@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <meta name="dcterms.date" content="2016-01-24">
+          <title>RPi Wifi Access Point Guide</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">RPi Wifi Access Point Guide</h1>
+                        <h3 id="project_tagline">Adding WiFi Access Point to your Raspberry Pi</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <section id="rpi-wifi-access-point-guide" class="level1">
+<h1>RPi Wifi Access Point Guide</h1>
+<section id="adding-wifi-access-point-to-your-raspberry-pi" class="level2">
+<h2>Adding WiFi Access Point to your Raspberry Pi</h2>
+</section>
+</section>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>Turning your pi into an access point is a useful step. It allows the pi to be used as a bridge between networks and allows your pi to be accessed directly from a client device. This is useful for IoT devices.</p>
+<p>This guide assumes that 2 WiFi adapters will be used, one for access point service and one for Internet access. The information presented, with minor modifications, would also apply for an Ethernet Internet connected and for a non-Internet connected access point.</p>
+</section>
+<section id="parts-list" class="level1">
+<h1>Parts List</h1>
+<ul>
+<li>Raspberry Pi 2</li>
+<li>4GB (or larger) class 10 MicroSD card</li>
+<li><a href="http://www.amazon.com/Edimax-EW-7811Un-150Mbps-Raspberry-Supports/dp/B003MTTJOY/ref=pd_bxgy_147_2">Two USB WiFi dongles</a> <em>(second wifi is optional)</em></li>
+<li><a href="https://www.adafruit.com/product/954">USB to serial console cable</a> <em>(optional)</em></li>
+<li>Pi Case</li>
+<li>Mini-USB power</li>
+</ul>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Start with a Raspberry Pi image. This is an image saved after following the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a>. The image may be either Lite or Full depending on your needs. If you do not have such an image, start with a Raspbian image and follow the aforementioned guide before returning here.</p>
+<ol type="1">
+<li><a href="#1">Write the image to the MicroSD.</a></li>
+<li><a href="#2">Connect to the Pi.</a></li>
+<li><a href="#3">Connect to your WiFi.</a></li>
+<li><a href="#4">Install new packages.</a></li>
+<li><a href="#4">Setup the DHCP server.</a></li>
+<li><a href="#4">Set a static IP on wlan1.</a></li>
+<li><a href="#4">Set the Pi as an Access Point.</a></li>
+<li><a href="#4">Configure NAT.</a></li>
+<li><a href="#4">Connect and Test.</a></li>
+<li><a href="#Conclusion">Conclusion</a>.</li>
+</ol>
+</section>
+<section id="procedures" class="level1">
+<h1>Procedures</h1>
+<section id="write-the-image" class="level2">
+<h2><a name="1"></a>Write the image</h2>
+<p>Write the image to the MicroSD as described in the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a>. Insert the MicroSD into the Pi.</p>
+</section>
+<section id="connect-to-the-pi" class="level2">
+<h2><a name="2"></a>Connect to the Pi</h2>
+<p>Attach the USB to serial console cable and allow the system to boot. Connect to the pi using a PuTTY terminal to the COM port or from Linux using <code>sudo screen /dev/ttyUSB0 115200</code>.</p>
+<p>It should also be possible to connect to the pi using SSH over the network connection. Your wlan0 connection should be fully functional unless you are not on the same access point.</p>
+</section>
+<section id="connect-to-your-wifi" class="level2">
+<h2><a name="3"></a>Connect to your WiFi</h2>
+<p>This guide assumes that wlan1 is used for the access point and wlan0 is used for the network connection. If your pi is not currently connected on the network, use NetworkManager, nmcli. See the <a href="rpi_initial_setup.html#12">RPi Initial Setup Guide</a>. Check your connection using <code>ifconfig</code>.</p>
+</section>
+<section id="install-new-packages" class="level2">
+<h2><a name="4"></a>Install new packages</h2>
+</section>
+<section id="setup-the-dhcp-server" class="level2">
+<h2>5 Setup the DHCP server</h2>
+</section>
+<section id="set-a-static-ip-on-wlan1" class="level2">
+<h2>6 Set a static IP on wlan1</h2>
+</section>
+<section id="set-the-pi-as-an-access-point" class="level2">
+<h2>7 Set the Pi as an Access Point</h2>
+</section>
+<section id="configure-nat" class="level2">
+<h2>8 Configure NAT</h2>
+</section>
+<section id="connect-and-test" class="level2">
+<h2>9 Connect and Test</h2>
+<p>For the steps 4 through 8 follow the procedures given by Adafruit's guide to <a href="https://learn.adafruit.com/setting-up-a-raspberry-pi-as-a-wifi-access-point/install-software">Setting up a Raspberry Pi as a WiFi access point</a>. <strong>Read my <em>Comments and additional references</em> before following these steps as there are a few minor changes.</strong></p>
+<section id="comments-and-additional-references" class="level3">
+<h3>Comments and additional references</h3>
+<ul>
+<li><a href="https://help.ubuntu.com/community/isc-dhcp-server">Ubuntu Community isc-dhcp-server</a></li>
+<li>The Domain Name Servers are <a href="https://developers.google.com/speed/public-dns/">Google Public DNS</a></li>
+<li>A valid private IPv4 address range is 192.168.0.0 - 192.168.255.255</li>
+<li><strong>File /etc/default/isc-dhcp-server</strong> The setting is INTERFACES=&quot;wlan1&quot;</li>
+<li><strong>Static IP on wlan1</strong> not on wlan0</li>
+<li><strong>iptables rules</strong> Change eth0 to wlan0 and wlan0 to wlan1</li>
+<li><strong>iptables rules</strong> Add to the current rules table.</li>
+</ul>
+<pre><code>sudo nano /etc/iptables.test.rules
+-----------
+# TOP OF FILE ADD
+
+*nat
+
+# Allow Access Point NAT
+-A POSTROUTING -o wlan0 -j MASQUERADE
+
+COMMIT
+-----------
+# BEFORE THE COMMENT # Reject all other inbound # ADD
+
+# Allow forwarded from wlan1 to permit NAT and Access Point
+-A FORWARD -i wlan0 -o wlan1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -i wlan1 -o wlan0 -j ACCEPT
+-----------
+# SAVE
+# LOAD RULES
+sudo iptables-restore &lt; /etc/iptables.test.rules
+# VERIFY RULES
+sudo iptables -L
+# SAVE RULES
+sudo -i
+iptables-save &gt; /etc/iptables.up.rules
+exit</code></pre>
+<ul>
+<li><strong>update hostapd</strong> The binary version available for download from Adafruit is a little old. It will work but I recommend compiling hostapd. The Adafruit tutorial covers this on the last page.</li>
+<li><strong>Realtek download</strong> The version listed on Adafruit is no longer available. Instead, try the version for Linux found on this <a href="http://www.realtek.com.tw/downloads/downloadsView.aspx?Langid=1&amp;PNid=21&amp;PFid=48&amp;Level=5&amp;Conn=4&amp;DownTypeID=3&amp;GetDown=false&amp;Downloads=true">Realtek page</a></li>
+<li><strong>hostapd compile</strong> File locations are a little different. Try these instead.</li>
+</ul>
+<pre><code>unzip RTL8188C_8192C_USB_linux_v4.0.2_9000.20130911.zip
+mv RTL8188C_8192C_USB_linux_v4.0.2_9000.20130911 rtl
+cd rtl
+cd wpa_supplicant_hostapd
+tar -xzvf wpa_supplicant_hostapd-0.8_rtw_r7475.20130812.tar.gz
+cd wpa_supplicant_hostapd-0.8_rtw_r7475.20130812
+cd hostapd
+make</code></pre>
+<ul>
+<li><strong>Do not remove WPA-Supplicant</strong></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1><a name="Conclusion"></a>Conclusion</h1>
+<p>Well done, you now have a working wifi access point. From here you could turn it into a hotspot, a Tor router, or an IoT controller.</p>
+<p>Remember to save your image file.</p>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

@@ -404,7 +404,8 @@ NetworkManager is a set of tools that make networking simpler. Whether Wi-Fi, wi
 
 1. Update your sources, `sudo apt-get update`
 2. Install NetworkManager, `sudo apt-get install network-manager`. This will install a number of other packages as well.
-3. NetworkManager does not manage any interface defined in /etc/network/interfaces by default. The easiest way to manage some interfaces using NetworkManager is to comment them out. `sudo nano /etc/network/interfaces`.
+3. Install links text-based browser to confirm on captive portals, `sudo apt-get install links`.
+4. NetworkManager does not manage any interface defined in /etc/network/interfaces by default. The easiest way to manage some interfaces using NetworkManager is to comment them out. `sudo nano /etc/network/interfaces`.
 
 ```
 auto lo

@@ -18,3 +18,4 @@ pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.h
 My Raspberry Pi project documentation
 
 - [RPi Initial Setup Guide](rpi_initial_setup.html)
+- [RPi WiFi Access Point Guide](rpi_wifi_ap.html)

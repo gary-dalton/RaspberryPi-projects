@@ -22,6 +22,8 @@ tags: rpi, tor, howto, router, privacy
 
 Turning your pi into an access point is a useful step. It allows the pi to be used as a bridge between networks and allows your pi to be accessed directly from a client device. This is useful for IoT devices.
 
+This guide assumes that 2 WiFi adapters will be used, one for access point service and one for Internet access. The information presented, with minor modifications, would also apply for an Ethernet Internet connected and for a non-Internet connected access point.
+
 # Parts List
 
 * Raspberry Pi 2
@@ -40,7 +42,7 @@ Start with a Raspberry Pi image. This is an image saved after following the [RPi
 3. Connect to your WiFi.
 4. Install new packages.
 5. Setup the DHCP server.
-6. Set a static IP on wlan0.
+6. Set a static IP on wlan1.
 7. Set the Pi as an Access Point.
 8. Configure NAT.
 Further configure and secure the system.
@@ -57,7 +59,9 @@ Attach the USB to serial console cable and allow the system to boot. Connect to 
 
 ## 3 Connect to your WiFi
 
-Unless you are using the same WiFi dongle as in the previous guide, your wifi needs to be told to connect. If you have more than 1 wifi dongle, make note of the HWaddr obtained from `ifconfig wlan1`. This guide assumes that wlan0 is used for the access point. Use ConnMan for managing this.
+Unless you are using the same WiFi dongle as in the previous guide, your wifi needs to be told to connect. If you have more than 1 wifi dongle, make note of the HWaddr obtained from `ifconfig wlan0`. This guide assumes that wlan1 is used for the access point. Use NetworkManager for managing this.
+
+`sudo apt-get install links`
 
 1. Start ConnMan control, `sudo connmanctl`. Notice that the CLI prompt changes.
 2. `enable wifi`

@@ -21,7 +21,7 @@
     
     <div id="header_wrap" class="outer">
     <header class="inner">
-                <a id="forkme_banner" href="https://github.com/gary-dalton/gary-dalton.github.io/tree/master">View on GitHub</a>
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
                         <h1 id="project_title">RPi Initial Setup Guide</h1>
                         <h3 id="project_tagline">Raspberry Pi - Image and Initial Setup</h3>
             </header>
@@ -39,7 +39,7 @@
 <section id="parts-list" class="level1">
 <h1>Parts List</h1>
 <ul>
-<li>Raspberry Pi</li>
+<li>Raspberry Pi 2</li>
 <li>4GB (or larger) class 10 MicroSD card</li>
 <li><a href="http://www.amazon.com/Edimax-EW-7811Un-150Mbps-Raspberry-Supports/dp/B003MTTJOY/ref=pd_bxgy_147_2">USB WiFi dongle</a> <em>(optional)</em></li>
 <li><a href="https://www.adafruit.com/product/954">USB to serial console cable</a> <em>(optional)</em></li>
@@ -48,39 +48,42 @@
 <section id="overview" class="level1">
 <h1>Overview</h1>
 <ol type="1">
-<li>Download the Raspbian image and write it to the microSD.</li>
-<li>Connect to the Pi using either the USB to serial cable or using a keyboard and monitor.</li>
-<li>Boot the Pi.</li>
-<li>Run the initial setup.</li>
-<li>Get the Pi connected to your WiFi.</li>
-<li>Install some network magic.</li>
-<li>Connect to the Pi using SSH.</li>
-<li>Improve SSH security.</li>
-<li>Firewalling with iptable.</li>
-<li>Connect to the Pi using VNC. <em>(optional)</em></li>
-<li>Add the Adafruit Raspberry Pi repository. <em>(optional)</em></li>
-<li>Install node.js. <em>(optional)</em></li>
-<li>Install occidentalis. <em>(optional)</em></li>
+<li><a href="#1">Download the Raspbian image and write it to the microSD.</a></li>
+<li><a href="#2">Connect to the Pi using either the USB to serial cable or using a keyboard and monitor.</a></li>
+<li><a href="#3">Boot the Pi.</a></li>
+<li><a href="#4">Run the initial setup.</a></li>
+<li><a href="#5">Connect to the Internet.</a></li>
+<li><a href="#6">Update and upgrade the Pi.</a></li>
+<li><a href="#7">Install some network magic.</a></li>
+<li><a href="#8">Connect to the Pi using SSH.</a></li>
+<li><a href="#9">Improving security.</a></li>
+<li><a href="#10">Firewalling with iptables.</a></li>
+<li><a href="#11">Connect to the Pi using VNC.</a> <em>(optional)</em></li>
+<li><a href="#12">Advanced network management with nmcli.</a> <em>(optional)</em></li>
+<li><a href="#13">Add the Adafruit Raspberry Pi repository.</a> <em>(optional)</em></li>
+<li><a href="#14">Install node.js.</a> <em>(optional)</em></li>
+<li><a href="#15">Install occidentalis.</a> <em>(optional)</em></li>
+<li><a href="#Conclusion">Conclusion</a>.</li>
 </ol>
 </section>
 <section id="procedures" class="level1">
 <h1>Procedures</h1>
 <section id="raspbian" class="level2">
-<h2>1 Raspbian</h2>
+<h2><a name="1"></a>Raspbian</h2>
 <p>Download the <a href="https://www.raspberrypi.org/downloads/raspbian/">latest version of Raspbian</a>. For general use, download the full version. If you are certain that you want a headless installation with no GUI desktop, download the Lite version. I usually use the Lite version with no desktop.</p>
 <p>For the Lite version, a 4Gb MicroSD is likely sufficient but use at least an 8GB card for the full version. The required size of your disk depends a bit on your expected use.</p>
 <p>Unzip the image and write it to the MicroSD card. On Windows, I use <a href="http://sourceforge.net/projects/win32diskimager/">Win32 Disk Imager</a>. Other OS instructions may be found on the Raspbian download page.</p>
 <p>Insert the MicroSD into the Pi.</p>
 </section>
 <section id="connect-to-the-pi" class="level2">
-<h2>2 Connect to the Pi</h2>
+<h2><a name="2"></a>Connect to the Pi</h2>
 <p>A Raspberry Pi is a computer that may be operated by connecting with a mouse, keyboard, and monitor. I prefer to connect to it using the USB to Serial console cable. This allows me to use my main computer's equipment while working on the Pi in a terminal window. See the <a href="https://learn.adafruit.com/adafruits-raspberry-pi-lesson-5-using-a-console-cable">Adafruit overiew</a> for full details on using the USB to console cable.</p>
 <figure>
 <img src="images/USB-console-connect.jpg" alt="USB to console connection" /><figcaption>USB to console connection</figcaption>
 </figure>
 </section>
 <section id="boot-the-pi" class="level2">
-<h2>3 Boot the Pi</h2>
+<h2><a name="3"></a>Boot the Pi</h2>
 <p>As soon as you insert the USB to console cable into your computer, the Pi will start to boot. If you are using a keyboard and monitor, plug in your power to boot the Pi.</p>
 <p>This next set of instructions assumes you are using the USB to console cable.</p>
 <ol type="1">
@@ -90,7 +93,7 @@
 </ol>
 </section>
 <section id="run-first-boot-setup" class="level2">
-<h2>4 Run first boot setup</h2>
+<h2><a name="4"></a>Run first boot setup</h2>
 <p>Start the configuration software to expand the filesystem, change the password, and change the hostname. Enter the configuration with this command, <code>sudo raspi-config</code>.</p>
 <ol type="1">
 <li>Select and execute <strong>Expand Filesystem</strong></li>
@@ -99,12 +102,15 @@
 <li>Reboot your system <code>sudo reboot now</code>.</li>
 </ol>
 </section>
-<section id="wifi" class="level2">
-<h2>5 WiFi</h2>
-<p>Time to get your Pi connected to your local network and then to the Internet. This procedure assumes you are using a supported wifi USB dongle, are connecting to a simple shared key access point using DHCP, and are not using the GUI desktop to configure your connections. If you are using the full desktop, connect your wifi using the graphical Network Manager. See the <a href="https://wiki.debian.org/WiFi">Debian wiki</a> for an excellent discussion.</p>
-<section id="method-1---etcnetworkinterfaces" class="level3">
-<h3>Method 1 - /etc/network/interfaces</h3>
-<p>If the Pi just needs to connect to one network and won't be moving around much, use Method 1. If you are likely to go mobile with your Pi and need to connect to multiple networks, do the initial setup with Method 1 and then move on to Method 2.</p>
+<section id="connect-to-the-internet" class="level2">
+<h2><a name="5"></a>Connect to the Internet</h2>
+<section id="ethernet" class="level3">
+<h3>Ethernet</h3>
+<p>The easiest way to do this is via Ethernet. Check if you are connected with <code>ifconfig eth</code>. From this output, make note of the <strong>inet addr</strong>. This is your Pi's IP address.</p>
+</section>
+<section id="wifi" class="level3">
+<h3>WiFi</h3>
+<p>If you do not have an Ethernet connection, you will have to set up your wifi. This procedure assumes you are using a supported wifi USB dongle, are connecting to a simple shared key access point using DHCP, and are not using the GUI desktop to configure your connections. If you are using the full desktop, connect your wifi using the graphical Network Manager. See the <a href="https://wiki.debian.org/WiFi">Debian wiki</a> for an excellent discussion.</p>
 <ol type="1">
 <li><code>sudo nano /etc/network/interfaces</code></li>
 <li><p>Add the following to this file</p>
@@ -125,50 +131,23 @@ auth_alg=OPEN
 }</code></pre></li>
 <li>You may need to change the <em>proto</em> or <em>key mgmt</em> values depending on your network. See <code>man wpa_supplicant.conf</code> for more information.</li>
 <li><p>Restart the wifi interface. If your settings are correct, it should automatically connect.</p>
-<pre><code>sudo ifdown
-sudo ifup</code></pre></li>
+<pre><code>sudo ifdown wlan0
+sudo ifup wlan0</code></pre></li>
 <li><p>Check that you are connected with <code>ifconfig wlan0</code>. From this output, make note of the <strong>inet addr</strong>. This is your Pi's IP address. Use <code>iwconfig wlan0</code> to see which Access Point you are connected to.</p></li>
 </ol>
 </section>
-<section id="method-2---connman" class="level3">
-<h3>Method 2 - ConnMan</h3>
-<p>ConnMan is a daemon for managing Internet connections within embedded devices. It has low memory consumption and reacts well to changing network conditions. See <a href="https://01.org/connman">ConnMan</a></p>
-<p>Basically ConnMan will make it easier to connect to and manage multiple connection profiles from the command line interface, CLI.</p>
-<ol type="1">
-<li>Update your sources, <code>sudo apt-get update</code></li>
-<li>Apply the updates, <code>sudo apt-get upgrade</code></li>
-<li>Install ConnMan, <code>sudo apt-get install connman</code>. This may also install <em>bluez</em> and <em>ofono</em>.</li>
-<li><p>Disable the previous network configuration, <code>sudo nano /etc/network/interfaces</code> and comment all the lines you previously entered.</p>
-<pre><code>#auto wlan0
-allow-hotplug wlan0
-#iface wlan0 inet dhcp
-iface wlan0 inet manual
-#    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf</code></pre></li>
-<li>Reboot, <code>sudo reboot now</code></li>
-<li><p>Check network connection status, <code>ifconfig wlan0</code> and verify that the inet addr is empty.</p></li>
-</ol>
-<p>Start using ConnMan. This guide will only cover an initial connection but ConnMan is capable of much more. See additional documentation from <a href="https://wiki.archlinux.org/index.php/Connman">archlinux</a>, <a href="https://01.org/connman/documentation">intel</a>, and <a href="https://wiki.tizen.org/wiki/IVI/ConnMan_Tips_%26_Tricks">tizen</a>. One thing to note is that ConnMan uses tab completion. This means type the first few characters of your command and hit tab.</p>
-<ol type="1">
-<li>Start ConnMan control, <code>sudo connmanctl</code>. Notice that the CLI prompt changes.</li>
-<li><code>enable wifi</code></li>
-<li>Scan for wifi services, <code>scan wifi</code>.</li>
-<li>List the found services, <code>services</code>.</li>
-<li>Register an agent to handle user requests, <code>agent on</code>.</li>
-<li>From the list of services, select the wifi address you wish to connect to. This will start with wifi_, tab completion comes in handy now. Connect to the service, <code>connect wifi_the_numbers_letters_of_your_service</code>.</li>
-<li>If it is a secured access point, the agent should request a password so enter the password.</li>
-<li>Once authenticated, your credentials are saved for future connections.</li>
-<li><code>quit</code>.</li>
-<li>Check your connection, <code>ifconfig wlan0</code>.</li>
-<li><p>To view all of your saved configurations,</p>
-<pre><code>sudo -i
-cat /var/lib/connman/*/settings
-exit</code></pre></li>
-<li><p>Start, stop, and view status of ConnMan using <code>systemctl status connman</code></p></li>
-</ol>
 </section>
+<section id="update-and-upgrade" class="level2">
+<h2><a name="6"></a>Update and upgrade</h2>
+<p>It is important to keep your pi's software up to date. This is commonly done using apt-get. The main keywords to know are <em>update</em>, <em>upgrade</em>, <em>install</em>, and <em>remove</em>. So let's make the system current.</p>
+<ol type="1">
+<li>Update the packages list, <code>sudo apt-get update</code>.</li>
+<li>Upgrade software packages to the current version, <code>sudo apt-get upgrade</code>.</li>
+<li>Relax, this might take a while.</li>
+</ol>
 </section>
 <section id="network-magic" class="level2">
-<h2>6 Network magic</h2>
+<h2><a name="7"></a>Network magic</h2>
 <p>This step does nothing more than make it easier to find your Pi on your network. It uses <em>Zeroconf</em>, provided by <em>Avahi</em> on Linux, <em>Bonjour</em> on Windows, and included in Apple.</p>
 <ol type="1">
 <li>Install <code>sudo apt-get install avahi-daemon</code>.</li>
@@ -177,7 +156,7 @@ exit</code></pre></li>
 </ol>
 </section>
 <section id="connect-to-pi-using-ssh" class="level2">
-<h2>7 Connect to Pi using SSH</h2>
+<h2><a name="8"></a>Connect to Pi using SSH</h2>
 <p>SSH is a safe and efficient way to connect to your Pi over the network or the Internet. It is enabled by default but for highest security, I recommend a few configuration changes and installing your own personal keys. This guide assumes you are connecting from Windows or another Linux system. For Windows use <a href="http://www.putty.org/">PuTTY</a> and for Linux use <a href="http://www.openssh.com/">OpenSSH</a>. It may be necessary to install PuTTY but OpenSSH comes installed on Linux.</p>
 <ul>
 <li>Verify that SSH is enabled, <code>sudo raspi-config</code> then Advanced Options and then SSH.</li>
@@ -206,7 +185,7 @@ exit</code></pre></li>
 </section>
 </section>
 <section id="improving-security" class="level2">
-<h2>8 Improving security</h2>
+<h2><a name="9"></a>Improving security</h2>
 <p>Some general rules to security are:</p>
 <ul>
 <li>Do not use default passwords</li>
@@ -311,7 +290,7 @@ PubkeyAuthentication yes</code></pre></li>
 </section>
 </section>
 <section id="firewall-with-iptables" class="level2">
-<h2>9 Firewall with iptables</h2>
+<h2><a name="10"></a>Firewall with iptables</h2>
 <p>At this point, your pi is functional, connected, and reasonably secure. It can be made more secure with iptables which will only allow the types of traffic you permit. Iptables is currently running on your pi but it is set to allow all traffic. We are about to change that. Rules for iptables can sometimes be a bit touchy so make certain that you are able to connect to your pi via console until certain of your settings. Iptables is quite powerful but also sometimes complex, so do try to learn more before blindly applying these rules. See <a href="https://help.ubuntu.com/community/IptablesHowTo/">Iptables How To</a>, <a href="https://wiki.debian.org/iptables">Debian</a>, and <a href="https://wiki.archlinux.org/index.php/iptables">archlinux</a>.</p>
 <p>Firewall rules are processed from top to bottom. Once a rule is matched, no more rule checking occurs. So if my first rule allows all traffic and my last rule allows none, then all traffic is allowed. Don't block yourself by creating a bad first rule.</p>
 <ol type="1">
@@ -380,7 +359,7 @@ PubkeyAuthentication yes</code></pre></li>
 COMMIT</code></pre>
 <ol start="5" type="1">
 <li>Load the rules, <code>sudo iptables-restore &lt; /etc/iptables.test.rules</code>.</li>
-<li>Check that they loaded correctly, <code>iptables -L</code>.</li>
+<li>Check that they loaded correctly, <code>sudo iptables -L</code>.</li>
 <li>Verify that you can still establish a connection using SSH.</li>
 <li>All OK? Save the rules, <code>sudo iptables-save &gt; /etc/iptables.up.rules</code>.</li>
 <li>Force rules to load on reboot, <code>sudo nano /etc/network/if-pre-up.d/iptables</code>.</li>
@@ -391,9 +370,9 @@ COMMIT</code></pre>
 <li><p>Reboot and test by connecting with SSH and <code>iptables -L</code>.</p></li>
 </ol>
 </section>
-<section id="connect-to-the-pi-using-vnc-optional" class="level2">
-<h2>10 Connect to the Pi using VNC (optional)</h2>
-<p>Virtual Network Connection (VNC) is a way to remotely connect to your pi via the network and access the pi's GUI desktop. I usually do not use a VNC but there are circumstances (educational setting, inexperienced users) where it does prove useful. Good information from <a href="https://www.raspberrypi.org/documentation/remote-access/vnc/">rasperrypi.org</a>.</p>
+<section id="connect-to-the-pi-using-vnc" class="level2">
+<h2><a name="11"></a>Connect to the Pi using VNC</h2>
+<p>(optional) Virtual Network Connection (VNC) is a way to remotely connect to your pi via the network and access the pi's GUI desktop. I usually do not use a VNC but there are circumstances (educational setting, inexperienced users) where it does prove useful. Good information from <a href="https://www.raspberrypi.org/documentation/remote-access/vnc/">rasperrypi.org</a>.</p>
 <p><strong>Note: VNC should only available on the local network.</strong></p>
 <ol type="1">
 <li>Update your sources, <code>sudo apt-get update</code>.</li>
@@ -425,10 +404,70 @@ COMMIT</code></pre>
 <li>When done, just close the window.</li>
 </ol>
 </section>
+<section id="connect-from-a-browser" class="level3">
+<h3>Connect from a browser</h3>
+<p>Browser based VNC makes it easy for anyone to use this technology. I use the Google Chrome App from <a href="https://www.realvnc.com/products/chrome/">RealVNC</a>.</p>
 </section>
-<section id="add-the-adafruit-raspberry-pi-repository-optional" class="level2">
-<h2>11 Add the Adafruit Raspberry Pi repository (optional)</h2>
-<p>The <a href="https://learn.adafruit.com/apt-adafruit-com/overiew">Adafruit repository</a> provides access to the most recent node packages and to a few other goodies useful to makers.</p>
+</section>
+<section id="networkmanager-cli" class="level2">
+<h2><a name="12"></a>NetworkManager CLI</h2>
+<p>If the Pi just needs to connect to one network and won't be moving around much, you don't need Network Manager. If you are likely to go mobile with your Pi and need to connect to multiple networks, consider using nmcli.</p>
+<p>NetworkManager is a set of tools that make networking simpler. Whether Wi-Fi, wired, bond, bridge, 3G, or Bluetooth, NetworkManager allows you to quickly move from one network to another: once a network has been configured and joined, it can be detected and re-joined automatically the next time its available. Nmcli is just the command line interface, CLI, to NetworkManager.</p>
+<p><strong>This procedure will disable your wifi connection until it is reestablished in NetworkManager. So you will need a console or Ethernet connection.</strong></p>
+<ol type="1">
+<li>Update your sources, <code>sudo apt-get update</code></li>
+<li>Install NetworkManager, <code>sudo apt-get install network-manager</code>. This will install a number of other packages as well.</li>
+<li>NetworkManager does not manage any interface defined in /etc/network/interfaces by default. The easiest way to manage some interfaces using NetworkManager is to comment them out. <code>sudo nano /etc/network/interfaces</code>.</li>
+</ol>
+<pre><code>auto lo
+iface lo inet loopback
+
+# Managed by NetworkManager
+#iface eth0 inet manual
+
+# Managed by NetworkManager
+#auto wlan0
+#allow-hotplug wlan0
+#iface wlan0 inet dhcp
+#    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf</code></pre>
+<ul>
+<li>Review the <code>sudo nano /etc/NetworkManager/NetworkManager.conf</code> file. It should look similar to this. The previous <em>interfaces</em> file combined with the <em>managed=false</em> setting, informs NetworkManager to only manage interfaces that are not listed in <em>interfaces</em>.</li>
+</ul>
+<pre><code>[main]
+plugins=ifupdown,keyfile
+
+[ifupdown]
+managed=false</code></pre>
+<ol type="1">
+<li>Reboot, <code>sudo reboot now</code>.</li>
+<li>Check network connection status, <code>ifconfig wlan0</code> and verify that the inet addr is empty.</li>
+<li>Start using nmcli by scanning the manual, <code>man nmcli</code>.</li>
+<li>There are 5 Objects but mainly, this guide uses <em>connection</em> and <em>device</em>. Learn more about these by, <code>nmcli con help</code> and <code>nmcli dev help</code>.</li>
+<li><code>nmcli dev status</code> displays a table. Notice that wlan0 is disconnected.</li>
+<li><code>nmcli dev wifi</code> displays a table of available wifi access points.</li>
+<li>Connects may be added using nmcli, for example <code>nmcli con add con-name HOMEOFFICE ifname wlan0 type wifi ssid MYSSID</code>, but I prefer to use nmtui.</li>
+<li><code>sudo nmtui</code> provides a text user interface that allows easy creation of wifi connection.</li>
+<li>Edit a connection.</li>
+<li>Add &gt;&gt; wifi</li>
+<li>Give your connection a name and set the fields needed for your access point.</li>
+<li>If you provided all the settings correctly and set the connection to connect automatically, it might already have connected. Check with <code>ifconfig wlan0</code>.</li>
+<li>Notice the changed out put from <code>nmcli dev status</code> and <code>nmcli dev wifi</code>.</li>
+<li>Show active connections with <code>nmcli con show -a</code>.</li>
+<li>Take down a connection with <code>sudo nmcli con down connection_name</code> and bring it back up with <code>sudo nmcli con up connection_name</code>.</li>
+</ol>
+<p>Learn more about NetworkManager and nmcli from these,</p>
+<ul>
+<li><a href="https://www.mankier.com/1/nmcli">Man nmcli</a></li>
+<li><a href="https://www.mankier.com/5/nmcli-examples">Man nmcli examples</a></li>
+<li><a href="https://blogs.gnome.org/dcbw/2015/02/16/networkmanager-for-administrators-part-1/">NetworkManager for Administrators</a></li>
+<li><a href="https://wiki.archlinux.org/index.php/NetworkManager">Archlinux</a></li>
+<li><a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Networking_Guide/sec-Using_the_NetworkManager_Command_Line_Tool_nmcli.html">Redhat</a></li>
+</ul>
+<p>NetworkManager service control is via systemctl, therefore it may be enabled with <code>sudo systemctl enable NetworkManager</code> and disabled with <code>sudo systemctl disable NetworkManager</code>. The service may also be monitored using <code>sudo service NetworkManager [status|start|stop|reload|restart]</code>.</p>
+</section>
+<section id="add-the-adafruit-raspberry-pi-repository" class="level2">
+<h2><a name="13"></a>Add the Adafruit Raspberry Pi repository</h2>
+<p>(optional) The <a href="https://learn.adafruit.com/apt-adafruit-com/overiew">Adafruit repository</a> provides access to the most recent node packages and to a few other goodies useful to makers.</p>
 <ol type="1">
 <li>Become root, <code>sudo -i</code>.</li>
 <li>Add the repository to the sources file, <code>echo &quot;deb http://apt.adafruit.com/raspbian/ release main&quot; &gt;&gt; /etc/apt/sources.list</code>. Replace <em>release</em> with the current stable release. In Jan2016, it is jessie.</li>
@@ -437,18 +476,18 @@ COMMIT</code></pre>
 <li>Exit root, <code>exit</code>.</li>
 </ol>
 </section>
-<section id="install-node.js-optional" class="level2">
-<h2>12 Install node.js (optional)</h2>
-<p>Node.js is a JavaScript runtime environment for developing server-side Web applications. It uses an asynchronous event driven framework that is designed to build scalable network applications. I install it on nearly all of my pi to provide a framework for building user interfaces that can actually do something.</p>
+<section id="install-node.js" class="level2">
+<h2><a name="14"></a>Install node.js</h2>
+<p>(optional) Node.js is a JavaScript runtime environment for developing server-side Web applications. It uses an asynchronous event driven framework that is designed to build scalable network applications. I install it on nearly all of my pi to provide a framework for building user interfaces that can actually do something. <em>(requires Adafruit Raspberry Pi repository)</em></p>
 <ol type="1">
 <li>Update, <code>sudo apt-get update</code>.</li>
 <li>Install node, <code>sudo apt-get install node</code>.</li>
 <li>Now go learn more about node from <a href="https://nodejs.org/en/">Node</a>, <a href="http://expressjs.com/en/starter/hello-world.html">Express</a>, <a href="https://learn.adafruit.com/node-embedded-development/events">Adafruit</a>, and <a href="https://www.google.com/webhp?q=node.js%20raspberry%20pi">search</a>.</li>
 </ol>
 </section>
-<section id="install-occidentalis-optional" class="level2">
-<h2>13 Install occidentalis (optional)</h2>
-<p>Occidentalis is a collection of drivers, configuration utilities, and other useful things for single-board computers from <a href="https://github.com/adafruit/Adafruit-Occidentalis">Adafruit</a>.</p>
+<section id="install-occidentalis" class="level2">
+<h2><a name="15"></a>Install occidentalis</h2>
+<p>(optional) Occidentalis is a collection of drivers, configuration utilities, and other useful things for single-board computers from <a href="https://github.com/adafruit/Adafruit-Occidentalis">Adafruit</a>. <em>(requires Adafruit Raspberry Pi repository)</em></p>
 <ol type="1">
 <li>Update, <code>sudo apt-get update</code>.</li>
 <li>Install occidentalis, <code>sudo apt-get install occidentalis</code>.</li>
@@ -456,7 +495,7 @@ COMMIT</code></pre>
 </section>
 </section>
 <section id="save-the-image-to-a-file" class="level1">
-<h1>Save the image to a file</h1>
+<h1><a name="Conclusion"></a>Save the image to a file</h1>
 <p>Now that you have spent all this time getting your Raspberry Pi set up just so, save it to an image for easy reuse. You will still have to change things like usernames, passwords, and hostnames.</p>
 <p>Instead of writing a file image to the MicroSD, use the same software to read the MicroSD to a file image. Then when you are ready to spin up your next pi, it will be as easy as, well, pie.</p>
 </section>

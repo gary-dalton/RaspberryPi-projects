@@ -19,3 +19,5 @@ My Raspberry Pi project documentation
 
 - [RPi Initial Setup Guide](rpi_initial_setup.html)
 - [RPi WiFi Access Point Guide](rpi_wifi_ap.html)
+- [Using the WiFi Access Point with captured portal](rpi_captured_portal.html)
+- [Raspberry Tor](rpi_tor.html)

@@ -24,6 +24,13 @@ Turning your pi into an access point is a useful step. It allows the pi to be us
 
 This guide assumes that 2 WiFi adapters will be used, one for access point service and one for Internet access. The information presented, with minor modifications, would also apply for an Ethernet Internet connected and for a non-Internet connected access point.
 
+# Next up?
+
+After reading this guide, you may be interested in reading:
+
+- [Raspberry Tor](rpi-tor.html)
+- [Using the WiFi Access Point with captured portal](rpi_captured_portal.html)
+
 # Parts List
 
 * Raspberry Pi 2
@@ -64,14 +71,14 @@ It should also be possible to connect to the pi using SSH over the network conne
 
 This guide assumes that wlan1 is used for the access point and wlan0 is used for the network connection. If your pi is not currently connected on the network, use NetworkManager, nmcli. See the [RPi Initial Setup Guide](rpi_initial_setup.html#12). Check your connection using `ifconfig`.
 
-## <a name="4"></a>Install new packages
+## <a name="4"></a>4 Install new packages
 ## 5 Setup the DHCP server
 ## 6 Set a static IP on wlan1
 ## 7 Set the Pi as an Access Point
 ## 8 Configure NAT
 ## 9 Connect and Test
 
-For the steps 4 through 8 follow the procedures given by Adafruit's guide to [Setting up a Raspberry Pi as a WiFi access point](https://learn.adafruit.com/setting-up-a-raspberry-pi-as-a-wifi-access-point/install-software). **Read my _Comments and additional references_ before following these steps as there are a few minor changes.**
+For the steps 4 through 9 follow the procedures given by Adafruit's guide to [Setting up a Raspberry Pi as a WiFi access point](https://learn.adafruit.com/setting-up-a-raspberry-pi-as-a-wifi-access-point/install-software). **Read my _Comments and additional references_ before following these steps as there are a few minor changes.**
 
 ### Comments and additional references
 

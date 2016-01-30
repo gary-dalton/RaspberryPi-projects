@@ -11,14 +11,14 @@ github:
 framework: minimal
 css: stylesheets/stylesheet.css
 pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html rpi_initial_setup.md -o rpi_initial_setup.html
-tags: rpi, setup, guide
+tags: rpi, setup, guide, secure
 ---
 
 # RPi Initial Setup Guide
 
 # Description
 
-This guides the user through creation of a MicroSD image and then initial setup of the Raspberry Pi. It is necessary to have either a wired or WiFi network to complete this guide. Once a well functioning and secure Pi is completed, the user will save the image.
+This guides the user through creation of a MicroSD image and then initial setup of the Raspberry Pi. It is necessary to have either a wired or WiFi network to complete this guide. Once a well functioning and secure Pi is completed, the user will save the image. Notice that a large part of this guide deals with security. Security is a primary concern when connecting things to the Internet.
 
 # Parts List
 
@@ -364,6 +364,8 @@ COMMIT
 (optional) Virtual Network Connection (VNC) is a way to remotely connect to your pi via the network and access the pi's GUI desktop. I usually do not use a VNC but there are circumstances (educational setting, inexperienced users) where it does prove useful. Good information from [rasperrypi.org](https://www.raspberrypi.org/documentation/remote-access/vnc/).
 
 **Note: VNC should only available on the local network.**
+
+If you feel you need to run an Internet accessible VNC Server, at a minimum, use SSH tunneling for all connections.
 
 1. Update your sources, `sudo apt-get update`.
 2. Install TightVNC Server, `sudo apt-get install tightvncserver`.

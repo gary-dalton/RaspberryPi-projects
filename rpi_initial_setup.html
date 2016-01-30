@@ -34,7 +34,7 @@
 </section>
 <section id="description" class="level1">
 <h1>Description</h1>
-<p>This guides the user through creation of a MicroSD image and then initial setup of the Raspberry Pi. It is necessary to have either a wired or WiFi network to complete this guide. Once a well functioning and secure Pi is completed, the user will save the image.</p>
+<p>This guides the user through creation of a MicroSD image and then initial setup of the Raspberry Pi. It is necessary to have either a wired or WiFi network to complete this guide. Once a well functioning and secure Pi is completed, the user will save the image. Notice that a large part of this guide deals with security. Security is a primary concern when connecting things to the Internet.</p>
 </section>
 <section id="parts-list" class="level1">
 <h1>Parts List</h1>
@@ -374,6 +374,7 @@ COMMIT</code></pre>
 <h2><a name="11"></a>Connect to the Pi using VNC</h2>
 <p>(optional) Virtual Network Connection (VNC) is a way to remotely connect to your pi via the network and access the pi's GUI desktop. I usually do not use a VNC but there are circumstances (educational setting, inexperienced users) where it does prove useful. Good information from <a href="https://www.raspberrypi.org/documentation/remote-access/vnc/">rasperrypi.org</a>.</p>
 <p><strong>Note: VNC should only available on the local network.</strong></p>
+<p>If you feel you need to run an Internet accessible VNC Server, at a minimum, use SSH tunneling for all connections.</p>
 <ol type="1">
 <li>Update your sources, <code>sudo apt-get update</code>.</li>
 <li>Install TightVNC Server, <code>sudo apt-get install tightvncserver</code>.</li>

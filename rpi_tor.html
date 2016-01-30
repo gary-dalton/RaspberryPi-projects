@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <meta name="dcterms.date" content="2016-01-24">
+          <title>Raspberry Tor</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">Raspberry Tor</h1>
+                        <h3 id="project_tagline">Raspberry Pi used as a Tor router</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <section id="raspberry-tor" class="level1">
+<h1>Raspberry Tor</h1>
+<section id="raspberry-pi-used-as-a-tor-router" class="level2">
+<h2>Raspberry Pi used as a Tor router</h2>
+</section>
+</section>
+<section id="status---not-complete" class="level1">
+<h1>STATUS - NOT COMPLETE</h1>
+</section>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>The purpose of Raspberry Tor is to securely and anonymously use the Internet. The Tor Project defends against network surveillance and traffic analysis. Tor joined with a Raspberry Pi provides a wireless router to ensure that all network traffic from a computer is automatically either blocked or routed through the Tor network.</p>
+<p>This is a first but insufficient step to online anonymity.</p>
+</section>
+<section id="parts-list" class="level1">
+<h1>Parts List</h1>
+<ul>
+<li>Raspberry Pi 2</li>
+<li>4GB MicroSD card</li>
+<li><a href="http://www.amazon.com/Edimax-EW-7811Un-150Mbps-Raspberry-Supports/dp/B003MTTJOY/ref=pd_bxgy_147_2">Two USB WiFi dongles</a></li>
+<li>Pi Case</li>
+<li>Mini-USB power</li>
+<li><a href="http://www.sunfounder.com/index.php?c=downloadscs&amp;a=Manualdetails&amp;id=64">DS3231 RTC Module</a> avilable from <a href="http://www.amazon.com/DS3231-Precision-Module-Arduino-Raspberry/dp/B00SSQAUHG/ref=sr_1_3?qid=1454019152">Amazon</a></li>
+</ul>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Start with a Raspberry Pi Lite with Wifi Access Point image. This is an image saved after following both the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a> and the <a href="rpi_wifi_ap.html">RPi Wifi Access Point Guide</a>. If you do not have such an image, start with a Raspbian Lite image and follow the aforementioned guides before returning here.</p>
+<ol type="1">
+<li>Write the image to the microSD.</li>
+<li>Connect to the Pi.</li>
+<li>Configure I2C</li>
+<li>Real Time clock</li>
+<li><p>Disable Internet date checking</p></li>
+<li>Install Tor and configure the firewall.</li>
+<li>Further configure and secure the system</li>
+<li><p>Test</p></li>
+</ol>
+</section>
+<section id="procedures" class="level1">
+<h1>Procedures</h1>
+<section id="write-the-image" class="level2">
+<h2><a name="1"></a>Write the image</h2>
+<p>Write the image to the MicroSD as described in the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a>. Insert the MicroSD into the Pi.</p>
+</section>
+<section id="connect-to-the-pi" class="level2">
+<h2><a name="2"></a>Connect to the Pi</h2>
+<p>Connect to the pi using SSH over the network connection. Your wlan0 connection should be fully functional unless you are not on the same access point.</p>
+</section>
+<section id="configure-i2c" class="level2">
+<h2>Configure I2C</h2>
+<p>Follow the <a href="https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c">Adafruit Guide</a>.</p>
+</section>
+<section id="adding-a-real-time-clock" class="level2">
+<h2>Adding a real time clock</h2>
+<p>Tor network require accurate time keeping and, for anonymity, time keeping over the Internet should be disabled. Follow the <a href="Adding%20a%20Real%20Time%20Clock%20to%20your%20Raspberry%20Pi">PiHut Guide</a>.</p>
+</section>
+<section id="disable-internet-date-checking" class="level2">
+<h2>Disable Internet date checking</h2>
+<p>Having an accurate time is important for synchronized communications and for log filing. Linux, and most computers, use Network Time Protocol to check and validate the date/time. Remove the NTP package is an option, <code>sudo apt-get remove ntp</code>. NTP can always be easily reinstalled if it is later needed.</p>
+</section>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

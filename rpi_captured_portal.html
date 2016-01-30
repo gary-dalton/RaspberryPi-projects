@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <meta name="dcterms.date" content="2016-01-29">
+          <title>Using the WiFi Access Point</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">Using the WiFi Access Point</h1>
+                        <h3 id="project_tagline">Connecting through a Captured Portal</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <section id="using-the-wifi-access-point" class="level1">
+<h1>Using the WiFi Access Point</h1>
+<section id="connecting-through-a-captured-portal" class="level2">
+<h2>Connecting through a Captured Portal</h2>
+</section>
+</section>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>Now that you have a wifi access point, how do you use it? It can be used on your home network, a public hotspot, and a captured portal hotspot. This how-to assumes that you have a Raspberry Pi wifi access point as setup in the <a href="rpi_wifi_ap.html">RPi Wifi Access Point Guide</a>.</p>
+</section>
+<section id="next-up" class="level1">
+<h1>Next up?</h1>
+<p>After reading this guide, you may be interested in reading:</p>
+<ul>
+<li><a href="rpi-tor.html">Raspberry Tor</a></li>
+</ul>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>This how-to covers the use of nmcli to scan, connect to and disconnect from access points. It also describes how to accept agreements or log into hotspot captive portals. Finally there is a section on troubleshooting.</p>
+<ol type="1">
+<li><a href="#1">Start the Access Point</a></li>
+<li><a href="#2">Connect to the pi.</a></li>
+<li><a href="#3">Scan for SSIDs.</a></li>
+<li><a href="#4">Add new connections.</a></li>
+<li><a href="#5">Connect and disconnect a connection.</a></li>
+<li><a href="#6">Install links.</a></li>
+<li><a href="#7">Use links with a captive portal.</a></li>
+<li><a href="#8">Connect and Test.</a></li>
+<li><a href="#9">Troubleshooting.</a></li>
+<li><a href="#10">Shutting down.</a></li>
+<li><a href="#Conclusion">Conclusion</a>.</li>
+</ol>
+</section>
+<section id="procedures" class="level1">
+<h1>Procedures</h1>
+<section id="start-the-access-point" class="level2">
+<h2><a name="1"></a>Start the Access Point</h2>
+<p>Basically, just give the pi power and the access point will start up. I use a simple USB to mini-USB cable and connect it from my laptop to my pi but you could use a dedicated power cord or even a battery pack.</p>
+</section>
+<section id="connect-to-the-pi" class="level2">
+<h2><a name="2"></a>Connect to the Pi</h2>
+<p>Once the pi is started it should broadcast its SSID. This is the SSID you gave it in /etc/hostapd/hostapd.conf. Connect to this SSID and provide the password you set in that file. Once connected, your device has an IP address in the same subnet as the AP and the device is using the nameservers you selected in the /etc/hostapd/hostapd.conf. These IP address were assigned via DHCP.</p>
+<p>Now SSH into the AP's shell using <code>ssh user@hostname.local</code>.</p>
+</section>
+<section id="scan-for-ssids" class="level2">
+<h2><a name="3"></a>Scan for SSIDs</h2>
+<p>Time to find out what SSIDs are nearby and available. The easy command is <code>nmcli dev wifi</code> which outputs a table similar to:</p>
+<table>
+<thead>
+<tr class="header">
+<th style="text-align: left;">X</th>
+<th style="text-align: left;">SSID</th>
+<th style="text-align: left;">MODE</th>
+<th style="text-align: left;">CHAN</th>
+<th style="text-align: left;">RATE</th>
+<th style="text-align: left;">SIGNAL</th>
+<th style="text-align: left;">BARS</th>
+<th style="text-align: left;">SECURITY</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td style="text-align: left;">.</td>
+<td style="text-align: left;">ap1</td>
+<td style="text-align: left;">Infra</td>
+<td style="text-align: left;">1</td>
+<td style="text-align: left;">16 Mbit/s</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">▂▄▆█</td>
+<td style="text-align: left;">WPA2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">X</td>
+<td style="text-align: left;">ap2</td>
+<td style="text-align: left;">Infra</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">54 Mbit/s</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">▂▄▆█</td>
+<td style="text-align: left;">WPA2</td>
+</tr>
+<tr class="odd">
+<td style="text-align: left;">.</td>
+<td style="text-align: left;">ap3</td>
+<td style="text-align: left;">Infra</td>
+<td style="text-align: left;">8</td>
+<td style="text-align: left;">54 Mbit/s</td>
+<td style="text-align: left;">100</td>
+<td style="text-align: left;">▂▄▆█</td>
+<td style="text-align: left;">WPA2</td>
+</tr>
+<tr class="even">
+<td style="text-align: left;">.</td>
+<td style="text-align: left;">ap4</td>
+<td style="text-align: left;">Infra</td>
+<td style="text-align: left;">6</td>
+<td style="text-align: left;">16 Mbit/s</td>
+<td style="text-align: left;">42</td>
+<td style="text-align: left;">▂▄__</td>
+<td style="text-align: left;">WPA2</td>
+</tr>
+</tbody>
+</table>
+<p>The table shows all nearby broadcasting SSIDs, their signal strength, and their security requirements. This table also shows that there is an active connection to ap2.</p>
+</section>
+<section id="add-new-connections" class="level2">
+<h2><a name="4"></a>Add new connections</h2>
+<p>Check to see if you already have a connection to one of these SSIDs by <code>nmcli con</code>. This displays a tabled list of saved connections. It is best to name new connections according to the SSID for ease of use. If you need more details on a connection, try <code>nmcli con connection_name show</code></p>
+<p>If you have previously added a connection to your desired SSID, then proceed to the next step. I found adding new connections using <code>sudo nmtui</code> to be easiest. Choose <em>Edit a connection</em> and then <em>Add</em>. The prompts and fields to be completed should be self-explantory.</p>
+</section>
+<section id="connect-and-disconnect-a-connection" class="level2">
+<h2><a name="5"></a>Connect and disconnect a connection</h2>
+<p>Once you have a connection, connecting and disconnection are easy.</p>
+<ul>
+<li><code>sudo nmcli con up connection_name</code></li>
+<li><code>sudo nmcli con down connection_name</code></li>
+</ul>
+</section>
+<section id="install-links" class="level2">
+<h2><a name="6"></a>Install links</h2>
+<p>Links is text browser with layouts, tables, and frames. This makes it easy to browse the Internet from the command line. Links will be used to check and accept terms of a captive portal. <code>sudo apt-get install links</code>.</p>
+</section>
+<section id="use-links-with-a-captive-portal" class="level2">
+<h2><a name="7"></a>Use links with a captive portal</h2>
+<p>A captive portal is a special web page that is shown before using the Internet normally. The portal is often used to present a login page. This is done by intercepting most packets, regardless of address or port, until the user opens a browser and tries to access the web. At that time the browser is redirected to a web page which may require authentication and/or payment, or simply display an acceptable use policy and require the user to agree. Captive portals are used at many Wi-Fi hotspots, and can be used to control wired access (e.g. apartment houses, hotel rooms, business centers, &quot;open&quot; Ethernet jacks) as well. <a href="https://en.wikipedia.org/wiki/Captive_portal">from Wikipedia</a></p>
+<p>The purpose here is not to circumvent the active portal but to acknowledge its terms and continue with using our personal access point. The easiest way to do this is simply to browse to some well know web site with links, eg. <code>links google.com</code>. If the hotspot is using an captive portal, the browser will be redirected to the proper page for login or acceptance.</p>
+<p>Once done with the captive portal, your access point should be connecting to the Internet. You may remain connected to the pi but, for now, let's move back to your main computing device.</p>
+</section>
+<section id="connect" class="level2">
+<h2><a name="8"></a>Connect</h2>
+<p>Try opening a browser window to a well known web site. If this works you are connected to the Internet, otherwise; review the <em>Troubleshooting</em> section.</p>
+</section>
+<section id="shutting-down" class="level2">
+<h2><a name="10"></a>Shutting down</h2>
+<p>It is always a good idea to follow a defined shutdown procedure and not just pull the plug on everything.</p>
+<ul>
+<li>On your pi, <code>sudo nmcli con down connection_name</code>.</li>
+<li>On your pi, <code>sudo shutdown now</code>.</li>
+<li>On you main device, close your SSH session.</li>
+<li>Shutdown your main device.</li>
+</ul>
+</section>
+<section id="troubleshooting" class="level2">
+<h2><a name="11"></a>Troubleshooting</h2>
+<p>I have encountered only a few problems using the above procedures. The main problem has to do with the hotspot blocking certain types of services.</p>
+<ul>
+<li><strong>Problem</strong> Able to connect from the pi but not from the main device.
+<ul>
+<li><strong>Solution</strong> This is likely due to the hotspot preventing external DNS lookups. The pi DHCP server assigns the <em>8.8.8.8</em> and <em>8.8.4.4</em> nameservers to your main device when it connects. The easiest way to solve this is by editing the configuration file to include the hotspot assigned nameservers.</li>
+<li>Find the hotspot DNS, <code>nmcli con show connection_name | grep DNS</code></li>
+<li>Using comments, disable the Google domain-name-servers and make the hotspot domain-name-servers active instead, <code>sudo nano /etc/dhcp/dhcpd.conf</code>.</li>
+<li>Restart the DHCP service, <code>sudo service isc-dhcp-server restart</code>.</li>
+<li>Disconnect and then reconnect your main device's wifi.</li>
+</ul></li>
+<li><strong>Question</strong> I want to connect to the hotspot and click through the captive portal page automatically.
+<ul>
+<li><strong>Answer</strong> I may choose to do this in the future but for now, there is no consensus on how a captive portal works and how to have express users on the portal. If you are interested in writing Python as a solution, have a look at <a href="https://github.com/seveas/python-networkmanager/tree/master/examples">python-networkmanager</a>.</li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1><a name="Conclusion"></a>Conclusion</h1>
+<p>Verifying Internet connectivity when connected with hotspots is still in flux. Much of this is done by the operating system for the user. Here, we must do some of this work ourselves.</p>
+<p>Remember to save your image file.</p>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

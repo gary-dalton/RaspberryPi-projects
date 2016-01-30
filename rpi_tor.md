@@ -18,6 +18,8 @@ tags: rpi, tor, howto, router, privacy
 
 ## Raspberry Pi used as a Tor router
 
+# STATUS - NOT COMPLETE
+
 # Description
 
 The purpose of Raspberry Tor is to securely and anonymously use the Internet.
@@ -35,36 +37,41 @@ This is a first but insufficient step to online anonymity.
 * [Two USB WiFi dongles](http://www.amazon.com/Edimax-EW-7811Un-150Mbps-Raspberry-Supports/dp/B003MTTJOY/ref=pd_bxgy_147_2)
 * Pi Case
 * Mini-USB power
+* [DS3231 RTC Module](http://www.sunfounder.com/index.php?c=downloadscs&a=Manualdetails&id=64) avilable from [Amazon](http://www.amazon.com/DS3231-Precision-Module-Arduino-Raspberry/dp/B00SSQAUHG/ref=sr_1_3?qid=1454019152)
 
 # Overview
 
 Start with a Raspberry Pi Lite with Wifi Access Point image. This is an image saved after following both the [RPi Initial Setup Guide](rpi_initial_setup.html) and the [RPi Wifi Access Point Guide](rpi_wifi_ap.html). If you do not have such an image, start with a Raspbian Lite image and follow the aforementioned guides before returning here.
 
 1. Write the image to the microSD.
-2. Connect to the Pi using either the USB to serial cable or using a keyboard
-and monitor.
-3. Boot the Pi and run general setup
-4. Get the Pi to connect to your WiFi.
-5. Get the Pi to act as a WiFi gateway.
+2. Connect to the Pi.
+3. Configure I2C
+4. Real Time clock
+5. Disable Internet date checking
+
+
 6. Install Tor and configure the firewall.
 7. Further configure and secure the system
 8. Test
 
 # Procedures
 
-## Raspbian
+## <a name="1"></a>Write the image
 
-Download the [latest version of Raspbian](https://www.raspberrypi.org/downloads/raspbian/).
-I used the Lite version as no GUI or additional software is needed. Unzip the
-image and write it to the MicroSD card. On Windows, I used [Win32 Disk Imager](http://sourceforge.net/projects/win32diskimager/). Other OS instructions
-may be found on the Raspbian download page.
+Write the image to the MicroSD as described in the [RPi Initial Setup Guide](rpi_initial_setup.html). Insert the MicroSD into the Pi.
 
-Insert the MicroSD into the Pi.
+## <a name="2"></a>Connect to the Pi
 
-## Connect to the Pi
+Connect to the pi using SSH over the network connection. Your wlan0 connection should be fully functional unless you are not on the same access point.
 
-A Raspberry Pi is a computer that may be operated by connecting with a mouse,
-keyboard, and monitor. I prefer to connect to it using  the USB to Serial
-console cable. This allows me to use my main computers resources while working
-on the Pi in a terminal window. See the [Adafruit overiew](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-5-using-a-console-cable) for full
-details on using the USB to console cable.
+## Configure I2C
+
+Follow the [Adafruit Guide](https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c).
+
+## Adding a real time clock
+
+Tor network require accurate time keeping and, for anonymity, time keeping over the Internet should be disabled. Follow the [PiHut Guide](Adding a Real Time Clock to your Raspberry Pi).
+
+## Disable Internet date checking
+
+Having an accurate time is important for synchronized communications and for log filing. Linux, and most computers, use Network Time Protocol to check and validate the date/time. Remove the NTP package is an option, `sudo apt-get remove ntp`. NTP can always be easily reinstalled if it is later needed.

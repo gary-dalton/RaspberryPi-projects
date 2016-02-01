@@ -43,7 +43,7 @@
 <h1>Next up?</h1>
 <p>After reading this guide, you may be interested in reading:</p>
 <ul>
-<li><a href="rpi-tor.html">Raspberry Tor</a></li>
+<li><a href="rpi_tor.html">Raspberry Tor</a></li>
 </ul>
 </section>
 <section id="overview" class="level1">
@@ -58,8 +58,8 @@
 <li><a href="#6">Install links.</a></li>
 <li><a href="#7">Use links with a captive portal.</a></li>
 <li><a href="#8">Connect and Test.</a></li>
-<li><a href="#9">Troubleshooting.</a></li>
-<li><a href="#10">Shutting down.</a></li>
+<li><a href="#9">Shutting down.</a></li>
+<li><a href="#10">Troubleshooting.</a></li>
 <li><a href="#Conclusion">Conclusion</a>.</li>
 </ol>
 </section>
@@ -155,7 +155,7 @@
 <section id="use-links-with-a-captive-portal" class="level2">
 <h2><a name="7"></a>Use links with a captive portal</h2>
 <p>A captive portal is a special web page that is shown before using the Internet normally. The portal is often used to present a login page. This is done by intercepting most packets, regardless of address or port, until the user opens a browser and tries to access the web. At that time the browser is redirected to a web page which may require authentication and/or payment, or simply display an acceptable use policy and require the user to agree. Captive portals are used at many Wi-Fi hotspots, and can be used to control wired access (e.g. apartment houses, hotel rooms, business centers, &quot;open&quot; Ethernet jacks) as well. <a href="https://en.wikipedia.org/wiki/Captive_portal">from Wikipedia</a></p>
-<p>The purpose here is not to circumvent the active portal but to acknowledge its terms and continue with using our personal access point. The easiest way to do this is simply to browse to some well know web site with links, eg. <code>links google.com</code>. If the hotspot is using an captive portal, the browser will be redirected to the proper page for login or acceptance.</p>
+<p>The purpose here is not to circumvent the active portal but to acknowledge its terms and continue with using our personal access point. The easiest way to do this is simply to browse to some well know web site with links, eg. <code>links fedoraproject.org/static/hotspot.txt</code> or <code>links network-test.debian.org/nm</code>. If the hotspot is using an captive portal, the browser will be redirected to the proper page for login or acceptance.</p>
 <p>Once done with the captive portal, your access point should be connecting to the Internet. You may remain connected to the pi but, for now, let's move back to your main computing device.</p>
 </section>
 <section id="connect" class="level2">
@@ -193,8 +193,7 @@
 </section>
 <section id="conclusion" class="level1">
 <h1><a name="Conclusion"></a>Conclusion</h1>
-<p>Verifying Internet connectivity when connected with hotspots is still in flux. Much of this is done by the operating system for the user. Here, we must do some of this work ourselves.</p>
-<p>Remember to save your image file.</p>
+<p>Verifying Internet connectivity when connected with hotspots is still in flux. Much of this is done by the operating system for the user. Here, we must do some of this work ourselves. In the future, I may choose to script the captive portal interaction. These links will be helpful, <a href="http://pkgs.fedoraproject.org/cgit/rpms/NetworkManager.git/tree/?id=8890459ab6419144c42bd1d8ca302eae0f88e026">Fedora git</a> and <a href="http://dev.iachieved.it/iachievedit/exploring-networkmanager-d-bus-systemd-and-raspberry-pi/">Exploring NetworkManager, D-Bus, systemd, and Raspberry Pi</a>.</p>
 </section>
             </section>
     </div>

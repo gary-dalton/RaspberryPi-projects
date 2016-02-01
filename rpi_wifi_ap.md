@@ -28,17 +28,18 @@ This guide assumes that 2 WiFi adapters will be used, one for access point servi
 
 After reading this guide, you may be interested in reading:
 
-- [Raspberry Tor](rpi-tor.html)
+- [Raspberry Tor](rpi_tor.html)
 - [Using the WiFi Access Point with captured portal](rpi_captured_portal.html)
 
 # Parts List
 
-* Raspberry Pi 2
-* 4GB (or larger) class 10 MicroSD card
-* [Two USB WiFi dongles](http://www.amazon.com/Edimax-EW-7811Un-150Mbps-Raspberry-Supports/dp/B003MTTJOY/ref=pd_bxgy_147_2) _(second wifi is optional)_
-* [USB to serial console cable](https://www.adafruit.com/product/954)  _(optional)_
-* Pi Case
-* Mini-USB power
++ Raspberry Pi 2
++ 4GB (or larger) class 10 MicroSD card
++ [Two USB WiFi dongles](http://www.amazon.com/Edimax-EW-7811Un-150Mbps-Raspberry-Supports/dp/B003MTTJOY/ref=pd_bxgy_147_2) _(second wifi is optional)_
+    - See the discussion [Which Wifi USB adapters](rpi_which_wifi_usb.html)
++ [USB to serial console cable](https://www.adafruit.com/product/954)  _(optional)_
++ Pi Case
++ Mini-USB power
 
 # Overview
 

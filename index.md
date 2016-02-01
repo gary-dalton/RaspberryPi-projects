@@ -15,9 +15,18 @@ pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.h
 
 # What's here?
 
-My Raspberry Pi project documentation
+## My Raspberry Pi project documentation
+
+### Guides
 
 - [RPi Initial Setup Guide](rpi_initial_setup.html)
 - [RPi WiFi Access Point Guide](rpi_wifi_ap.html)
+- [Raspberry Tor Guide](rpi_tor.html)
+
+### How-tos
+
 - [Using the WiFi Access Point with captured portal](rpi_captured_portal.html)
-- [Raspberry Tor](rpi_tor.html)
+
+### Discussions
+
+- [Which Wifi USB adapters](rpi_which_wifi_usb.html)

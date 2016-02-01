@@ -26,7 +26,7 @@ Now that you have a wifi access point, how do you use it? It can be used on your
 
 After reading this guide, you may be interested in reading:
 
-- [Raspberry Tor](rpi-tor.html)
+- [Raspberry Tor](rpi_tor.html)
 
 # Overview
 
@@ -40,8 +40,8 @@ This how-to covers the use of nmcli to scan, connect to and disconnect from acce
 6. [Install links.](#6)
 7. [Use links with a captive portal.](#7)
 8. [Connect and Test.](#8)
-9. [Troubleshooting.](#9)
-10. [Shutting down.](#10)
+9. [Shutting down.](#9)
+10. [Troubleshooting.](#10)
 11. [Conclusion](#Conclusion).
 
 # Procedures
@@ -94,7 +94,7 @@ Links is text browser with layouts, tables, and frames. This makes it easy to br
 
 A captive portal is a special web page that is shown before using the Internet normally. The portal is often used to present a login page. This is done by intercepting most packets, regardless of address or port, until the user opens a browser and tries to access the web. At that time the browser is redirected to a web page which may require authentication and/or payment, or simply display an acceptable use policy and require the user to agree. Captive portals are used at many Wi-Fi hotspots, and can be used to control wired access (e.g. apartment houses, hotel rooms, business centers, "open" Ethernet jacks) as well. [from Wikipedia](https://en.wikipedia.org/wiki/Captive_portal)
 
-The purpose here is not to circumvent the active portal but to acknowledge its terms and continue with using our personal access point. The easiest way to do this is simply to browse to some well know web site with links, eg. `links google.com`. If the hotspot is using an captive portal, the browser will be redirected to the proper page for login or acceptance.
+The purpose here is not to circumvent the active portal but to acknowledge its terms and continue with using our personal access point. The easiest way to do this is simply to browse to some well know web site with links, eg. `links fedoraproject.org/static/hotspot.txt` or `links network-test.debian.org/nm`. If the hotspot is using an captive portal, the browser will be redirected to the proper page for login or acceptance.
 
 Once done with the captive portal, your access point should be connecting to the Internet. You may remain connected to the pi but, for now, let's move back to your main computing device.
 
@@ -126,6 +126,4 @@ I have encountered only a few problems using the above procedures. The main prob
 
 # <a name="Conclusion"></a>Conclusion
 
-Verifying Internet connectivity when connected with hotspots is still in flux. Much of this is done by the operating system for the user. Here, we must do some of this work ourselves.
-
-Remember to save your image file.
+Verifying Internet connectivity when connected with hotspots is still in flux. Much of this is done by the operating system for the user. Here, we must do some of this work ourselves. In the future, I may choose to script the captive portal interaction. These links will be helpful, [Fedora git](http://pkgs.fedoraproject.org/cgit/rpms/NetworkManager.git/tree/?id=8890459ab6419144c42bd1d8ca302eae0f88e026) and [Exploring NetworkManager, D-Bus, systemd, and Raspberry Pi](http://dev.iachieved.it/iachievedit/exploring-networkmanager-d-bus-systemd-and-raspberry-pi/).

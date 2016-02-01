@@ -20,6 +20,14 @@ tags: rpi, setup, guide, secure
 
 This guides the user through creation of a MicroSD image and then initial setup of the Raspberry Pi. It is necessary to have either a wired or WiFi network to complete this guide. Once a well functioning and secure Pi is completed, the user will save the image. Notice that a large part of this guide deals with security. Security is a primary concern when connecting things to the Internet.
 
+# Next up?
+
+After reading this guide, you may be interested in reading:
+
+- [RPi WiFi Access Point Guide](rpi_wifi_ap.html)
+- [Raspberry Tor](rpi_tor.html)
+
+
 # Parts List
 
 * Raspberry Pi 2

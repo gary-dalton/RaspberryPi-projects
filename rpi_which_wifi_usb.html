@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <meta name="dcterms.date" content="2016-01-30">
+          <title>Which WiFi USB</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">Which WiFi USB</h1>
+                        <h3 id="project_tagline">Discussion on choice</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <section id="which-wifi-usb" class="level1">
+<h1>Which WiFi USB?</h1>
+<section id="discussion-on-choice-for-the-raspberry-pi" class="level2">
+<h2>Discussion on choice for the Raspberry Pi</h2>
+</section>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Which wifi USB adapter makes the best purchase? The cheapest? The highest rated? The one mentioned in all the tutorials? If only it were that easy. Sections that require special caution are denoted.</p>
+<ol type="1">
+<li><a href="#1">Pi compatible.</a></li>
+<li><a href="#2">Define your needs.</a></li>
+<li><a href="#3">Range, power suppply, and antenna.</a></li>
+<li><a href="#4">As an access point.</a> (caution)</li>
+<li><a href="#5">Change a MAC address.</a>(caution)</li>
+<li><a href="#6">Commands for information.</a></li>
+<li><a href="#7">Using two wifi adapters.</a>(caution)</li>
+<li><a href="#8">Solution to wlan0 and wlan1 confusion.</a></li>
+<li><a href="#9">Test the solution.</a></li>
+<li><a href="#Conclusion">Conclusion</a>.</li>
+</ol>
+</section>
+<section id="discussion" class="level1">
+<h1>Discussion</h1>
+<section id="pi-compatible" class="level2">
+<h2><a name="1"></a>Pi compatible</h2>
+<p>Make certain that whichever adapter you decide upon that it is compatible with the Raspberry Pi. This is not always easy to determine as the compatibility depends more on the maker of the chipset used in the adapter and not on the brand name logoed on the package. This <a href="http://elinux.org/RPi_USB_Wi-Fi_Adapters">eLinux RPi USB Wi-Fi Adapters page</a> is excellent for knowing what will work and what probably will not work.</p>
+<p>The adapters I have used in these guides are:</p>
+<ul>
+<li><a href="http://www.amazon.com/Edimax-EW-7811Un-150Mbps-Raspberry-Supports/dp/B003MTTJOY/ref=pd_bxgy_147_2">Edimax EW-7811Un</a></li>
+<li><a href="http://www.amazon.com/CanaKit-Raspberry-Wireless-Adapter-Dongle/dp/B00GFAN498">CanaKit Raspberry Pi WiFi Wireless Adapter</a></li>
+</ul>
+</section>
+<section id="define-your-needs" class="level2">
+<h2><a name="2"></a>Define your needs</h2>
+<p>Before deciding on the right adapter, define your needs and requirements.</p>
+<ul>
+<li>Do you want it powered directly from the pi or is a powered hub OK?</li>
+<li>How much range do you require?</li>
+<li>Do you need to attach an external antenna?</li>
+<li>Are you going to use it as an access point?</li>
+<li>Do you need to change its MAC address?</li>
+<li>Do you need monitor mode?</li>
+<li>Do you need to inject?</li>
+</ul>
+<p>If you have some of these needs, some of them may be answered from the <a href="http://elinux.org/RPi_USB_Wi-Fi_Adapters">eLinux page</a> or from the manufacturers documentation. Others, you may have to dig for an answer but next I will share my experiences.</p>
+</section>
+<section id="range-power-supply-and-antenna" class="level2">
+<h2><a name="3"></a>Range, power supply, and antenna</h2>
+<p>For the most part the issues of range, power supply, and antenna can be determined from eLinux and the documentation. A rule of thumb, however; suggests that larger units with better range and external antennae will require a powered USB hub.</p>
+</section>
+<section id="as-an-access-point" class="level2">
+<h2><a name="4"></a>As an access point</h2>
+<p><strong>(caution)</strong> So you want to use your pi as an access point? Take a bit more care in your wifi selection. The <a href="rpi_wifi_ap.html">RPi WiFi Access Point Guide</a> uses an Edimax adapter. The Edimax adapter is based on the RealTek RTL8188CUS chipset.</p>
+<p>This chipset does not work out-of-the-box as an access point with <em>hostpad</em>. Instead, downloading or compiling a special hostapd is required to make this chipset work. The guides do assume this adapter though.</p>
+</section>
+<section id="change-a-mac-address" class="level2">
+<h2><a name="5"></a>Change a MAC address</h2>
+<p><strong>(caution)</strong> The RealTek RTL8188CUS chipset does not support modifying the MAC address. If changing the MAC on your wifi is important, try an adapter based on a Ralink chipset. In fact, the Ralink chipset should be your choice if you need to monitor or inject as well.</p>
+<p>Notice that the second wifi card in the <a href="rpi_tor.html">Raspberry Tor Guide</a> has a Ralink chipset.</p>
+</section>
+<section id="commands-for-information" class="level2">
+<h2><a name="6"></a>Commands for information</h2>
+<p>There are some basic commands to determine information about your USB devices.</p>
+<ul>
+<li>List the devices, <code>lsusb</code>.
+<ul>
+<li>Shows a table with chipset manufacturer and model.</li>
+</ul></li>
+<li>Show the MAC address of a device, <code>macchanger -s wlan0</code>.
+<ul>
+<li>Lists the current and permanent MAC address of the device.</li>
+</ul></li>
+<li>Verbose list of devices, <code>lsusb -vv</code>.</li>
+</ul>
+</section>
+<section id="using-two-wifi-adapters" class="level2">
+<h2><a name="7"></a>Using two wifi adapters</h2>
+<p><strong>(caution)</strong> In order to build a wifi to wifi access point, two wifi adapters are needed. If these adapters are built using the same chipset or have the same capabilities then you should experience no problems.</p>
+<p>If wifi adapters with different capabilities are used, you may need to do some extra work. In the <a href="rpi_wifi_ap.html">RPi WiFi Access Point Guide</a>, wlan1 is setup as the access point server. That guide presumes that wlan0 is a RealTek RTL8188CUS chipset adapter and installs a specially compiled hostapd. The guide also sets the <em>/etc/hostapd/hostapd.conf</em> to use <em>driver=rtl871xdrv</em>. The guide uses two of the same adapter and therefore avoids problems.</p>
+<p>Moving to the <a href="rpi_tor.html">Raspberry Tor Guide</a>, we start with the completed access point but now want to change the MAC address on wlan1. This is not possible with the RealTek chipset. In order to change the MAC address, the wlan1 adapter is changed to a Ralink chipset. This solves the problem of MAC address but introduces the problem of which adapter is assigned by udev to the wlan0 and wlan1 identifiers.</p>
+</section>
+<section id="solution-to-wlan0-and-wlan1-confusion" class="level2">
+<h2><a name="8"></a>Solution to wlan0 and wlan1 confusion</h2>
+<p>To ensure consistency on wlan0 and wlan1, a persistence rule must be generated for udev.</p>
+<ul>
+<li>Boot you pi with only the Ralink chipset adapter inserted.</li>
+<li>Edit the file, <code>sudo nano /lib/udev/rules.d/75-persistent-net-generator.rules</code>.</li>
+</ul>
+<pre><code>CHANGE
+# device name whitelist
+KERNEL!=&quot;ath*|msh*|ra*|sta*|ctc*|lcs*|hsi*&quot;, \
+                                       GOTO=&quot;persistent_net_generator_end&quot;
+
+TO
+# device name whitelist
+KERNEL!=&quot;ath*|wlan*[0-9]|msh*|ra*|sta*|ctc*|lcs*|hsi*&quot;, \
+                                        GOTO=&quot;persistent_net_generator_end&quot;</code></pre>
+<ul>
+<li>Reboot.</li>
+<li>Check the file, <code>cat /etc/udev/rules.d/70-persistent-net.rules</code> to make certain a USB device has been assigned to wlan0.</li>
+<li>Shutdown.</li>
+<li>Insert the RealTek chipset device.</li>
+<li>Boot the pi.</li>
+<li>Check the file, <code>cat /etc/udev/rules.d/70-persistent-net.rules</code> to make certain a USB device has been assigned to wlan0 and wlan1.</li>
+<li><p>Understand that these specific devices, identified by there hardcode MAC, are tied to the interface. If you later need to replace an adapter, revisit the process of setting persistent rules.</p></li>
+<li><p><a href="https://www.raspberrypi.org/forums/viewtopic.php?f=29&amp;t=55527">Solution source</a></p></li>
+</ul>
+</section>
+<section id="test-the-solution" class="level2">
+<h2><a name="9"></a>Test the solution</h2>
+<p>The easiest way to check for persistence is to boot your pi with the wlan0 adapter missing. The <code>ifconfig</code> will not display wlan0 but only wlan1.</p>
+<p>Also test this by changing the MAC on the Ralink chipset adapter, wlan0.</p>
+<ul>
+<li><code>sudo service network-manager stop</code></li>
+<li><code>sudo macchanger -e wlan0</code></li>
+<li>A successful MAC change will not contain the phrase <em>Network driver didn't actually change to the new MAC!!</em></li>
+<li><code>sudo service network-manager start</code></li>
+</ul>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1><a name="Conclusion"></a>Conclusion</h1>
+<p>The gist of this discussion is that one should choose the wifi adapter with care and foresight.</p>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

@@ -35,9 +35,6 @@
 <h2>Raspberry Pi used as a Tor router</h2>
 </section>
 </section>
-<section id="status---not-complete" class="level1">
-<h1>STATUS - NOT COMPLETE</h1>
-</section>
 <section id="description" class="level1">
 <h1>Description</h1>
 <p>The purpose of Raspberry Tor is to securely and anonymously use the Internet. The Tor Project defends against network surveillance and traffic analysis. Tor joined with a Raspberry Pi provides a wireless router to ensure that all network traffic from a computer is automatically either blocked or routed through the Tor network.</p>
@@ -48,7 +45,11 @@
 <ul>
 <li>Raspberry Pi 2</li>
 <li>4GB MicroSD card</li>
-<li><a href="http://www.amazon.com/Edimax-EW-7811Un-150Mbps-Raspberry-Supports/dp/B003MTTJOY/ref=pd_bxgy_147_2">Two USB WiFi dongles</a></li>
+<li><a href="http://www.amazon.com/Edimax-EW-7811Un-150Mbps-Raspberry-Supports/dp/B003MTTJOY/ref=pd_bxgy_147_2">Edimax EW-7811Un</a></li>
+<li><a href="http://www.amazon.com/CanaKit-Raspberry-Wireless-Adapter-Dongle/dp/B00GFAN498">CanaKit Raspberry Pi WiFi Wireless Adapter</a>
+<ul>
+<li>See the discussion <a href="rpi_which_wifi_usb.html">Which Wifi USB adapters</a>.</li>
+</ul></li>
 <li>Pi Case</li>
 <li>Mini-USB power</li>
 <li><a href="http://www.sunfounder.com/index.php?c=downloadscs&amp;a=Manualdetails&amp;id=64">DS3231 RTC Module</a> avilable from <a href="http://www.amazon.com/DS3231-Precision-Module-Arduino-Raspberry/dp/B00SSQAUHG/ref=sr_1_3?qid=1454019152">Amazon</a></li>
@@ -58,15 +59,32 @@
 <h1>Overview</h1>
 <p>Start with a Raspberry Pi Lite with Wifi Access Point image. This is an image saved after following both the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a> and the <a href="rpi_wifi_ap.html">RPi Wifi Access Point Guide</a>. If you do not have such an image, start with a Raspbian Lite image and follow the aforementioned guides before returning here.</p>
 <ol type="1">
-<li>Write the image to the microSD.</li>
-<li>Connect to the Pi.</li>
-<li>Configure I2C</li>
-<li>Real Time clock</li>
-<li><p>Disable Internet date checking</p></li>
-<li>Install Tor and configure the firewall.</li>
-<li>Further configure and secure the system</li>
-<li><p>Test</p></li>
+<li><a href="#1">Write the image to the microSD.</a></li>
+<li><a href="#2">Connect to the Pi.</a></li>
+<li><a href="#3">Configure I2C.</a></li>
+<li><a href="#4">Real Time clock.</a></li>
+<li><a href="#5">Disable Internet date checking.</a></li>
+<li><a href="#6">Install macchanger.</a></li>
+<li><a href="#7">Add the Tor repository.</a></li>
+<li><a href="#8">Install Tor.</a></li>
+<li><a href="#9">Tor configuration.</a></li>
+<li><a href="#10">Iptables configuration.</a></li>
+<li><a href="#11">Create the log file.</a></li>
+<li><a href="#12">Set Tor to start at boot.</a></li>
+<li><a href="#13">Test the Raspberry Tor.</a></li>
+<li><a href="#Conclusion">Conclusion.</a></li>
 </ol>
+</section>
+<section id="references" class="level1">
+<h1>References</h1>
+<ul>
+<li><a href="https://www.torproject.org/docs/debian.html.en">Installing Tor on Debian</a></li>
+<li><a href="https://trac.torproject.org/projects/tor/wiki">Tor wiki</a></li>
+<li><a href="https://learn.adafruit.com/onion-pi/install-tor">Adafruit Onion Pi</a></li>
+<li><a href="https://github.com/breadtk/onion_pi/blob/master/setup.sh">breadtk onion_pi</a></li>
+<li><a href="https://trac.torproject.org/projects/tor/wiki/doc/TransparentProxy#AnonymizingMiddlebox">AnonymizingMiddlebox</a></li>
+<li><a href="https://wiki.archlinux.org/index.php/tor">Archlinux</a></li>
+</ul>
 </section>
 <section id="procedures" class="level1">
 <h1>Procedures</h1>
@@ -79,17 +97,331 @@
 <p>Connect to the pi using SSH over the network connection. Your wlan0 connection should be fully functional unless you are not on the same access point.</p>
 </section>
 <section id="configure-i2c" class="level2">
-<h2>Configure I2C</h2>
+<h2><a name="3"></a>Configure I2C</h2>
 <p>Follow the <a href="https://learn.adafruit.com/adafruits-raspberry-pi-lesson-4-gpio-setup/configuring-i2c">Adafruit Guide</a>.</p>
 </section>
 <section id="adding-a-real-time-clock" class="level2">
-<h2>Adding a real time clock</h2>
+<h2><a name="4"></a>Adding a real time clock</h2>
 <p>Tor network require accurate time keeping and, for anonymity, time keeping over the Internet should be disabled. Follow the <a href="Adding%20a%20Real%20Time%20Clock%20to%20your%20Raspberry%20Pi">PiHut Guide</a>.</p>
 </section>
 <section id="disable-internet-date-checking" class="level2">
-<h2>Disable Internet date checking</h2>
+<h2><a name="5"></a>Disable Internet date checking</h2>
 <p>Having an accurate time is important for synchronized communications and for log filing. Linux, and most computers, use Network Time Protocol to check and validate the date/time. Remove the NTP package is an option, <code>sudo apt-get remove ntp</code>. NTP can always be easily reinstalled if it is later needed.</p>
 </section>
+<section id="install-macchanger" class="level2">
+<h2><a name="6"></a>Install macchanger</h2>
+<p>Media Access Control (MAC) address is a hardware address that uniquely identifies each node of a network. Each of your network interfaces have a MAC address. Macchanger makes it easy to spoof your network node's MAC. See <a href="https://wiki.archlinux.org/index.php/MAC_address_spoofing">archlinux</a> and <a href="http://www.debianadmin.com/change-your-network-card-mac-media-access-control-address.html">debianadmin</a>.</p>
+<p><strong>Note: See the discussion <a href="rpi_which_wifi_usb.html">Which Wifi USB adapters</a></strong></p>
+<ul>
+<li><code>sudo apt-get install macchanger</code>.</li>
+<li>Choose Yes to the question <em>Please specify whether macchanger should be set up to run automatically every time a network device is brought up or down. This gives a new MAC address whenever you attach an ethernet cable or reenable wifi. Change MAC automatically?</em>.</li>
+<li>Verify that the MAC is automaticaly changed by
+<ul>
+<li>checking your current MAC, <code>ifconfig wlan0</code>, make note of the <em>HWaddr</em></li>
+<li>take the interface down, <code>sudo service network-manager stop</code></li>
+<li>bring the interface up, <code>sudo service network-manager start</code></li>
+<li>check the new MAC, <code>ifconfig wlan0</code></li>
+</ul></li>
+</ul>
+<section id="the-mac-did-not-automatically-change" class="level3">
+<h3>The MAC did not automatically change</h3>
+<p>If the MAC address did not automatically change, there are two options.</p>
+<ul>
+<li><code>sudo nano /etc/init/macchanger.conf</code> and add the following:</li>
+</ul>
+<pre><code># macchanger - set MAC addresses
+#
+# Set the MAC addresses for the network interfaces.
+
+description &quot;change mac addresses&quot;
+
+start on starting network-manager
+
+pre-start script
+        /usr/bin/macchanger -e wlan0
+        #/usr/bin/macchanger -e eth0
+        #/usr/bin/macchanger -e wmaster0
+        #/usr/bin/macchanger -e pan0
+        #/usr/bin/logger wlan0 `/usr/bin/macchanger -s wlan0`
+        #/usr/bin/logger eth0 `/usr/bin/macchanger -s eth0`
+end script</code></pre>
+<ul>
+<li>Test it</li>
+<li>If it still is not changing, <code>/etc/init/network-manager.conf</code> and add the following:</li>
+</ul>
+<pre><code># network-manager - network connection manager
+#
+# The Network Manager daemon manages the system&#39;s network connections,
+# automatically switching between the best available.
+
+description &quot;network connection manager&quot;
+
+start on (local-filesystems
+          and started dbus)
+stop on stopping dbus
+
+expect fork
+respawn
+pre-start script
+        /usr/bin/macchanger -e wlan0
+        #/usr/bin/macchanger -e eth0
+        #/usr/bin/macchanger -e wmaster0
+        #/usr/bin/macchanger -e pan0
+        #/usr/bin/logger wlan0 `/usr/bin/macchanger -s wlan0`
+        #/usr/bin/logger eth0 `/usr/bin/macchanger -s eth0`
+end script</code></pre>
+<ul>
+<li>Test it</li>
+<li>Sources are <a href="https://bugs.launchpad.net/ubuntu/+source/network-manager/+bug/336736/comments/32">comment 32</a> and <a href="https://bugs.launchpad.net/ubuntu/+source/network-manager/+bug/336736/comments/31">comment 31</a></li>
+</ul>
+</section>
+</section>
+<section id="add-the-tor-repository" class="level2">
+<h2><a name="7"></a>Add the Tor repository</h2>
+<ol type="1">
+<li>Become root, <code>sudo -i</code>.</li>
+<li>Add the repository to the sources file, <code>echo &quot;deb http://deb.torproject.org/torproject.org release main&quot; &gt;&gt; /etc/apt/sources.list</code>. Replace <em>release</em> with the current stable release. In Jan2016, it is jessie.</li>
+<li>Add the repository key,
+<ul>
+<li><code>gpg --keyserver keys.gnupg.net --recv 886DDD89</code></li>
+<li><code>gpg --export A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89 | apt-key add -</code></li>
+</ul></li>
+<li><code>apt-get update</code>.</li>
+<li>Exit root, <code>exit</code>.</li>
+</ol>
+</section>
+<section id="install-tor" class="level2">
+<h2><a name="8"></a>Install Tor</h2>
+<p>Installation is an easy one line command.</p>
+<ul>
+<li><code>sudo apt-get install tor deb.torproject.org-keyring</code></li>
+<li>Stop Tor, <code>sudo service tor stop</code></li>
+</ul>
+</section>
+<section id="tor-configuration" class="level2">
+<h2><a name="9"></a>Tor configuration</h2>
+<p>Configuration takes place in a number of service files. Let's start with Tor.</p>
+<ul>
+<li><code>sudo nano /etc/tor/torrc</code></li>
+<li>Scan over this configuration and try to understand as much as you can. Combine this with documents and FAQs from the <a href="https://www.torproject.org">Tor Project</a>.</li>
+</ul>
+<pre><code>###############  Raspberry Tor Configuration ###
+## dated 31JAN2016
+
+VirtualAddrNetworkIPv4 10.192.0.0/10
+
+# Transparent proxy port
+TransPort 192.168.83.1:9040
+#DEPRECATED
+#TransListenAddress 192.168.83.1
+
+# Explicit SOCKS port for local applications.
+#SocksPort 9050
+SOCKSPort 0
+
+# Port that Tor will output &#39;info&#39; level logs to.
+Log notice file /var/log/tor/notices.log
+
+# Have Tor run in the background
+#Conflicts with systemd
+#RunAsDaemon 1
+
+# Only ever run as a client. Do not run as a relay or an exit.
+ClientOnly
+
+# Ensure resolution of .onion and .exit domains happen through Tor.
+AutomapHostsSuffixes .onion,.exit
+AutomapHostsOnResolve 1
+
+# Serve DNS responses
+DNSPort 192.168.83.1:53
+#DEPRECATED
+#DNSListenAddress 192.168.83.1
+
+# Firewall will be blocking most outgoing ports
+FascistFirewall 1
+
+## End Raspberry Tor Configuration</code></pre>
+<ul>
+<li>Validate the configuration, <code>tor --verify-config</code>.</li>
+</ul>
+<p>Some important configuration settings from the <a href="https://www.torproject.org/docs/tor-manual.html.en">Tor manual</a> are:</p>
+<ul>
+<li><strong>TransPort [address:]port|auto [isolation flags]</strong>
+<ul>
+<li>Open this port to listen for transparent proxy connections. Set this to 0 if you don’t want to allow transparent proxy connections. Set the port to &quot;auto&quot; to have Tor pick a port for you. This directive can be specified multiple times to bind to multiple addresses/ports. See SOCKSPort for an explanation of isolation flags.</li>
+<li>TransPort requires OS support for transparent proxies, such as BSDs' pf or Linux’s IPTables. If you’re planning to use Tor as a transparent proxy for a network, you’ll want to examine and change VirtualAddrNetwork from the default setting. You’ll also want to set the TransListenAddress option for the network you’d like to proxy. (Default: 0)</li>
+</ul></li>
+<li><strong>VirtualAddrNetworkIPv4 Address/bits</strong>
+<ul>
+<li>When Tor needs to assign a virtual (unused) address because of a MAPADDRESS command from the controller or the AutomapHostsOnResolve feature, Tor picks an unassigned address from this range. (Defaults: 127.192.0.0/10 and /10 respectively.)</li>
+<li>When providing proxy server service to a network of computers using a tool like dns-proxy-tor, change the IPv4 network to &quot;10.192.0.0/10&quot; or &quot;172.16.0.0/12&quot; and change the IPv6 network to &quot;[FC00]/7&quot;. The default VirtualAddrNetwork address ranges on a properly configured machine will route to the loopback or link-local interface. For local use, no change to the default VirtualAddrNetwork setting is needed.</li>
+</ul></li>
+<li><strong>DNSPort [address:]port|auto [isolation flags]</strong>
+<ul>
+<li>If non-zero, open this port to listen for UDP DNS requests, and resolve them anonymously. This port only handles A, AAAA, and PTR requests---it doesn’t handle arbitrary DNS request types. Set the port to &quot;auto&quot; to have Tor pick a port for you. This directive can be specified multiple times to bind to multiple addresses/ports. See SOCKSPort for an explanation of isolation flags. (Default: 0)</li>
+</ul></li>
+<li><strong>FascistFirewall 0|1</strong>
+<ul>
+<li>If 1, Tor will only create outgoing connections to ORs running on ports that your firewall allows (defaults to 80 and 443; see FirewallPorts). This will allow you to run Tor as a client behind a firewall with restrictive policies, but will not allow you to run as a server behind such a firewall. If you prefer more fine-grained control, use ReachableAddresses instead.</li>
+</ul></li>
+</ul>
+</section>
+<section id="iptables-configuration" class="level2">
+<h2><a name="10"></a>Iptables configuration</h2>
+<p>From earlier guides, the file /etc/iptables.test.rules /etc/iptables.test.rules was used to load the iptables rules. Here, a new file with some torrified rules added to the old rules will be used instead.</p>
+<ul>
+<li><code>sudo nano /etc/iptables.tortest.rules</code></li>
+</ul>
+<pre><code>*nat
+
+# Allow SSH to access point
+-A PREROUTING -i wlan1 -p tcp --dport 22 -j REDIRECT --to-ports 22
+
+# DNS routing
+-A PREROUTING -i wlan1 -p udp --dport 53 -j REDIRECT --to-ports 53
+
+# All other TCP traffic
+-A PREROUTING -i wlan1 -p tcp --syn -j REDIRECT --to-ports 9040
+
+COMMIT
+
+*filter
+
+# Allows all loopback (lo0) traffic and drop all traffic to 127/8 that
+# doesn&#39;t use lo0
+-A INPUT -i lo -j ACCEPT
+-A INPUT ! -i lo -d 127.0.0.0/8 -j REJECT
+
+# Allows all local traffic from wlan1
+# This may be tweaked to deny some traffic on wlan1
+-A INPUT -i wlan1 -j ACCEPT
+
+# Accepts all established inbound connections
+#-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+-A INPUT -i wlan0 -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+# Prevent transproxy packet leak
+-A OUTPUT -m conntrack --ctstate INVALID -j LOG --log-prefix &quot;Transproxy ctstate leak blocked: &quot; --log-uid
+-A OUTPUT -m conntrack --ctstate INVALID -j DROP
+
+# On wlan1
+# Allow all outgoing traffic
+# This may be tweaked to limit wlan1 traffic
+-A OUTPUT -o wlan1 -j ACCEPT
+
+# On wlan0
+# Only allows outbound traffic to ports 80 and 443
+# Also allow DNS traffic (needed for captive portal connection)
+-A OUTPUT -o wlan0 -p tcp --dport 80 -j ACCEPT
+-A OUTPUT -o wlan0 -p tcp --dport 443 -j ACCEPT
+# Also allow DNS traffic (needed for captive portal connection)
+# If needed, this rule may be dropped once connected to the portal
+-A OUTPUT -o wlan0 -p udp --dport 53 -j ACCEPT
+
+# Deny all other outbound traffic on wlan0
+-A OUTPUT -o wlan0 -j REJECT
+
+# Allows SSH connections
+# The --dport number is the same as in /etc/ssh/sshd_config
+-A INPUT -p tcp -m state --state NEW --dport 22 -j ACCEPT
+
+# Limit SSH abuse
+# The first rule records the IP address of each new attempt to access
+# port 22 using the recent module. The second rule checks to see if that
+# IP address has attempted to connect 4 or more times within the last
+# 60 seconds, and if not then the packet is accepted.
+-A INPUT -p tcp -m state --state NEW -m recent --dport 22 --set --name ssh --rsource
+-A INPUT -p tcp -m state --state NEW -m recent --dport 22 ! --rcheck --seconds 60 --hitcount 4 --name ssh --rsource -j ACCEPT
+
+# Allow Zeroconf connections. (Bonjour and Avahi)
+-A INPUT -p udp -m state --state NEW --dport 5353 -j ACCEPT
+
+# Allow ping
+# note that blocking other types of icmp packets is considered a bad idea
+# by some
+#  remove -m icmp --icmp-type 8 from this line to allow all kinds of icmp:
+#  https://security.stackexchange.com/questions/22711
+-A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
+
+# log iptables denied calls (access via &#39;dmesg&#39; command)
+-A INPUT -m limit --limit 5/min -j LOG --log-prefix &quot;iptables denied: &quot; --log-level 7
+
+# Allow forwarded from wlan1 to permit NAT and Access Point
+-A FORWARD -i wlan0 -o wlan1 -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -i wlan1 -o wlan0 -j ACCEPT
+
+# Reject all other inbound - default deny unless explicitly allowed policy:
+-A INPUT -j DROP
+-A FORWARD -j DROP
+
+COMMIT</code></pre>
+<ul>
+<li>Become root, <code>sudo -i</code>.</li>
+<li>Load the new rules, <code>iptables-restore &lt; /etc/iptables.tortest.rules</code>.</li>
+<li>Visually verify the new rules, <code>iptables -t nat -S</code> and <code>iptables -S</code>.</li>
+<li>Save the new rules <code>iptables-save &gt; /etc/iptables.up.rules</code>.</li>
+<li><code>exit</code></li>
+</ul>
+</section>
+<section id="create-the-log-file" class="level2">
+<h2><a name=11></a>Create the log file</h2>
+<ul>
+<li>Create the file, <code>sudo touch /var/log/tor/notices.log</code>.</li>
+<li>Set the owner and permissions.
+<ul>
+<li><code>sudo chown debian-tor /var/log/tor/notices.log</code></li>
+<li><code>sudo chmod 644 /var/log/tor/notices.log</code></li>
+</ul></li>
+</ul>
+</section>
+<section id="set-tor-to-start-at-boot" class="level2">
+<h2><a name=12></a>Set Tor to start at boot</h2>
+<ul>
+<li>It Tor already enabled on boot, <code>sudo systemctl is-enabled tor.service</code>?</li>
+<li>Enable Tor for boot start, <code>sudo systemctl enable tor.service</code></li>
+<li>Start Tor now, <code>sudo service tor start</code></li>
+</ul>
+</section>
+<section id="test-the-raspberry-tor" class="level2">
+<h2><a name=13></a>Test the Raspberry Tor</h2>
+<p>The final product is near. Let's do a little testing to make sure everything is performing as it should. (It is possible to tweak the iptables rules if needed.)</p>
+<ul>
+<li>Start the pi, connect to it, and connect it to the network. Let the <a href="rpi_captured_portal.html">Using the WiFi Access Point with captured portal</a> be your guide.</li>
+<li>On the pi, <code>links check.torproject.org</code>. Should show <em>Sorry. You are not using Tor.</em></li>
+<li>From your connected device, use a standard browser to <strong>check.torproject.org</strong>. Should show <em>Congratulations. This browser is configured to use Tor.</em></li>
+<li>All connections from your connected device are routed through Tor.</li>
+<li>The pi only allows outgoing connections to ports 80, 433, and 53.</li>
+<li>Once connected to a captive portal, port 53 may be blocked.
+<ul>
+<li>Deny with <code>sudo iptables -D OUTPUT -o wlan0 -p udp --dport 53 -j ACCEPT</code></li>
+<li>Reallow with <code>sudo iptables -A OUTPUT -o wlan0 -p udp --dport 53 -j ACCEPT</code></li>
+</ul></li>
+</ul>
+<section id="some-helpful-commands-for-troubleshooting" class="level3">
+<h3>Some helpful commands for troubleshooting</h3>
+<ul>
+<li><code>sudo nano /etc/dhcp/dhcpd.conf</code></li>
+<li><code>sudo service isc-dhcp-server restart</code></li>
+<li><code>sudo nano /etc/hostapd/hostapd.conf</code></li>
+<li><code>sudo service hostapd start</code></li>
+<li><code>sudo service network-manager stop</code></li>
+<li><code>sudo nmcli con up connection_name</code></li>
+<li><code>sudo nano /etc/tor/torrc</code></li>
+<li><code>sudo service tor status</code></li>
+<li><code>sudo nano /etc/iptables.tortest.rules</code></li>
+<li><code>sudo iptables-restore &lt; /etc/iptables.tortest.rules</code></li>
+<li><code>sudo iptables -t nat -S</code></li>
+<li><code>sudo iptables -L</code></li>
+<li><code>tail -F /var/log/tor/notices.log</code></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1><a name="Conclusion"></a>Conclusion</h1>
+<p>The Tor Browser is recommended in addition to using the Raspberry Tor. It has a number of tweaks that improve anonymity. If you like this guide and using Tor, consider supporting the Tor Project. The easiest way to show your support is by setting up a relay. The Tor Project also <a href="https://www.torproject.org/donate/donate.html">accepts donations</a></p>
+<p>After doing the research needed to make this guide work, I am planning on setting most of my servers as relays or bridges. I would really like to set up an exit node but that requires a bit more effort.</p>
 </section>
             </section>
     </div>

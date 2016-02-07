@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <title>RPi Desktop Mods</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">RPi Desktop Mods</h1>
+                        <h3 id="project_tagline">Changes to the packages and defaults of the full Raspian</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <section id="description" class="level1">
+<h1>Description</h1>
+<p>The choice of what software to run on a pi is a personal choice. Rarely will two people make the same decisions. The default full Raspbian image includes many packages I will never use and does not include many I use everyday. I make many of the following changes to my installations but, please note, each addition or removal is optional.</p>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>A good command to see all that is installed on the system is <code>dpkg -l | grep ii | more</code>.</p>
+<ol type="1">
+<li><a href="#1">Remove LibreOffice</a></li>
+<li><a href="#2">Remove Wolfram and Mathematica</a></li>
+<li><a href="#3">Remove Blue Jay Java IDE</a></li>
+<li><a href="#4">Remove Greenfoot Java IDE</a></li>
+<li><a href="#5">Menu icon removal</a></li>
+<li><a href="#6">Install Eric IDE</a></li>
+<li><a href="#7">Install Midnight Commander</a></li>
+<li><a href="#8">Install Arduino IDE</a></li>
+<li><a href="#9">Install GNU Octave</a></li>
+<li><a href="#10">Install Coder</a></li>
+<li><a href="#11">Install Adafruit WebIDE</a></li>
+<li><a href="#Conclusion">Conclusion.</a></li>
+</ol>
+</section>
+<section id="procedures" class="level1">
+<h1>Procedures</h1>
+<section id="remove-libreoffice" class="level2">
+<h2><a name="1"></a>Remove LibreOffice</h2>
+<p>LibreOffice is a great suite of programs for those using the pi as a traditional office computer. I do not use my pi thusly, therefore; I remove it.</p>
+<ul>
+<li><code>sudo apt-get remove --purge libreoffice*</code></li>
+<li><code>sudo apt-get clean</code></li>
+<li><code>sudo apt-get autoremove</code></li>
+</ul>
+</section>
+<section id="remove-wolfram-and-mathematica" class="level2">
+<h2><a name="2"></a>Remove Wolfram and Mathematica</h2>
+<p>Although Wolfram's Mathematica seems like an excellent programming environment, it is not the one I choose to use. <code>sudo apt-get remove --purge wolfram-engine</code></p>
+</section>
+<section id="remove-blue-jay-java-ide" class="level2">
+<h2><a name="3"></a>Remove Blue Jay Java IDE</h2>
+<p>A Java Integrated Development Environment that is appropriate for learning at the high school or college level.</p>
+<ul>
+<li><code>sudo apt-get remove --purge bluej</code></li>
+</ul>
+</section>
+<section id="remove-greenfoot-java-ide" class="level2">
+<h2><a name="4"></a>Remove Greenfoot Java IDE</h2>
+<p>A Java Integrated Development Environment that is appropriate for learning at the high school or college level. Let's do this from the GUI. Use a monitor connected to your pi or a VNC connection.</p>
+<ul>
+<li>Run <code>gksudo pi-packages</code></li>
+<li>In the search box enter <em>greenfoot</em>.</li>
+<li>Uncheck the greenfoot package.</li>
+<li>Click <em>Apply</em>.</li>
+<li>Click <em>Close</em>.</li>
+</ul>
+</section>
+<section id="menu-icon-removal" class="level2">
+<h2><a name="5"></a>Menu icon removal</h2>
+<p>Sometimes the menu system does not seem to properly remove uninstalled applications. Force removal of menu item icons.</p>
+<ul>
+<li>From the command line,
+<ul>
+<li><code>cd /usr/share/raspi-ui-overrides/applications</code></li>
+<li>List the items, <code>ls -al</code> Remove with <code>sudo rm /appname.desktop</code>. Replace appname as needed.</li>
+</ul></li>
+<li>From the desktop,
+<ul>
+<li>Run <code>gksudo pcmanfm</code></li>
+<li>Browse to <em>/usr/share/raspi-ui-overrides/applications</em></li>
+<li>Select <em>Greenfoot Java IDE</em></li>
+<li>Delete</li>
+<li>Close File Manager</li>
+</ul></li>
+</ul>
+</section>
+<section id="install-eric-ide" class="level2">
+<h2><a name="6"></a>Install Eric IDE</h2>
+<p>The <a href="http://eric-ide.python-projects.org/index.html">Eric Python IDE</a>. Eric is a full featured Python editor and IDE, written in Python.</p>
+<ul>
+<li><code>sudo apt-get install eric</code></li>
+<li>Start Eric and check your version</li>
+<li>See the latest version at <a href="http://sourceforge.net/projects/eric-ide/files/eric6/stable/">Eric downloads</a></li>
+<li>I often install the latest version at this point. Download the latest version.</li>
+<li><code>sudo apt-get remove eric</code></li>
+<li>The following packages upon which Eric depends will not be removed. <em>bicyclerepair bluez libmysqlclient18 libqt4-declarative libqt4-designer libqt4-help libqt4-script libqt4-scripttools libqt4-sql libqt4-sql-mysql libqt4-svg libqt4-test libqtassistantclient4 mysql-common ofono python3-pygments python3-pyqt4 python3-pyqt4.qsci python3-pyqt4.qtsql python3-sip vim-addon-manager</em></li>
+<li>Assuming you downloaded the file into <em>Downloads</em>, <code>cd ~/Downloads</code></li>
+<li>Unarchive the latest version of eric, <code>tar -xzvf eric*.gz</code></li>
+<li>CD into its folder</li>
+<li>Install with <code>sudo python3 ./install.py</code></li>
+<li>Run it from the Programming menu</li>
+</ul>
+</section>
+<section id="midnight-commander" class="level2">
+<h2><a name="7"></a>Midnight Commander</h2>
+<p>Midnight Commander is a text-based file manager. It makes it very easy to work with file structure from the command line.</p>
+<ul>
+<li><code>sudo apt-get install mc</code></li>
+<li>Use with <code>mc</code></li>
+</ul>
+</section>
+<section id="install-arduino-ide" class="level2">
+<h2><a name="8"></a>Install Arduino IDE</h2>
+<p>I like to work with Arduinos and other microcontrollers. When running the GUI on the pi, sometimes it is just more convenient to run the IDE from there. At the time of this writing, the latest version of the Arduino IDE is not in the repositories. Instead, this guide follows the instructions from <a href="https://github.com/ShorTie8/Arduino_IDE">ShorTie8</a>. Also see this <a href="https://www.raspberrypi.org/forums/viewtopic.php?f=66&amp;t=92662&amp;start=75">forum topic</a></p>
+<ul>
+<li>Install an old version, <code>sudo apt-get install arduino</code></li>
+</ul>
+<p>Go into the desktop and start the IDE. If this covers all of the boards you use and connects well with your Arduino, you do not need to install a newer version.</p>
+</section>
+<section id="install-gnu-octave" class="level2">
+<h2><a name="9"></a>Install GNU Octave</h2>
+<p>GNU Octave is a high-level interpreted language, primarily intended for numerical computations. It provides capabilities for the numerical solution of linear and nonlinear problems, and for performing other numerical experiments. It also provides extensive graphics capabilities for data visualization and manipulation.</p>
+<ul>
+<li><code>sudo apt-get install octave</code></li>
+<li>Interested in additional Octave packages? Search with <code>apt-cache search octave-</code></li>
+</ul>
+</section>
+<section id="install-coder" class="level2">
+<h2><a name="10"></a>Install Coder</h2>
+<p>Coder is a simple way to make web stuff on Raspberry Pi. New coders can craft small projects in HTML, CSS, and Javascript, right from the web browser. From <a href="https://github.com/googlecreativelab/coder">Coder on Github</a>.</p>
+<ul>
+<li>Node.js and npm must be installed prior to coder. See <a href="rpi_initial_setup.html#14">RPi Initial Setup Guide - Install node.js</a></li>
+<li><code>cd</code></li>
+<li>Download, <code>git clone https://github.com/googlecreativelab/coder.git</code></li>
+<li><code>cd coder/coder-apps</code></li>
+<li>Install apps, <code>./install_common.sh ../coder-base</code>
+<ul>
+<li>You may ignore messages like _cp: cannot stat ‘./common//auth/static/media/*’: No such file or directory_</li>
+</ul></li>
+<li><code>cd ../coder-base</code></li>
+<li>Preinstall bcrypt, <code>npm install bcrypt</code></li>
+<li>Node install for required packages, <code>npm install</code></li>
+</ul>
+<section id="configure-coder" class="level3">
+<h3>Configure Coder</h3>
+<p>This will base the configuration on config.js.localhost.</p>
+<ul>
+<li>Backup original config, <code>mv config.js config.js.datestamp</code></li>
+<li>Copy localhost config, <code>cp config.js.localhost config.js</code></li>
+<li>Get your IP, <code>ifconfig</code></li>
+<li>Edit config, <code>nano config.js</code>
+<ul>
+<li>exports.commonName = &quot;hostname.local&quot;;</li>
+<li>exports.subjectAltName = &quot;DNS:yourIP&quot;;</li>
+</ul></li>
+</ul>
+</section>
+<section id="use-coder-locally" class="level3">
+<h3>Use Coder locally</h3>
+<ul>
+<li><code>cd ~/coder/coder-base</code></li>
+<li>Start it, <code>node localserver.js</code></li>
+<li>Test from the pi desktop by openning a browser to <strong>http://127.0.0.1:8080</strong></li>
+<li>You should a see page to set your password, enter one</li>
+<li>Now login and start coding. It will run very slowly from the pi desktop.</li>
+<li>Stop coder with <code>CTRL-c</code></li>
+<li>Learn more about usage and projects to try at:
+<ul>
+<li><a href="https://googlecreativelab.github.io/coder/">Coder for Raspberry Pi</a></li>
+<li><a href="https://googlecreativelab.github.io/coder-projects/">Coder Projects</a></li>
+</ul></li>
+</ul>
+</section>
+<section id="use-coder-from-the-network" class="level3">
+<h3>Use Coder from the network</h3>
+<ul>
+<li>Some firewall rules must be added to route the connections.
+<ul>
+<li><code>sudo iptables -t nat -A PREROUTING -p tcp -m tcp --dport 80 -j REDIRECT --to-ports 8080</code></li>
+<li><code>sudo iptables -t nat -A PREROUTING -p tcp -m tcp --dport 443 -j REDIRECT --to-ports 8081</code></li>
+</ul></li>
+<li>Update the config, <code>nano config.js</code>
+<ul>
+<li><em>exports.listenIP = null;</em></li>
+</ul></li>
+<li>Test by pointing your browser, not from pi, to <strong>http://hostname.local:8080</strong></li>
+</ul>
+</section>
+<section id="start-coder-as-a-service" class="level3">
+<h3>Start coder as a service</h3>
+<p>A service runs in the background and is started and monitored by a standard set of commands. A service may also be set to run at boot. (Good guide to <a href="https://certsimple.com/blog/deploy-node-on-linux">deploy a node app</a>)</p>
+<ul>
+<li>Become root, <code>sudo -i</code></li>
+<li>Make the folder structure, <code>mkdir -p /var/www/coderapp</code></li>
+<li>Copy the files, <code>cp -R /home/pi/coder/coder-base/* /var/www/coderapp</code></li>
+<li>Create and edit the launch script, <code>nano /var/www/coderapp/start_coder.sh</code></li>
+</ul>
+<pre><code>#!/bin/sh
+/usr/local/bin/node /var/www/coderapp/server.js</code></pre>
+<ul>
+<li>Make it executable, <code>chmod +x /var/www/coderapp/start_coder.sh</code></li>
+<li>Change folder ownership, <code>chown -R www-data:www-data /var/www/coderapp</code></li>
+<li>Create the service file, <code>touch /etc/systemd/system/coderapp.service</code></li>
+<li>Edit file, <code>nano /etc/systemd/system/coderapp.service</code> thusly</li>
+</ul>
+<pre><code>[Unit]
+Description=coderapp
+
+[Service]
+ExecStart=/var/www/coderapp/start_coder.sh
+Restart=always
+User=www-data
+Group=www-data
+Environment=PATH=/usr/bin:/usr/local/bin
+Environment=NODE_ENV=production
+WorkingDirectory=/var/www/coderapp
+
+[Install]
+WantedBy=multi-user.target</code></pre>
+<ul>
+<li>Exit root, <code>exit</code></li>
+<li>Reload system control, <code>sudo systemctl daemon-reload</code></li>
+<li>Start Coder, <code>sudo systemctl start coderapp</code></li>
+<li>View log file, <code>sudo journalctl -u coderapp</code></li>
+<li>(optional) Enable it to run on boot, <code>sudo systemctl enable coderapp</code></li>
+<li>Test by pointing your browser, not from pi, to <strong>http://hostname.local:8080</strong></li>
+</ul>
+</section>
+</section>
+<section id="install-adafruit-webide" class="level2">
+<h2><a name="11"></a>Install Adafruit WebIDE</h2>
+<p><strong>I do not typically install this.</strong></p>
+<p>The Adafruit WebIDE is easy way to run code on your Raspberry Pi or BeagleBone. Just connect your Pi or BeagleBone to your local network, and log on to the WebIDE in your web browser to edit Python, Ruby, JavaScript, or anything and easily send it over to your Pi. The WebiDE includes a terminal, so you can easily send various commands to your Pi right from the browser. Also, your code will be versioned in a local git repository, and pushed remotely out to bitbucket so you can access it from anywhere, and any time.</p>
+<ul>
+<li>Download and install the WebIDE</li>
+</ul>
+<pre><code>curl -O http://adafruit-download.s3.amazonaws.com/adafruitwebide-0.3.12-Linux.deb
+sudo dpkg -i adafruitwebide-0.3.12-Linux.deb
+sudo apt-get -f install</code></pre>
+<ul>
+<li>Once this completes, you should receive a message similar to:</li>
+</ul>
+<pre><code>**** The Adafruit WebIDE is installed and running! ****
+**** Commands: sudo service adafruit-webide.sh {start,stop,restart} ****
+**** Navigate to http://_hostname.local to use the WebIDE</code></pre>
+<ul>
+<li>Some good to know options:
+<ul>
+<li>Redo the bitbucket setup, <code>http://_hostname.local/setup</code></li>
+<li>Access some configuration options, <code>http://_hostname.local/config</code></li>
+</ul></li>
+</ul>
+<section id="uninstall" class="level3">
+<h3>Uninstall</h3>
+<ul>
+<li><code>sudo apt-get remove --purge adafruitwebide</code></li>
+<li><code>apt-get autoremove</code></li>
+<li>Start Midnight Commander,<code>sudo mc</code> to remove these folders:
+<ul>
+<li>/usr/share/adafruit</li>
+<li>/home/webide</li>
+</ul></li>
+<li><code>sudo apt-get autoremove</code></li>
+</ul>
+</section>
+<section id="references" class="level3">
+<h3>References</h3>
+<ul>
+<li><a href="https://github.com/adafruit/Adafruit-WebIDE">Adafruit WebIDE on github</a></li>
+<li><a href="https://learn.adafruit.com/webide">Adafruit WebIDE</a></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1><a name="Conclusion"></a>Conclusion</h1>
+<p>Save the image file. After all that configuring it is good to make sure you can duplicate it.</p>
+<p>The newly configured pi has many fun and functional packages installed. Explore your pi from the desktop and from the command line. This guide has not informed you how to use any of the packages. For that information use help files, the <code>man</code> command and search techniques.</p>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

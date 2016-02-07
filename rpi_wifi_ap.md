@@ -12,12 +12,7 @@ framework: minimal
 css: stylesheets/stylesheet.css
 pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html rpi_wifi_ap.md -o rpi_wifi_ap.html
 tags: rpi, howto, router, iot, accesspoint
-
 ---
-# RPi Wifi Access Point Guide
-
-## Adding WiFi Access Point to your Raspberry Pi
-
 # Description
 
 Turning your pi into an access point is a useful step. It allows the pi to be used as a bridge between networks and allows your pi to be accessed directly from a client device. This is useful for IoT devices.
@@ -30,6 +25,7 @@ After reading this guide, you may be interested in reading:
 
 - [Raspberry Tor](rpi_tor.html)
 - [Using the WiFi Access Point with captured portal](rpi_captured_portal.html)
+- [RPi Desktop Mods](rpi_gui_changes.html), Changes to the packages and defaults of the full Raspian
 
 # Parts List
 

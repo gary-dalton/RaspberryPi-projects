@@ -29,10 +29,7 @@
 
     <div id="main_content_wrap" class="outer">
     <section id="main_content" class="inner">
-                <section id="rpi-initial-setup-guide" class="level1">
-<h1>RPi Initial Setup Guide</h1>
-</section>
-<section id="description" class="level1">
+                <section id="description" class="level1">
 <h1>Description</h1>
 <p>This guides the user through creation of a MicroSD image and then initial setup of the Raspberry Pi. It is necessary to have either a wired or WiFi network to complete this guide. Once a well functioning and secure Pi is completed, the user will save the image. Notice that a large part of this guide deals with security. Security is a primary concern when connecting things to the Internet.</p>
 </section>
@@ -42,6 +39,7 @@
 <ul>
 <li><a href="rpi_wifi_ap.html">RPi WiFi Access Point Guide</a></li>
 <li><a href="rpi_tor.html">Raspberry Tor</a></li>
+<li><a href="rpi_gui_changes.html">RPi Desktop Mods</a>, Changes to the packages and defaults of the full Raspian</li>
 </ul>
 </section>
 <section id="parts-list" class="level1">
@@ -57,7 +55,7 @@
 <h1>Overview</h1>
 <ol type="1">
 <li><a href="#1">Download the Raspbian image and write it to the microSD.</a></li>
-<li><a href="#2">Connect to the Pi using either the USB to serial cable or using a keyboard and monitor.</a></li>
+<li><a href="#2">Connect to the Pi.</a></li>
 <li><a href="#3">Boot the Pi.</a></li>
 <li><a href="#4">Run the initial setup.</a></li>
 <li><a href="#5">Connect to the Internet.</a></li>
@@ -85,7 +83,12 @@
 </section>
 <section id="connect-to-the-pi" class="level2">
 <h2><a name="2"></a>Connect to the Pi</h2>
-<p>A Raspberry Pi is a computer that may be operated by connecting with a mouse, keyboard, and monitor. I prefer to connect to it using the USB to Serial console cable. This allows me to use my main computer's equipment while working on the Pi in a terminal window. See the <a href="https://learn.adafruit.com/adafruits-raspberry-pi-lesson-5-using-a-console-cable">Adafruit overiew</a> for full details on using the USB to console cable.</p>
+<p>From the initial boot, there are three ways to connect to the pi.</p>
+<ol type="1">
+<li>A Raspberry Pi is a computer that may be operated by connecting with a mouse, keyboard, and monitor.</li>
+<li>Using SSH over an Ethernet connection. If you are not familiar with SSH, we will review it later in this guide.</li>
+<li>Often, I find it easiest to connect to it using the USB to Serial console cable. This allows me to use my main computer's equipment while working on the Pi in a terminal window. See the <a href="https://learn.adafruit.com/adafruits-raspberry-pi-lesson-5-using-a-console-cable">Adafruit overiew</a> for full details on using the USB to console cable.</li>
+</ol>
 <figure>
 <img src="images/USB-console-connect.jpg" alt="USB to console connection" /><figcaption>USB to console connection</figcaption>
 </figure>
@@ -103,12 +106,17 @@
 <section id="run-first-boot-setup" class="level2">
 <h2><a name="4"></a>Run first boot setup</h2>
 <p>Start the configuration software to expand the filesystem, change the password, and change the hostname. Enter the configuration with this command, <code>sudo raspi-config</code>.</p>
-<ol type="1">
+<ul>
 <li>Select and execute <strong>Expand Filesystem</strong></li>
 <li>Select and execute <strong>Change User Password</strong></li>
+<li>Select and execute <strong>Internationalization Options</strong>
+<ul>
+<li><strong>Change Locale</strong> to you locale. Mine is en_US.UTF.</li>
+<li><strong>Change Timezone</strong> to UTC.</li>
+</ul></li>
 <li>Select <strong>Advanced Options</strong> and select and execute <strong>Hostname</strong>. <em>Pick a unique and easy to remember hostname. This will be used to connect later.</em></li>
 <li>Reboot your system <code>sudo reboot now</code>.</li>
-</ol>
+</ul>
 </section>
 <section id="connect-to-the-internet" class="level2">
 <h2><a name="5"></a>Connect to the Internet</h2>
@@ -121,14 +129,17 @@
 <p>If you do not have an Ethernet connection, you will have to set up your wifi. This procedure assumes you are using a supported wifi USB dongle, are connecting to a simple shared key access point using DHCP, and are not using the GUI desktop to configure your connections. If you are using the full desktop, connect your wifi using the graphical Network Manager. See the <a href="https://wiki.debian.org/WiFi">Debian wiki</a> for an excellent discussion.</p>
 <ol type="1">
 <li><code>sudo nano /etc/network/interfaces</code></li>
-<li><p>Add the following to this file</p>
+<li>Add the following to this file</li>
+</ol>
 <pre><code>auto wlan0
 allow-hotplug wlan0
 iface wlan0 inet dhcp
-wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf</code></pre></li>
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf</code></pre>
+<ol start="3" type="1">
 <li><code>CTRL-o</code> to save and <code>CTRL-x</code> to exit.</li>
 <li><code>sudo nano /etc/wpa_supplicant/wpa_supplicant.conf</code></li>
-<li><p>Add the following to this file:</p>
+<li>Add the following to this file:</li>
+</ol>
 <pre><code>network={
 ssid=&quot;your_wifi_identifier&quot;
 psk=&quot;your_wifi_password&quot;
@@ -136,12 +147,15 @@ proto=RSN
 key_mgmt=WPA-PSK
 pairwise=CCMP
 auth_alg=OPEN
-}</code></pre></li>
+}</code></pre>
+<ol start="6" type="1">
 <li>You may need to change the <em>proto</em> or <em>key mgmt</em> values depending on your network. See <code>man wpa_supplicant.conf</code> for more information.</li>
-<li><p>Restart the wifi interface. If your settings are correct, it should automatically connect.</p>
+<li>Restart the wifi interface. If your settings are correct, it should automatically connect.</li>
+</ol>
 <pre><code>sudo ifdown wlan0
-sudo ifup wlan0</code></pre></li>
-<li><p>Check that you are connected with <code>ifconfig wlan0</code>. From this output, make note of the <strong>inet addr</strong>. This is your Pi's IP address. Use <code>iwconfig wlan0</code> to see which Access Point you are connected to.</p></li>
+sudo ifup wlan0</code></pre>
+<ol start="8" type="1">
+<li>Check that you are connected with <code>ifconfig wlan0</code>. From this output, make note of the <strong>inet addr</strong>. This is your Pi's IP address. Use <code>iwconfig wlan0</code> to see which Access Point you are connected to.</li>
 </ol>
 </section>
 </section>
@@ -158,8 +172,8 @@ sudo ifup wlan0</code></pre></li>
 <h2><a name="7"></a>Network magic</h2>
 <p>This step does nothing more than make it easier to find your Pi on your network. It uses <em>Zeroconf</em>, provided by <em>Avahi</em> on Linux, <em>Bonjour</em> on Windows, and included in Apple.</p>
 <ol type="1">
-<li>Install <code>sudo apt-get install avahi-daemon</code>.</li>
-<li>Your system can now be found at hostname.local, where the hostname is that which you entered back in <em>4 Run first boot setup</em>.</li>
+<li>Install <code>sudo apt-get install avahi-daemon</code>. (<strong>Note,</strong> on recent versions of Raspbian this is already installed and working.)</li>
+<li>Your system can now be found at hostname.local, where the hostname is that which you entered back in <em><a href="#4">Run first boot setup</a></em>.</li>
 <li>For your Windows machine, download and install <a href="https://support.apple.com/downloads/Bonjour_for_Windows">Bonjour Print Services</a>.</li>
 </ol>
 </section>
@@ -167,7 +181,7 @@ sudo ifup wlan0</code></pre></li>
 <h2><a name="8"></a>Connect to Pi using SSH</h2>
 <p>SSH is a safe and efficient way to connect to your Pi over the network or the Internet. It is enabled by default but for highest security, I recommend a few configuration changes and installing your own personal keys. This guide assumes you are connecting from Windows or another Linux system. For Windows use <a href="http://www.putty.org/">PuTTY</a> and for Linux use <a href="http://www.openssh.com/">OpenSSH</a>. It may be necessary to install PuTTY but OpenSSH comes installed on Linux.</p>
 <ul>
-<li>Verify that SSH is enabled, <code>sudo raspi-config</code> then Advanced Options and then SSH.</li>
+<li>Verify that SSH is enabled, <code>sudo raspi-config</code> then Advanced Options and then SSH. (<strong>Note,</strong> on recent versions of Raspbian this is enabled by default.)</li>
 </ul>
 <section id="windows" class="level3">
 <h3>Windows</h3>
@@ -213,11 +227,12 @@ sudo ifup wlan0</code></pre></li>
 <li><p>Change the following:</p>
 <pre><code>PermitRootLogin no</code></pre></li>
 <li><p>Add the following:</p>
-<pre><code>AllowUsers pi   // Even better if you use a non-default user</code></pre></li>
+<pre><code>AllowUsers pi
+# Even better if you use a non-default user</code></pre></li>
 </ol>
 </section>
-<section id="ssh-key-authentication" class="level3">
-<h3>SSH key authentication</h3>
+<section id="ssh-key-authentication-advanced" class="level3">
+<h3>SSH key authentication (advanced)</h3>
 <p>Using public key authentication will greatly improve your SSHd security but sometimes seems complicated. Do it anyways.</p>
 <section id="linux-1" class="level4">
 <h4>Linux</h4>
@@ -268,7 +283,11 @@ and check to make sure that only the key(s) you wanted were added.</code></pre>
 <li>Click <strong>Generate</strong> to generate a new key pair.</li>
 <li>Add a password to the <em>Key passphrase</em> and <em>Confirm passphrase</em>.</li>
 <li>Save your public and private keys. The private key should not be shared but the public key may be freely shared.</li>
-<li>On the pi, <code>nano ~/.ssh/authorized_keys</code>.</li>
+<li>On the pi,
+<ul>
+<li><code>mkdir ~/.ssh</code></li>
+<li><code>nano ~/.ssh/authorized_keys</code>.</li>
+</ul></li>
 <li>Copy the public key from the Windows PuTTYgen box and paste it into the authorized_keys file on your pi. Save the file.</li>
 <li>Close PuTTYgen.</li>
 <li>Open PuTTY.</li>
@@ -282,8 +301,8 @@ and check to make sure that only the key(s) you wanted were added.</code></pre>
 <p><strong>NOTE: Do not lose your private keys. Once the next configuration steps are complete, your private key and password are required to login remotely.</strong> You will still be able to login from the console or with a keyboard and monitor.</p>
 </section>
 </section>
-<section id="more-sshd-configuration" class="level3">
-<h3>More SSHd configuration</h3>
+<section id="more-sshd-configuration-advanced" class="level3">
+<h3>More SSHd configuration (advanced)</h3>
 <p>Time now to only allow remote logins using public key authentication. This configuration is on your pi.</p>
 <ol type="1">
 <li>Open the file, <code>sudo nano /etc/ssh/sshd_config</code></li>
@@ -297,8 +316,8 @@ PubkeyAuthentication yes</code></pre></li>
 </ol>
 </section>
 </section>
-<section id="firewall-with-iptables" class="level2">
-<h2><a name="10"></a>Firewall with iptables</h2>
+<section id="firewall-with-iptables-advanced" class="level2">
+<h2><a name="10"></a>Firewall with iptables (advanced)</h2>
 <p>At this point, your pi is functional, connected, and reasonably secure. It can be made more secure with iptables which will only allow the types of traffic you permit. Iptables is currently running on your pi but it is set to allow all traffic. We are about to change that. Rules for iptables can sometimes be a bit touchy so make certain that you are able to connect to your pi via console until certain of your settings. Iptables is quite powerful but also sometimes complex, so do try to learn more before blindly applying these rules. See <a href="https://help.ubuntu.com/community/IptablesHowTo/">Iptables How To</a>, <a href="https://wiki.debian.org/iptables">Debian</a>, and <a href="https://wiki.archlinux.org/index.php/iptables">archlinux</a>.</p>
 <p>Firewall rules are processed from top to bottom. Once a rule is matched, no more rule checking occurs. So if my first rule allows all traffic and my last rule allows none, then all traffic is allowed. Don't block yourself by creating a bad first rule.</p>
 <ol type="1">
@@ -402,6 +421,10 @@ COMMIT</code></pre>
 <li>When done, just close the window.</li>
 </ol>
 </section>
+<section id="connect-from-a-browser" class="level3">
+<h3>Connect from a browser</h3>
+<p>Browser based VNC makes it easy for anyone to use this technology. I use the Google Chrome App from <a href="https://www.realvnc.com/products/chrome/">RealVNC</a>.</p>
+</section>
 <section id="connect-from-windows" class="level3">
 <h3>Connect from Windows</h3>
 <ol type="1">
@@ -413,14 +436,10 @@ COMMIT</code></pre>
 <li>When done, just close the window.</li>
 </ol>
 </section>
-<section id="connect-from-a-browser" class="level3">
-<h3>Connect from a browser</h3>
-<p>Browser based VNC makes it easy for anyone to use this technology. I use the Google Chrome App from <a href="https://www.realvnc.com/products/chrome/">RealVNC</a>.</p>
 </section>
-</section>
-<section id="networkmanager-cli" class="level2">
-<h2><a name="12"></a>NetworkManager CLI</h2>
-<p>If the Pi just needs to connect to one network and won't be moving around much, you don't need Network Manager. If you are likely to go mobile with your Pi and need to connect to multiple networks, consider using nmcli.</p>
+<section id="networkmanager-cli-advanced" class="level2">
+<h2><a name="12"></a>NetworkManager CLI (advanced)</h2>
+<p>If the Pi will be used from the GUI destop or if it just needs to connect to one network and won't be moving around much, you don't need Network Manager. If you are likely to go mobile with your Pi and need to connect to multiple networks, consider using nmcli.</p>
 <p>NetworkManager is a set of tools that make networking simpler. Whether Wi-Fi, wired, bond, bridge, 3G, or Bluetooth, NetworkManager allows you to quickly move from one network to another: once a network has been configured and joined, it can be detected and re-joined automatically the next time its available. Nmcli is just the command line interface, CLI, to NetworkManager.</p>
 <p><strong>This procedure will disable your wifi connection until it is reestablished in NetworkManager. So you will need a console or Ethernet connection.</strong></p>
 <ol type="1">
@@ -506,7 +525,7 @@ managed=false</code></pre>
 </section>
 <section id="save-the-image-to-a-file" class="level1">
 <h1><a name="Conclusion"></a>Save the image to a file</h1>
-<p>Now that you have spent all this time getting your Raspberry Pi set up just so, save it to an image for easy reuse. You will still have to change things like usernames, passwords, and hostnames.</p>
+<p>Now that you have spent all this time getting your Raspberry Pi set up just so, <strong>save it to an image</strong> for easy reuse. You will still have to change things like usernames, passwords, and hostnames.</p>
 <p>Instead of writing a file image to the MicroSD, use the same software to read the MicroSD to a file image. Then when you are ready to spin up your next pi, it will be as easy as, well, pie.</p>
 </section>
             </section>

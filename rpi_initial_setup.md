@@ -26,6 +26,7 @@ After reading this guide, you may be interested in reading:
 
 - [RPi WiFi Access Point Guide](rpi_wifi_ap.html)
 - [Raspberry Tor](rpi_tor.html)
+- [RPi Desktop Mods](rpi_gui_changes.html)
 
 
 # Parts List

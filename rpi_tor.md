@@ -11,7 +11,7 @@ github:
 framework: minimal
 css: stylesheets/stylesheet.css
 pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html rpi_tor.md -o rpi_tor.html
-tags: rpi, tor, howto, router, privacy
+tags: rpi, tor, guide, router, privacy
 
 ---
 # Raspberry Tor
@@ -379,6 +379,8 @@ The final product is near. Let's do a little testing to make sure everything is 
 + `tail -F /var/log/tor/notices.log`
 
 # <a name="Conclusion"></a>Conclusion
+
+Save the image file. After all that configuring it is good to make sure you can duplicate it.
 
 The Tor Browser is recommended in addition to using the Raspberry Tor. It has a number of tweaks that improve anonymity. If you like this guide and using Tor, consider supporting the Tor Project. The easiest way to show your support is by setting up a relay. The Tor Project also [accepts donations](https://www.torproject.org/donate/donate.html)
 

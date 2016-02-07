@@ -3,7 +3,7 @@ title: RPi Wifi Access Point Guide
 subtitle: Adding WiFi Access Point to your Raspberry Pi
 author: Gary Dalton
 date: 24 January 2016
-license: MIT
+license: Creative Commons BY-SA
 github:
   user: gary-dalton
   repo: RaspberryPi-projects

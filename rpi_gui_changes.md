@@ -115,6 +115,9 @@ Go into the desktop and start the IDE. If this covers all of the boards you use 
 GNU Octave is a high-level interpreted language, primarily intended for numerical computations. It provides capabilities for the numerical solution of linear and nonlinear problems, and for performing other numerical experiments. It also provides extensive graphics capabilities for data visualization and manipulation.
 
 + `sudo apt-get install octave`
++ Add the manual, ` sudo apt-get install octave-info`
++ Edit a local config file to make sure plotting works, `sudo nano ~/.octaverc`
+    - Add the line, _graphics_toolkit('gnuplot')_
 + Interested in additional Octave packages? Search with `apt-cache search octave-`
 
 ## <a name="10"></a>Install Coder

@@ -140,6 +140,11 @@
 <p>GNU Octave is a high-level interpreted language, primarily intended for numerical computations. It provides capabilities for the numerical solution of linear and nonlinear problems, and for performing other numerical experiments. It also provides extensive graphics capabilities for data visualization and manipulation.</p>
 <ul>
 <li><code>sudo apt-get install octave</code></li>
+<li>Add the manual, <code>sudo apt-get install octave-info</code></li>
+<li>Edit a local config file to make sure plotting works, <code>sudo nano ~/.octaverc</code>
+<ul>
+<li>Add the line, <em>graphics_toolkit('gnuplot')</em></li>
+</ul></li>
 <li>Interested in additional Octave packages? Search with <code>apt-cache search octave-</code></li>
 </ul>
 </section>

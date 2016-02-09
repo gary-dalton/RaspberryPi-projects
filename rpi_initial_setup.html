@@ -71,55 +71,70 @@
 <li><a href="#15">Install occidentalis.</a> <em>(optional)</em></li>
 <li><a href="#Conclusion">Conclusion</a>.</li>
 </ol>
+<p>The estimated time to complete each step is given. This time is for a novice performing the procedures for the first time. If you are familiar with some of the topics or have completed these procedures before, you should expect to use less time.</p>
 </section>
 <section id="procedures" class="level1">
 <h1>Procedures</h1>
 <section id="raspbian" class="level2">
 <h2><a name="1"></a>Raspbian</h2>
+<p><em>Time to complete this is about 1 hour 20 minutes. If you already have an image, the required software, and have done it before it will go much faster.</em></p>
 <p>Download the <a href="https://www.raspberrypi.org/downloads/raspbian/">latest version of Raspbian</a>. For general use, download the full version. If you are certain that you want a headless installation with no GUI desktop, download the Lite version. I usually use the Lite version with no desktop.</p>
-<p>For the Lite version, a 4Gb MicroSD is likely sufficient but use at least an 8GB card for the full version. The required size of your disk depends a bit on your expected use.</p>
-<p>Unzip the image and write it to the MicroSD card. On Windows, I use <a href="http://sourceforge.net/projects/win32diskimager/">Win32 Disk Imager</a>. Other OS instructions may be found on the Raspbian download page.</p>
+<p>For the Lite version, a 4Gb MicroSD is likely sufficient but use at least an 8GB card for the full version. The required size of your disk depends a bit on your expected use. In early 2016, the sweet spot in pricing for these cards is 16GB.</p>
+<p>Unzip the image and write it to the MicroSD card. On Windows, I use <a href="http://sourceforge.net/projects/win32diskimager/">Win32 Disk Imager</a>. More detailed instructions and instructions for other operating systems may be found on <a href="https://www.raspberrypi.org/documentation/installation/installing-images/README.md">Raspberrypi.org's Installing Images</a>.</p>
 <p>Insert the MicroSD into the Pi.</p>
+<hr />
 </section>
 <section id="connect-to-the-pi" class="level2">
 <h2><a name="2"></a>Connect to the Pi</h2>
+<p><em>Time to complete is about 15 minutes.</em></p>
 <p>From the initial boot, there are three ways to connect to the pi.</p>
 <ol type="1">
 <li>A Raspberry Pi is a computer that may be operated by connecting with a mouse, keyboard, and monitor.</li>
 <li>Using SSH over an Ethernet connection. If you are not familiar with SSH, we will review it later in this guide.</li>
-<li>Often, I find it easiest to connect to it using the USB to Serial console cable. This allows me to use my main computer's equipment while working on the Pi in a terminal window. See the <a href="https://learn.adafruit.com/adafruits-raspberry-pi-lesson-5-using-a-console-cable">Adafruit overiew</a> for full details on using the USB to console cable.</li>
+<li>Often, I find it easiest to connect to it using the USB to Serial console cable. This allows me to use my main computer's equipment while working on the Pi in a terminal window. See the <a href="https://learn.adafruit.com/adafruits-raspberry-pi-lesson-5-using-a-console-cable">Adafruit overiew</a> for full details on using the USB to console cable.
+<ul>
+<li>If you use the Adafruit guide and wish to install PuTTY, this <a href="http://www.chiark.greenend.org.uk/~sgtatham/putty/download.html">PuTTY page</a> instead. Also, don't download just the putty.exe but the <strong>A Windows installer for everything except PuTTYtel</strong> instead.</li>
+</ul></li>
 </ol>
 <figure>
 <img src="images/USB-console-connect.jpg" alt="USB to console connection" /><figcaption>USB to console connection</figcaption>
 </figure>
+<hr />
 </section>
 <section id="boot-the-pi" class="level2">
 <h2><a name="3"></a>Boot the Pi</h2>
+<p><em>Time to complete is about 5 minutes.</em></p>
 <p>As soon as you insert the USB to console cable into your computer, the Pi will start to boot. If you are using a keyboard and monitor, plug in your power to boot the Pi.</p>
 <p>This next set of instructions assumes you are using the USB to console cable.</p>
 <ol type="1">
-<li>Use SSH to connect to the serial COM port of the USB connection</li>
+<li>Use PuTTY to connect to the serial COM port of the USB connection</li>
 <li>Hit enter to show the login screen</li>
 <li>Login using the default user: pi and the default password: raspberry. (We will change these shortly.)</li>
 </ol>
+<p><strong>Hint</strong>, putty allows easy copy/paste. To copy from the putty session to the clipboard, just highlight the required text using the mouse. To paste into the putty session from the clipboard, press the <em>Shift and Insert</em> keys.</p>
+<hr />
 </section>
 <section id="run-first-boot-setup" class="level2">
 <h2><a name="4"></a>Run first boot setup</h2>
+<p><em>Time to complete is about 10 minutes.</em></p>
 <p>Start the configuration software to expand the filesystem, change the password, and change the hostname. Enter the configuration with this command, <code>sudo raspi-config</code>.</p>
 <ul>
 <li>Select and execute <strong>Expand Filesystem</strong></li>
 <li>Select and execute <strong>Change User Password</strong></li>
 <li>Select and execute <strong>Internationalization Options</strong>
 <ul>
-<li><strong>Change Locale</strong> to you locale. Mine is en_US.UTF.</li>
+<li><strong>Change Locale</strong> to your locale. Mine is en_US.UTF.</li>
 <li><strong>Change Timezone</strong> to UTC.</li>
 </ul></li>
 <li>Select <strong>Advanced Options</strong> and select and execute <strong>Hostname</strong>. <em>Pick a unique and easy to remember hostname. This will be used to connect later.</em></li>
 <li>Reboot your system <code>sudo reboot now</code>.</li>
 </ul>
+<p><strong>The pi may be shutdown from the command line with, <code>sudo shutdown now</code>. Wait about a minute and remove power.</strong></p>
+<hr />
 </section>
 <section id="connect-to-the-internet" class="level2">
 <h2><a name="5"></a>Connect to the Internet</h2>
+<p><em>Time to complete is about 40 minutes.</em></p>
 <section id="ethernet" class="level3">
 <h3>Ethernet</h3>
 <p>The easiest way to do this is via Ethernet. Check if you are connected with <code>ifconfig eth</code>. From this output, make note of the <strong>inet addr</strong>. This is your Pi's IP address.</p>
@@ -127,19 +142,20 @@
 <section id="wifi" class="level3">
 <h3>WiFi</h3>
 <p>If you do not have an Ethernet connection, you will have to set up your wifi. This procedure assumes you are using a supported wifi USB dongle, are connecting to a simple shared key access point using DHCP, and are not using the GUI desktop to configure your connections. If you are using the full desktop, connect your wifi using the graphical Network Manager. See the <a href="https://wiki.debian.org/WiFi">Debian wiki</a> for an excellent discussion.</p>
-<ol type="1">
+<ul>
+<li>Before connecting any USB dongle, shutdown the pi</li>
 <li><code>sudo nano /etc/network/interfaces</code></li>
-<li>Add the following to this file</li>
-</ol>
+<li>Find the section within this file starting with <code>allow hotplug wlan0</code>. Replace that section with the following.</li>
+</ul>
 <pre><code>auto wlan0
 allow-hotplug wlan0
 iface wlan0 inet dhcp
     wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf</code></pre>
-<ol start="3" type="1">
+<ul>
 <li><code>CTRL-o</code> to save and <code>CTRL-x</code> to exit.</li>
 <li><code>sudo nano /etc/wpa_supplicant/wpa_supplicant.conf</code></li>
-<li>Add the following to this file:</li>
-</ol>
+<li>Add the following to this file (remember to change replace <em>your_wifi_identifier</em> and <em>your_wifi_password</em> with your real values):</li>
+</ul>
 <pre><code>network={
 ssid=&quot;your_wifi_identifier&quot;
 psk=&quot;your_wifi_password&quot;
@@ -148,37 +164,43 @@ key_mgmt=WPA-PSK
 pairwise=CCMP
 auth_alg=OPEN
 }</code></pre>
-<ol start="6" type="1">
-<li>You may need to change the <em>proto</em> or <em>key mgmt</em> values depending on your network. See <code>man wpa_supplicant.conf</code> for more information.</li>
+<ul>
+<li>Try continuing with these setting but make note that you may need to change the <em>proto</em> or <em>key mgmt</em> values depending on your network. See <code>man wpa_supplicant.conf</code> for more information.</li>
 <li>Restart the wifi interface. If your settings are correct, it should automatically connect.</li>
-</ol>
+</ul>
 <pre><code>sudo ifdown wlan0
 sudo ifup wlan0</code></pre>
-<ol start="8" type="1">
+<ul>
 <li>Check that you are connected with <code>ifconfig wlan0</code>. From this output, make note of the <strong>inet addr</strong>. This is your Pi's IP address. Use <code>iwconfig wlan0</code> to see which Access Point you are connected to.</li>
-</ol>
+</ul>
+<hr />
 </section>
 </section>
 <section id="update-and-upgrade" class="level2">
 <h2><a name="6"></a>Update and upgrade</h2>
+<p><em>Time to complete is about 5 minutes. This does not include the amount of time required to upgrade. Upgrading your system may take an hour with a slow connection and many upgrades.</em></p>
 <p>It is important to keep your pi's software up to date. This is commonly done using apt-get. The main keywords to know are <em>update</em>, <em>upgrade</em>, <em>install</em>, and <em>remove</em>. So let's make the system current.</p>
-<ol type="1">
+<ul>
 <li>Update the packages list, <code>sudo apt-get update</code>.</li>
 <li>Upgrade software packages to the current version, <code>sudo apt-get upgrade</code>.</li>
-<li>Relax, this might take a while.</li>
-</ol>
+<li>Relax, this might take a while. Maybe grab lunch.</li>
+</ul>
+<hr />
 </section>
 <section id="network-magic" class="level2">
 <h2><a name="7"></a>Network magic</h2>
+<p><em>Time to complete is about 5 minutes.</em></p>
 <p>This step does nothing more than make it easier to find your Pi on your network. It uses <em>Zeroconf</em>, provided by <em>Avahi</em> on Linux, <em>Bonjour</em> on Windows, and included in Apple.</p>
 <ol type="1">
 <li>Install <code>sudo apt-get install avahi-daemon</code>. (<strong>Note,</strong> on recent versions of Raspbian this is already installed and working.)</li>
 <li>Your system can now be found at hostname.local, where the hostname is that which you entered back in <em><a href="#4">Run first boot setup</a></em>.</li>
 <li>For your Windows machine, download and install <a href="https://support.apple.com/downloads/Bonjour_for_Windows">Bonjour Print Services</a>.</li>
 </ol>
+<hr />
 </section>
 <section id="connect-to-pi-using-ssh" class="level2">
 <h2><a name="8"></a>Connect to Pi using SSH</h2>
+<p><em>Time to complete is about 30 minutes.</em></p>
 <p>SSH is a safe and efficient way to connect to your Pi over the network or the Internet. It is enabled by default but for highest security, I recommend a few configuration changes and installing your own personal keys. This guide assumes you are connecting from Windows or another Linux system. For Windows use <a href="http://www.putty.org/">PuTTY</a> and for Linux use <a href="http://www.openssh.com/">OpenSSH</a>. It may be necessary to install PuTTY but OpenSSH comes installed on Linux.</p>
 <ul>
 <li>Verify that SSH is enabled, <code>sudo raspi-config</code> then Advanced Options and then SSH. (<strong>Note,</strong> on recent versions of Raspbian this is enabled by default.)</li>
@@ -187,7 +209,10 @@ sudo ifup wlan0</code></pre>
 <h3>Windows</h3>
 <ol type="1">
 <li>Start puTTY</li>
-<li>Enter <em>hostname.local</em>, where hostname is from <em>6 Network magic</em> into the <strong>Host Name (or IP address)</strong> box.</li>
+<li>Enter <em>hostname.local</em>, where hostname is from <em>Network magic</em> into the <strong>Host Name (or IP address)</strong> box.
+<ul>
+<li>If you are not able to connect with <em>hostname.local</em>, try connecting using the IP address instead. If this works, then somehow the network magic is being blocked.</li>
+</ul></li>
 <li>Save the session if you wish.</li>
 <li>The first time you connect, you will get an alert. Click Yes to continue.</li>
 <li>Enter your username, default <em>pi</em>, and password.</li>
@@ -204,6 +229,7 @@ sudo ifup wlan0</code></pre>
 <li>When done, end your session with <code>exit</code>.</li>
 </ol>
 <p>A good resource is from <a href="https://wiki.archlinux.org/index.php/Secure_Shell">archlinux</a>.</p>
+<hr />
 </section>
 </section>
 <section id="improving-security" class="level2">
@@ -221,15 +247,16 @@ sudo ifup wlan0</code></pre>
 </ul>
 <section id="sshd-configuration" class="level3">
 <h3>SSHd configuration</h3>
+<p><em>Time to complete is about 5 minutes.</em></p>
 <p>There are a few SSHd configuration changes that will improve SSH security. Since SSHd is likely a service you do want to provide and it gives shell access, this is important.</p>
-<ol type="1">
+<ul>
 <li>Edit the configuration file, <code>sudo nano /etc/ssh/sshd_config</code></li>
 <li><p>Change the following:</p>
 <pre><code>PermitRootLogin no</code></pre></li>
 <li><p>Add the following:</p>
 <pre><code>AllowUsers pi
 # Even better if you use a non-default user</code></pre></li>
-</ol>
+</ul>
 </section>
 <section id="ssh-key-authentication-advanced" class="level3">
 <h3>SSH key authentication (advanced)</h3>
@@ -314,6 +341,7 @@ PubkeyAuthentication yes</code></pre></li>
 <li>Reload the sshd configuration, <code>sudo service sshd reload</code></li>
 <li><p>Test by trying to login without the key file.</p></li>
 </ol>
+<hr />
 </section>
 </section>
 <section id="firewall-with-iptables-advanced" class="level2">
@@ -396,10 +424,12 @@ COMMIT</code></pre>
 <li>Make that file executable, <code>sudo chmod +x /etc/network/if-pre-up.d/iptables</code>.</li>
 <li><p>Reboot and test by connecting with SSH and <code>iptables -L</code>.</p></li>
 </ol>
+<hr />
 </section>
 <section id="connect-to-the-pi-using-vnc" class="level2">
 <h2><a name="11"></a>Connect to the Pi using VNC</h2>
-<p>(optional) Virtual Network Connection (VNC) is a way to remotely connect to your pi via the network and access the pi's GUI desktop. I usually do not use a VNC but there are circumstances (educational setting, inexperienced users) where it does prove useful. Good information from <a href="https://www.raspberrypi.org/documentation/remote-access/vnc/">rasperrypi.org</a>.</p>
+<p><em>Time to complete is about 20 minutes.</em></p>
+<p>(optional) Virtual Network Connection (VNC) is a way to remotely connect to your pi via the network and access the pi's GUI desktop. I usually do not use a VNC but there are circumstances (educational setting, inexperienced users) where it does prove useful. Generally, I connect using the Browser method. Good information from <a href="https://www.raspberrypi.org/documentation/remote-access/vnc/">rasperrypi.org</a>.</p>
 <p><strong>Note: VNC should only available on the local network.</strong></p>
 <p>If you feel you need to run an Internet accessible VNC Server, at a minimum, use SSH tunneling for all connections.</p>
 <ol type="1">
@@ -409,7 +439,7 @@ COMMIT</code></pre>
 <li>Enter the requested new vnc password. This will be required from the VNC Viewer we install later.</li>
 <li>Stop the server with <code>vncserver -kill :1</code>.</li>
 <li>The vncserver may be setup to run at boot but I do not recommend it.</li>
-<li>Update the iptables rule if needed.</li>
+<li>Update the iptables rule if needed. (this is from <em>Firewall with iptables (advanced)</em>)</li>
 </ol>
 <section id="connect-from-linux" class="level3">
 <h3>Connect from Linux</h3>
@@ -424,6 +454,15 @@ COMMIT</code></pre>
 <section id="connect-from-a-browser" class="level3">
 <h3>Connect from a browser</h3>
 <p>Browser based VNC makes it easy for anyone to use this technology. I use the Google Chrome App from <a href="https://www.realvnc.com/products/chrome/">RealVNC</a>.</p>
+<ul>
+<li>From the RealVNC page click <em>available in the chrome web store</em></li>
+<li>Add to Chrome</li>
+<li>Launch the extension from Chrome Apps</li>
+<li>Enter the address, <em>hostname.local:1</em></li>
+<li>Click <em>Connect</em></li>
+<li>Enter the vnc password.</li>
+<li>When done, just close the window.</li>
+</ul>
 </section>
 <section id="connect-from-windows" class="level3">
 <h3>Connect from Windows</h3>
@@ -435,6 +474,7 @@ COMMIT</code></pre>
 <li>Connect to the Remote Host, <em>hostname.local:1</em>.</li>
 <li>When done, just close the window.</li>
 </ol>
+<hr />
 </section>
 </section>
 <section id="networkmanager-cli-advanced" class="level2">
@@ -493,6 +533,7 @@ managed=false</code></pre>
 <li><a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Networking_Guide/sec-Using_the_NetworkManager_Command_Line_Tool_nmcli.html">Redhat</a></li>
 </ul>
 <p>NetworkManager service control is via systemctl, therefore it may be enabled with <code>sudo systemctl enable NetworkManager</code> and disabled with <code>sudo systemctl disable NetworkManager</code>. The service may also be monitored using <code>sudo service NetworkManager [status|start|stop|reload|restart]</code>.</p>
+<hr />
 </section>
 <section id="add-the-adafruit-raspberry-pi-repository" class="level2">
 <h2><a name="13"></a>Add the Adafruit Raspberry Pi repository</h2>
@@ -504,6 +545,7 @@ managed=false</code></pre>
 <li><code>apt-get update</code>.</li>
 <li>Exit root, <code>exit</code>.</li>
 </ol>
+<hr />
 </section>
 <section id="install-node.js" class="level2">
 <h2><a name="14"></a>Install node.js</h2>
@@ -513,6 +555,7 @@ managed=false</code></pre>
 <li>Install node, <code>sudo apt-get install node</code>.</li>
 <li>Now go learn more about node from <a href="https://nodejs.org/en/">Node</a>, <a href="http://expressjs.com/en/starter/hello-world.html">Express</a>, <a href="https://learn.adafruit.com/node-embedded-development/events">Adafruit</a>, and <a href="https://www.google.com/webhp?q=node.js%20raspberry%20pi">search</a>.</li>
 </ol>
+<hr />
 </section>
 <section id="install-occidentalis" class="level2">
 <h2><a name="15"></a>Install occidentalis</h2>
@@ -521,6 +564,7 @@ managed=false</code></pre>
 <li>Update, <code>sudo apt-get update</code>.</li>
 <li>Install occidentalis, <code>sudo apt-get install occidentalis</code>.</li>
 </ol>
+<hr />
 </section>
 </section>
 <section id="save-the-image-to-a-file" class="level1">

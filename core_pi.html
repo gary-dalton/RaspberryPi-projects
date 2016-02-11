@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <meta name="dcterms.date" content="2016-01-24">
+          <title>Core Pi</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">Core Pi</h1>
+                        <h3 id="project_tagline">Pi as an access point providing dhcp to eth0</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <section id="description" class="level1">
+<h1>Description</h1>
+<p>Core Pi may seem an odd exercise but the point is to use a pi as the central point in providing Internet and initial setup for other pies in a wifi only environment. Core Pi connects to the Internet via wifi, provides a wifi access point, and acts as a DHCP router for a pi direct connected with Ethernet cable.</p>
+<p>Recent Raspbian versions are ready for SSH connection over Ethernet cable. Core Pi takes advantage of that to ease initial connection and setup. I am using this in a learning lab environment with Chromebooks.</p>
+<p>This guide assumes that 2 WiFi adapters will be used, one for access point service and one for Internet access. It also assumes that another pi, not fuly set up, may be connected to it via eth0.</p>
+</section>
+<section id="next-up" class="level1">
+<h1>Next up?</h1>
+<p>After reading this guide, you may be interested in reading:</p>
+<ul>
+<li><a href="rpi_captured_portal.html">Using the WiFi Access Point with captured portal</a></li>
+</ul>
+</section>
+<section id="parts-list" class="level1">
+<h1>Parts List</h1>
+<ul>
+<li>Raspberry Pi 2</li>
+<li>8GB (or larger) class 10 MicroSD card</li>
+<li><a href="http://www.amazon.com/Edimax-EW-7811Un-150Mbps-Raspberry-Supports/dp/B003MTTJOY/ref=pd_bxgy_147_2">Two USB WiFi dongles</a> <em>(second wifi is optional)</em>
+<ul>
+<li>See the discussion <a href="rpi_which_wifi_usb.html">Which Wifi USB adapters</a></li>
+</ul></li>
+<li>Pi Case</li>
+<li>Mini-USB power</li>
+<li>Ethernet cable</li>
+</ul>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Start with a Raspberry Pi image. This is an image saved after following the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a>, <a href="rpi_wifi_ap.html">RPi WiFi Access Point Guide</a>, and <a href="rpi_gui_changes.html">RPi Desktop Mods</a>. The image should not be Lite. If you do not have such an image, start with a Raspbian image and follow the aforementioned guides before returning here.</p>
+<ol type="1">
+<li><a href="#1">Write the image to the MicroSD.</a></li>
+<li><a href="#2">Connect to the Pi.</a></li>
+<li><a href="#3">Connect to your WiFi.</a></li>
+<li><a href="#4">Setup the DHCP server.</a></li>
+<li><a href="#5">Set a static IP on eth0.</a></li>
+<li><a href="#6">Configure NAT.</a></li>
+<li><a href="#7">Connect and test.</a></li>
+<li><a href="#Conclusion">Conclusion</a>.</li>
+</ol>
+</section>
+<section id="procedures" class="level1">
+<h1>Procedures</h1>
+<section id="write-the-image" class="level2">
+<h2><a name="1"></a>Write the image</h2>
+<p>Write the image to the MicroSD as described in the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a>. Insert the MicroSD into the Pi and boot.</p>
+</section>
+<section id="connect-to-the-pi" class="level2">
+<h2><a name="2"></a>Connect to the Pi</h2>
+<p>Since your pi already acts as a wifi access point, connect to its SSID. Now use SSH to connect to it using either <em>hostname.local</em> or its IP address.</p>
+</section>
+<section id="connect-the-pi-to-your-wifi-internet" class="level2">
+<h2><a name="3"></a>Connect the Pi to your WiFi Internet</h2>
+<p>In this guide, I will use the desktop but nmcli may be used as discussed in the <a href="rpi_initial_setup.html#12">RPi Initial Setup Guide - NetworkManager CLI</a>. VNC was discussed in <a href="rpi_initial_setup.html#11">RPi Initial Setup Guide - Connect to the Pi using VNC</a></p>
+<ul>
+<li><code>vncserver :1</code></li>
+<li>From your browser connect to the pi's VNC</li>
+<li>Using the dialogs, connect to your Internet wifi SSID</li>
+</ul>
+</section>
+<section id="setup-the-dhcp-server" class="level2">
+<h2><a name="4"></a>Setup the DHCP server</h2>
+<ul>
+<li><code>sudo nano /etc/default/isc-dhcp-server</code></li>
+<li><code>INTERFACES=&quot;eth0 wlan1&quot;</code></li>
+<li>Now edit the DHCP configuration file, <code>sudo nano /etc/dhcp/dhcpd.conf</code></li>
+</ul>
+<pre><code># ADD interface wlan1; TO WIFI ACCESS POINT CONFIG
+subnet 192.168.42.0 netmask 255.255.255.0 {
+    interface wlan1;
+    range 192.168.42.10 192.168.42.50;
+    option broadcast-address 192.168.42.255;
+    option routers 192.168.42.1;
+    default-lease-time 600;
+    max-lease-time 7200;
+    option domain-name &quot;local&quot;;
+    option domain-name-servers 8.8.8.8, 8.8.4.4;
+}
+
+# ADD THE BELOW TO CONFIG FOR ETH0
+subnet 192.168.84.0 netmask 255.255.255.0 {
+    interface eth0;
+    range 192.168.84.10 192.168.84.50;
+    option broadcast-address 192.168.42.255;
+    option routers 192.168.84.1;
+    default-lease-time 600;
+    max-lease-time 7200;
+    option domain-name &quot;local&quot;;
+    option domain-name-servers 8.8.8.8, 8.8.4.4;
+}</code></pre>
+</section>
+<section id="set-a-static-ip-on-eth0" class="level2">
+<h2><a name="5"></a>Set a static IP on eth0</h2>
+<ul>
+<li>Take the interface down, <code>sudo ifdown eth0</code></li>
+<li><code>sudo nano /etc/network/interfaces</code></li>
+<li>Comment <code>#iface eth0 inet manual</code></li>
+<li>Add</li>
+</ul>
+<pre><code>iface eth0 inet static
+  address 192.168.84.1
+  netmask 255.255.255.0</code></pre>
+</section>
+<section id="configure-nat" class="level2">
+<h2><a name="6"></a>Configure NAT</h2>
+<ul>
+<li>Verify IP Forwarding was enabled earlier
+<ul>
+<li><code>cat /etc/sysctl.conf</code> should contain <em>net.ipv4.ip_forward=1</em></li>
+<li><code>cat /proc/sys/net/ipv4/ip_forward</code> shoule be <em>1</em></li>
+</ul></li>
+<li>Update iptables rules, <code>sudo nano /etc/iptables.test.rules</code></li>
+</ul>
+<pre><code># BEFORE THE COMMENT # Reject all other inbound # ADD
+
+# Allow forwarded from eth0 to permit NAT and Core Pi
+-A FORWARD -i wlan0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A FORWARD -i eth0 -o wlan0 -j ACCEPT</code></pre>
+<ul>
+<li>Load the rules, <code>sudo iptables-restore &lt; /etc/iptables.test.rules</code></li>
+<li>Verify rules, <code>sudo iptables -L</code> and <code>sudo iptables -S</code></li>
+<li>Save rules for booting,</li>
+</ul>
+<pre><code>sudo -i
+iptables-save &gt; /etc/iptables.up.rules
+exit</code></pre>
+</section>
+<section id="connect-and-test" class="level2">
+<h2><a name="7"></a>Connect and Test</h2>
+<p>First, down and up the interfaces then restart the services.</p>
+<ul>
+<li>Down and then up the interfaces,
+<ul>
+<li><code>sudo ifdown wlan1</code></li>
+<li><code>sudo ifdown eth0</code></li>
+<li><code>sudo ifup eth0</code></li>
+<li><code>sudo ifup wlan1</code></li>
+</ul></li>
+<li>Restart the DHCP server, <code>sudo service isc-dhcp-server restart</code></li>
+<li>Restart hostapd, <code>sudo service hostapd restart</code></li>
+<li>Check their statuses</li>
+<li>View logged output from the DHCP server and also from iptables, <code>tail -F /var/log/syslog</code>. This may be helpful if troubleshooting is needed.</li>
+</ul>
+<p>Next, connect to the interfaces and verify proper functioning of hostapd and dhcp.</p>
+<ul>
+<li>Connect to the wifi ap</li>
+<li>Connect with an Ethernet cable to the pi</li>
+<li>View the active DHCP leases with, <code>cat /var/lib/dhcp/dhcpd.leases</code>.</li>
+<li>Use arp to more easily view active addresses, <code>arp</code>.</li>
+<li>Verify that VNC and SSH work as expected with the DHCP assigned addresses.</li>
+</ul>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1><a name="Conclusion"></a>Conclusion</h1>
+<p>CorePi is ready to use for serving as a wifi router, network master, and pi setup station. It would be relatively easy to write some scripts to automatically set up any unconfigured pi connected to eth0. I do not plan on writing such scripts since my CorePi will be used in learning how to set up a pi.</p>
+<p>Remember to save your image file as CorePi.</p>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

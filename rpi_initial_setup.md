@@ -55,6 +55,8 @@ After reading this guide, you may be interested in reading:
 
 The estimated time to complete each step is given. This time is for a novice performing the procedures for the first time. If you are familiar with some of the topics or have completed these procedures before, you should expect to use less time.
 
+Not sure where things are on your Pi? Review [this diagram](http://www.techweekeurope.co.uk/wp/wp-content/gallery/raspberry-pi-b/b__infographic_web.jpg).
+
 # Procedures
 
 ## <a name="1"></a>Raspbian

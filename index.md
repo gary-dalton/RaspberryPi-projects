@@ -20,6 +20,7 @@ tags: rpi, index
 - [RPi WiFi Access Point Guide](rpi_wifi_ap.html), Adding WiFi Access Point to your Raspberry Pi
 - [Raspberry Tor Guide](rpi_tor.html), Raspberry Pi used as a Tor router
 - [RPi Desktop Mods](rpi_gui_changes.html), Changes to the packages and defaults of the full Raspian
+- [Core Pi](core_pi.html), pi as the central point in providing Internet and initial setup for other pies in a wifi only environment.
 
 # How-tos
 

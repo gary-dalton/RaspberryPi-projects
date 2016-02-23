@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <meta name="dcterms.date" content="2016-02-21">
+          <title>RPi Voice Recognition and Command</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">RPi Voice Recognition and Command</h1>
+                        <h3 id="project_tagline">With Jasper and PocketSphinx</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <section id="description" class="level1">
+<h1>Description</h1>
+<p>Voice recognition and command is one of the modules useful for interacting with robotic systems. There are many voice recognition (VR) systems available but my requirements are:</p>
+<ul>
+<li>No Internet connection required,</li>
+<li>Open source license that permits commercial use,</li>
+<li>Still being developed,</li>
+<li>Supports Linux,</li>
+<li>Able to run on the Raspberry Pi,</li>
+<li>Balance between speed and accuracy</li>
+</ul>
+<p>Out of the <a href="https://en.wikipedia.org/wiki/List_of_speech_recognition_software">possible VR engines</a>, the best candidates seem to be PocketSphinx or Julius running under Jasper. I removed Kaldi as a candidate due to its RAM and CPU requirements. Simon was removed as a candidate since it seems very focused on the desktop.</p>
+</section>
+<section id="next-up" class="level1">
+<h1>Next up?</h1>
+<p>After reading this guide, you may be interested in reading:</p>
+</section>
+<section id="parts-list" class="level1">
+<h1>Parts List</h1>
+<ul>
+<li>Raspberry Pi 2</li>
+<li>16GB (or larger) class 10 MicroSD card</li>
+<li>USB microphone or webcam, preferrably listed at <a href="http://elinux.org/RPi_VerifiedPeripherals">elinux</a>
+<ul>
+<li>I am using a Logitech Webcam C525</li>
+</ul></li>
+<li>Headphones or powered computer speakers
+<ul>
+<li>In a separate guide, the sound output will be replaced with an amplifier and passive speakers.</li>
+</ul></li>
+</ul>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Start with a Raspberry Pi image. This is an image saved after following the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a>, <a href="rpi_wifi_ap.html">RPi WiFi Access Point Guide</a>, and <a href="rpi_gui_changes.html">RPi Desktop Mods</a>. The image should not be Lite. If you do not have such an image, start with a Raspbian image and follow the aforementioned guides before returning here. This guide assumes you have an appropriate image and are connected to your running pi.</p>
+<ol type="1">
+<li><a href="#1">Setup sound I/O</a></li>
+<li><a href="#2">Test sound I/O</a></li>
+<li><a href="#3">Virtual Environments</a></li>
+<li><a href="#4"></a></li>
+<li><a href="#5"></a></li>
+<li><a href="#6">Install Jasper</a></li>
+<li><a href="#7">Connect and test.</a></li>
+<li><a href="#Conclusion">Conclusion</a>.</li>
+</ol>
+</section>
+<section id="procedures" class="level1">
+<h1>Procedures</h1>
+<section id="setup-sound-io" class="level2">
+<h2><a name="1"></a>Setup sound I/O</h2>
+<p>Much of the documentation for setting up a USB microphone refer to Raspbian versions prior to Jessie. Since our base distribution is Jessie or newer, those do not apply. This guide follows the stackexchange, <a href="https://raspberrypi.stackexchange.com/questions/40831/how-do-i-configure-my-sound-for-jasper-on-raspbian-jessie">How do I configure my sound for Jasper on Raspbian Jessie?</a>.</p>
+<ul>
+<li>Power down your pi and insert your USB webcam/microphone</li>
+<li>Boot the pi and connect to the cli</li>
+<li><p>Check the order in which your sound cards have been loaded, <code>cat /proc/asound/modules</code>. With output similar to:</p>
+<pre><code>0 snd_bcm2835
+1 snd_usb_audio</code></pre></li>
+<li><p>Create a file, <code>sudo nano /etc/modprobe.d/alsa-base.conf</code> with these lines</p>
+<pre><code># This sets the index value of the cards but doesn&#39;t reorder.
+options snd_usb_audio index=0
+options snd_bcm2835 index=1
+
+# Does the reordering.
+options snd slots=snd-usb-audio,snd-bcm2835</code></pre></li>
+<li>Reboot the pi</li>
+<li>Check the sound card order, <code>cat /proc/asound/modules</code>
+<ul>
+<li>The order should have changed</li>
+</ul></li>
+</ul>
+</section>
+<section id="test-sound-io" class="level2">
+<h2><a name="2"></a>Test sound I/O</h2>
+<p>Settings may be viewed and changed using: amixer, a <em>command-line mixer for ALSA soundcard driver</em> and alsamixer, a <em>soundcard mixer for ALSA soundcard driver, with ncurses interface</em>.</p>
+<ul>
+<li>View settings of microphone, <code>amixer -c 0</code></li>
+<li>View settings of playback, <code>amixer -c 1</code></li>
+<li>Adjust settings using <code>alsamixer -c 0</code> and <code>alsamixer -c 1</code></li>
+</ul>
+<p>Recording is done with arecord, a <em>command-line sound recorder for ALSA soundcard driver</em> and aplay, a <em>command-line sound player for ALSA soundcard driver</em>.</p>
+<ul>
+<li>Record something with (<strong>stop recording with CTRL-c</strong>) <code>arecord -D plughw:0,0 -f cd test.wav</code></li>
+<li>Play it back with <code>aplay test.wav</code></li>
+<li>If you receive error messages or no sound record and playback occurs, please troubleshoot before continuing</li>
+</ul>
+</section>
+<section id="virtual-environments" class="level2">
+<h2><a name="4"></a>Virtual Environments</h2>
+<p>A Virtual Environment is a tool to keep the dependencies required by different projects in separate places, by creating virtual Python environments for them. Jasper, a python project which helps convert voice recognition into commands, has a number of dependencies that may conflict with the OS installed Linux. A virtual environment will help greatly with this. See <a href="http://docs.python-guide.org/en/latest/dev/virtualenvs/">The Hitchhiker's Guide to Python</a> and <a href="https://virtualenv.readthedocs.org/en/latest/index.html">Virtualenv Documentation</a>.</p>
+<ul>
+<li>Install virtualenv, <code>sudo apt-get install virtualenv</code></li>
+<li>Some basic commands are:
+<ul>
+<li><code>cd my_project_folder</code></li>
+<li>Create the virtual environment, <code>virtualenv venv</code>. Only needs to be created once.</li>
+<li>Activate the environment, <code>. venv/bin/activate</code>. The prompt will change.</li>
+<li>Perform tasks as usual</li>
+<li>When done, deactivate the environment, <code>deactivate</code></li>
+</ul></li>
+</ul>
+</section>
+<section id="install-jasper" class="level2">
+<h2><a name="4"></a>Install Jasper</h2>
+<ul>
+<li>Install prerequisites, <code>sudo apt-get install vim git-core python-dev python-pip bison libasound2-dev libportaudio-dev python-pyaudio</code></li>
+<li>Add to <code>nano ~/.bash_profile</code> export LD_LIBRARY_PATH=&quot;/usr/local/lib&quot; source .bashrc</li>
+<li>Add to <code>nano ~/.bashrc</code> LD_LIBRARY_PATH=&quot;/usr/local/lib&quot; export LD_LIBRARY_PATH PATH=$PATH:/usr/local/lib/ export PAT</li>
+<li>Clone Jasper, <code>git clone https://github.com/jasperproject/jasper-client.git jasper</code></li>
+<li><code>cd jasper</code></li>
+<li>Create virtualenv, <code>virtualenv venv</code></li>
+<li>Activate the environment, <code>. venv/bin/activate</code></li>
+<li>Install Jasper requirements, <code>pip install -r client/requirements.txt</code></li>
+</ul>
+<p>https://jasperproject.github.io/</p>
+<p><code>sudo nano /usr/share/alsa/alsa.conf</code></p>
+<p><code>sudo apt-get install vim git-core python-dev python-pip bison libasound2-dev libportaudio-dev python-pyaudio</code></p>
+</section>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

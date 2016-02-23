@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <meta name="dcterms.date" content="2016-02-20">
+          <title>Using Core Pi</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">Using Core Pi</h1>
+                        <h3 id="project_tagline">What is Core Pi used for?</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <section id="description" class="level1">
+<h1>Description</h1>
+<p>Core Pi acts as the central point in providing Internet and initial setup for other pies in a wifi only environment. Core Pi connects to the Internet via wifi, provides a wifi access point, and acts as a DHCP router for a pi direct connected with Ethernet cable.</p>
+</section>
+<section id="next-up" class="level1">
+<h1>Next up?</h1>
+<p>After reading this guide, you may be interested in reading:</p>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>This how-to covers the various uses of a Core Pi. Of course, in order to use the Core Pi, one must be connected to it.</p>
+<ol type="1">
+<li>Connect the Core Pi</li>
+<li>Setup other pies</li>
+</ol>
+<section id="connect-the-core-pi" class="level2">
+<h2><a name="1"></a>Connect the Core Pi</h2>
+<p>Since your pi already acts as a wifi access point, connect to its SSID.</p>
+<section id="ssh" class="level3">
+<h3>SSH</h3>
+<p>Now use SSH to connect to it using either <em>hostname.local</em> or its IP address. If you used the settings given in <a href="rpi_wifi_ap.html">RPi WiFi Access Point Guide</a>, the IP address is <em>192.168.42.1</em>.</p>
+</section>
+<section id="vnc" class="level3">
+<h3>VNC</h3>
+<p>VNC was discussed in <a href="rpi_initial_setup.html#11">RPi Initial Setup Guide - Connect to the Pi using VNC</a>.</p>
+<ul>
+<li><code>vncserver :1</code></li>
+<li>From your browser connect to the pi's VNC</li>
+</ul>
+</section>
+<section id="connect-core-pi-to-your-wifi-internet" class="level3">
+<h3>Connect Core Pi to your WiFi Internet</h3>
+<p>From the VNC desktop, use the dialogs to connect to your Internet wifi SSID.</p>
+</section>
+</section>
+<section id="setup-other-pies" class="level2">
+<h2><a name="2"></a>Setup other pies</h2>
+<p>Core Pi makes it easy to set up a new pi, starting with an image written to a microSD card inserted into the new pi.</p>
+<ul>
+<li>Connect an Ethernet cable between the Core Pi and the new pi</li>
+<li>Power up the new pi</li>
+</ul>
+<section id="from-core-pis-command-line" class="level3">
+<h3>From Core Pi's command line</h3>
+<ul>
+<li><code>arp -i eth0</code>, which will list IP addresses served by DHCPd on eth0.</li>
+<li>Use the IP address to connect to the new pi, <code>ssh pi@192.168.84.10</code></li>
+<li><strong>Note:</strong> If you receive <em>WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED!</em>, it is because the IP address is now associated with a different pi.
+<ul>
+<li>To remove the stored key, <code>ssh-keygen -f &quot;/home/pi/.ssh/known_hosts&quot; -R 192.168.84.10</code></li>
+<li>To prevent Core Pi from storing the key edit or create a config file
+<ul>
+<li><code>nano ~/.ssh/config</code> with the following lines (see <a href="http://linux.die.net/man/5/ssh_config">ssh config</a> for full details)</li>
+</ul></li>
+</ul></li>
+</ul>
+<pre><code>Host raspberrypi
+  StrictHostKeyChecking no
+  UserKnownHostsFile=/dev/null</code></pre>
+<ul>
+<li>Run the setup as you usually would</li>
+</ul>
+</section>
+</section>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

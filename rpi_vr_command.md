@@ -16,6 +16,7 @@ tags: rpi, guide, router, iot, accesspoint
 # Description
 
 Voice recognition and command is one of the modules useful for interacting with robotic systems. There are many voice recognition (VR) systems available but my requirements are:
+
 + No Internet connection required,
 + Open source license that permits commercial use,
 + Still being developed,
@@ -59,11 +60,13 @@ Much of the documentation for setting up a USB microphone refer to Raspbian vers
 
 + Power down your pi and insert your USB webcam/microphone
 + Boot the pi and connect to the cli
-+ Check the order in which your sound cards have been loaded, `cat /proc/asound/modules`
-    - The output will be similar to:
++ Check the order in which your sound cards have been loaded, `cat /proc/asound/modules`. With output similar to:
+
         0 snd_bcm2835
         1 snd_usb_audio
+
 + Create a file, `sudo nano /etc/modprobe.d/alsa-base.conf` with these lines
+
         # This sets the index value of the cards but doesn't reorder.
         options snd_usb_audio index=0
         options snd_bcm2835 index=1
@@ -85,7 +88,7 @@ Settings may be viewed and changed using: amixer, a _command-line mixer for ALSA
 
 Recording is done with arecord, a _command-line sound recorder for ALSA soundcard driver_ and aplay, a _command-line sound player for ALSA soundcard driver_.
 
-+ Record something **stop recording with CTRL-c** with `arecord -D plughw:0,0 -f cd test.wav`
++ Record something with (**stop recording with CTRL-c**) `arecord -D plughw:0,0 -f cd test.wav`
 + Play it back with `aplay test.wav`
 + If you receive error messages or no sound record and playback occurs, please troubleshoot before continuing
 
@@ -116,17 +119,9 @@ A Virtual Environment is a tool to keep the dependencies required by different p
 + `cd jasper`
 + Create virtualenv, `virtualenv venv`
 + Activate the environment, `. venv/bin/activate`
-+ Install Jasper requirements, `pip install -r client/requirements.txt`
++ Install Jasper requirements, `pip install -r client/requirements.txt`. _This might take a while to compile_
 
 
 
 
 https://jasperproject.github.io/
-
-`sudo nano /usr/share/alsa/alsa.conf`
-
-
-
-
-
-` sudo apt-get install vim git-core python-dev python-pip bison libasound2-dev libportaudio-dev python-pyaudio`

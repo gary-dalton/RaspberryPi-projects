@@ -8,7 +8,7 @@
     <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
 
           <meta name="author" content="Gary Dalton">
-              <meta name="dcterms.date" content="2016-01-24">
+              <meta name="dcterms.date" content="2016-02-22">
           <title>RPi Wifi Access Point Guide</title>
       <style type="text/css">code{white-space: pre;}</style>
       <!--[if lt IE 9]>
@@ -114,6 +114,13 @@
 <li>A valid private IPv4 address range is 192.168.0.0 - 192.168.255.255</li>
 <li><strong>File /etc/default/isc-dhcp-server</strong> The setting is INTERFACES=&quot;wlan1&quot;</li>
 <li><strong>Static IP on wlan1</strong> not on wlan0</li>
+<li><strong>Alternate Access Point setup</strong> using a ralink chipset wifi dongle.
+<ul>
+<li>In <em>/etc/hostapd/hostapd.conf</em> the driver should be <strong>nl80211</strong> instead of rtl871xdrv</li>
+<li>Do not update or compile a new <strong>hostapd</strong></li>
+<li>It may be necessary to review <a href="rpi_which_wifi_usb.html">Which Wifi USB adapters</a> in order to set the correct loading of USB devices</li>
+<li>Overall this is an easier setup</li>
+</ul></li>
 <li><strong>iptables rules</strong> Change eth0 to wlan0 and wlan0 to wlan1</li>
 <li><strong>iptables rules</strong> Add to the current rules table.</li>
 </ul>

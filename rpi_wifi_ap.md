@@ -2,7 +2,7 @@
 title: RPi Wifi Access Point Guide
 subtitle: Adding WiFi Access Point to your Raspberry Pi
 author: Gary Dalton
-date: 24 January 2016
+date: 22 February 2016
 license: Creative Commons BY-SA
 github:
   user: gary-dalton
@@ -79,13 +79,18 @@ For the steps 4 through 9 follow the procedures given by Adafruit's guide to [Se
 
 ### Comments and additional references
 
-- [Ubuntu Community isc-dhcp-server](https://help.ubuntu.com/community/isc-dhcp-server)
-- The Domain Name Servers are [Google Public DNS](https://developers.google.com/speed/public-dns/)
-- A valid private IPv4 address range is 192.168.0.0 - 192.168.255.255
-- **File /etc/default/isc-dhcp-server** The setting is INTERFACES="wlan1"
-- **Static IP on wlan1** not on wlan0
-- **iptables rules** Change eth0 to wlan0 and wlan0 to wlan1
-- **iptables rules** Add to the current rules table.
++ [Ubuntu Community isc-dhcp-server](https://help.ubuntu.com/community/isc-dhcp-server)
++ The Domain Name Servers are [Google Public DNS](https://developers.google.com/speed/public-dns/)
++ A valid private IPv4 address range is 192.168.0.0 - 192.168.255.255
++ **File /etc/default/isc-dhcp-server** The setting is INTERFACES="wlan1"
++ **Static IP on wlan1** not on wlan0
++ **Alternate Access Point setup** using a ralink chipset wifi dongle.
+    - In _/etc/hostapd/hostapd.conf_ the driver should be **nl80211** instead of rtl871xdrv
+    - Do not update or compile a new **hostapd**
+    - It may be necessary to review [Which Wifi USB adapters](rpi_which_wifi_usb.html) in order to set the correct loading of USB devices
+    - Overall this is an easier setup
++ **iptables rules** Change eth0 to wlan0 and wlan0 to wlan1
++ **iptables rules** Add to the current rules table.
 
 ```
 sudo nano /etc/iptables.test.rules

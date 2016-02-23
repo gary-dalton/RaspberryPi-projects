@@ -11,7 +11,7 @@ github:
 framework: minimal
 css: stylesheets/stylesheet.css
 pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html core_pi.md -o core_pi.html
-tags: rpi, howto, router, iot, accesspoint
+tags: rpi, guide, router, iot, accesspoint
 ---
 # Description
 
@@ -26,6 +26,7 @@ This guide assumes that 2 WiFi adapters will be used, one for access point servi
 After reading this guide, you may be interested in reading:
 
 - [Using the WiFi Access Point with captured portal](rpi_captured_portal.html)
+- [Using CorePi](using_core_pi.html)
 
 # Parts List
 
@@ -58,7 +59,7 @@ Write the image to the MicroSD as described in the [RPi Initial Setup Guide](rpi
 
 ## <a name="2"></a>Connect to the Pi
 
-Since your pi already acts as a wifi access point, connect to its SSID. Now use SSH to connect to it using either _hostname.local_ or its IP address.
+Since your pi already acts as a wifi access point, connect to its SSID. Now use SSH to connect to it using either _hostname.local_ or its IP address. If you used the settings given in [RPi WiFi Access Point Guide](rpi_wifi_ap.html), the IP address is _192.168.42.1_.
 
 ## <a name="3"></a>Connect the Pi to your WiFi Internet
 

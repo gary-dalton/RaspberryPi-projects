@@ -448,11 +448,12 @@ If you feel you need to run an Internet accessible VNC Server, at a minimum, use
 
 ### Connect from Linux
 
-1. From the desktop open either _Remote Desktop Viewer_ or the _Remmina Remote Desktop Client_.
-2. Change the connection protocol to VNC.
-3. Connect to _hostname.local:1_.
-4. Enter the vnc password.
-5. When done, just close the window.
++ From the desktop open either _Remote Desktop Viewer_ or the _Remmina Remote Desktop Client_.
+    - `sudo apt-get install remmina`
++ Change the connection protocol to VNC.
++ Connect to _hostname.local:1_.
++ Enter the vnc password.
++ When done, just close the window.
 
 ### Connect from a browser
 

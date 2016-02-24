@@ -25,8 +25,8 @@ After reading this guide, you may be interested in reading:
 
 This how-to covers the various uses of a Core Pi. Of course, in order to use the Core Pi, one must be connected to it.
 
-1. Connect the Core Pi
-2. Setup other pies
+1. [Connect the Core Pi](#1)
+2. [Setup other pies](#2)
 
 ## <a name="1"></a>Connect the Core Pi
 

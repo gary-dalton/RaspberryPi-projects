@@ -206,6 +206,19 @@ sudo ifup wlan0</code></pre>
 <ul>
 <li>Verify that SSH is enabled, <code>sudo raspi-config</code> then Advanced Options and then SSH. (<strong>Note,</strong> on recent versions of Raspbian this is enabled by default.)</li>
 </ul>
+<section id="browser" class="level3">
+<h3>Browser</h3>
+<p>If you are using the Chrome browser, there is an app that makes SSH easy. Add to Chrome by visiting the <a href="https://chrome.google.com/webstore/detail/secure-shell/pnhechapfaindjhompbnflcldabbghjo">Web Store</a>. Once installed, launch it from the <a href="chrome://apps/">apps page</a>.</p>
+<ul>
+<li>Select a <em>New connection</em></li>
+<li>In the free form text box enter a name for your pi connection. I usually give it the same name as my pi.</li>
+<li>Username is the user to connect to your pi as. Default it <em>pi</em></li>
+<li>Hostname is <em>hostname.local</em> or the IP address you made note of earlier.</li>
+<li>Port is 22</li>
+<li>Click <em>Connect</em></li>
+<li>When done <code>exit</code></li>
+</ul>
+</section>
 <section id="windows" class="level3">
 <h3>Windows</h3>
 <ol type="1">

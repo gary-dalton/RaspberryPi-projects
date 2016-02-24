@@ -203,6 +203,18 @@ SSH is a safe and efficient way to connect to your Pi over the network or the In
 
 * Verify that SSH is enabled, `sudo raspi-config` then Advanced Options and then SSH. (**Note,** on recent versions of Raspbian this is enabled by default.)
 
+### Browser
+
+If you are using the Chrome browser, there is an app that makes SSH easy. Add to Chrome by visiting the [Web Store](https://chrome.google.com/webstore/detail/secure-shell/pnhechapfaindjhompbnflcldabbghjo). Once installed, launch it from the [apps page](chrome://apps/).
+
++ Select a _New connection_
++ In the free form text box enter a name for your pi connection. I usually give it the same name as my pi.
++ Username is the user to connect to your pi as. Default it _pi_
++ Hostname is  _hostname.local_ or the IP address you made note of earlier.
++ Port is 22
++ Click _Connect_
++ When done `exit`
+
 ### Windows
 
 1. Start puTTY

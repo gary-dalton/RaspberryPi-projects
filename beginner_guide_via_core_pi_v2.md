@@ -29,7 +29,7 @@ After reading this guide, you may be interested in reading:
 
 A coach provides:
 
-+ a connected Core Pire
++ a connected Core Pi v2
 + a MicroSD with Raspbian image installed
 + a Chrome browser with the Secure Shell and VNC Viewer apps installed
 
@@ -43,7 +43,8 @@ Some useful information is:
 + SSID to connect to is _corepiv2_
 + Corepiv2 wifi password is _raspberry_
 + New pi username/password is _pi/raspberry_
-+ Core Pire IP address is _192.168.42.1_
++ Core Pi router IP address is _192.168.42.1_
++ Core Pi microcomputer IP address is _192.168.84.1_
 
 The steps to follow for easy setup are:
 
@@ -105,7 +106,7 @@ Since this is your first time connecting to this pi, you should receive the mess
     Connecting to pi@newpi_IP...
     Loading NaCl plugin... done.
     The authenticity of host 'newpi_IP (newpi_IP)' can't be established.
-    ECDSA key fingerprint is 2a:a7:94:bd:45:f2:00:40:e0:47:1c:09:ce:52:36:be.
+    ECDSA key fingerprint is 2a:a7:94:bd:45:f2:00.
     Are you sure you want to continue connecting (yes/no)?
 
 Enter **yes**
@@ -119,7 +120,7 @@ You will now see a prompt to enter a password. The password is _raspberry_. If i
     Someone could be eavesdropping on you right now (man-in-the-middle attack)!
     It is also possible that a host key has just been changed.
     The fingerprint for the ECDSA key sent by the remote host is
-    d6:be:12:7e:22:23:c3:e1:56:30:d6:cd:65:b7:ab:42.
+    d6:be:12:7e:22:23:c3
     Please contact your system administrator.
     Add correct host key in /.ssh/known_hosts to get rid of this message.
     Offending ECDSA key in /.ssh/known_hosts:7

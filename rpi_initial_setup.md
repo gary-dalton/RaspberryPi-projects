@@ -13,6 +13,7 @@ css: stylesheets/stylesheet.css
 pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html rpi_initial_setup.md -o rpi_initial_setup.html
 tags: rpi, setup, guide, secure
 ---
+[Home](index.html)
 
 # Description
 
@@ -120,8 +121,6 @@ Start the configuration software to expand the filesystem, change the password, 
 + Reboot your system `sudo reboot now`.
 
 **The pi may be shutdown from the command line with, `sudo shutdown now`. Wait about a minute and remove power.**
-
----
 
 ## <a name="5"></a>Connect to the Internet
 
@@ -446,14 +445,16 @@ _Time to complete is about 20 minutes._
 
 (optional) Virtual Network Connection (VNC) is a way to remotely connect to your pi via the network and access the pi's GUI desktop. I usually do not use a VNC but there are circumstances (educational setting, inexperienced users) where it does prove useful. Generally, I connect using the Browser method. Good information from [rasperrypi.org](https://www.raspberrypi.org/documentation/remote-access/vnc/).
 
-**Note: VNC should only available on the local network.**
+**NOTE: There are many security problems in current vnc implementations. Permit  access to vnc servers on the local network only.**
 
-If you feel you need to run an Internet accessible VNC Server, at a minimum, use SSH tunneling for all connections.
+If you feel you need to run an Internet accessible VNC Server, at a minimum, use SSH tunneling for all connections. Also view [About VNC Servers](https://help.ubuntu.com/community/VNC/Servers)
 
 1. Update your sources, `sudo apt-get update`.
 2. Install TightVNC Server, `sudo apt-get install tightvncserver`.
-3. Start the server, `vncserver :1`.
-4. Enter the requested new vnc password. This will be required from the VNC Viewer we install later.
+3. Start the server, `vncserver -nolisten tcp -nevershared -dontdisconnect :1`.
+    + Learn more with `man vncserver`, `man Xvnc`, and `Xvnc -help`
+4. Enter the requested new vnc password, a view-only password is not needed. This will be required from the VNC Viewer we install later.
+    + If you later wish to set a different password simply `rm .vnc/passwd`
 5. Stop the server with `vncserver -kill :1`.
 6. The vncserver may be setup to run at boot but I do not recommend it.
 7. Update the iptables rule if needed. (this is from _Firewall with iptables (advanced)_)

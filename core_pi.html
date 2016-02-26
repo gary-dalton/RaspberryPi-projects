@@ -29,7 +29,8 @@
 
     <div id="main_content_wrap" class="outer">
     <section id="main_content" class="inner">
-                <section id="description" class="level1">
+                <p><a href="index.html">Home</a></p>
+<section id="description" class="level1">
 <h1>Description</h1>
 <p>Core Pi may seem an odd exercise but the point is to use a pi as the central point in providing Internet and initial setup for other pies in a wifi only environment. Core Pi connects to the Internet via wifi, provides a wifi access point, and acts as a DHCP router for a pi direct connected with Ethernet cable.</p>
 <p>Recent Raspbian versions are ready for SSH connection over Ethernet cable. Core Pi takes advantage of that to ease initial connection and setup. I am using this in a learning lab environment with Chromebooks.</p>
@@ -68,6 +69,8 @@
 <li><a href="#5">Set a static IP on eth0.</a></li>
 <li><a href="#6">Configure NAT.</a></li>
 <li><a href="#7">Connect and test.</a></li>
+<li><a href="#8">Add a guest user</a></li>
+<li><a href="#9">Install additional packages</a></li>
 <li><a href="#Conclusion">Conclusion</a>.</li>
 </ol>
 </section>
@@ -84,8 +87,9 @@
 <section id="connect-the-pi-to-your-wifi-internet" class="level2">
 <h2><a name="3"></a>Connect the Pi to your WiFi Internet</h2>
 <p>In this guide, I will use the desktop but nmcli may be used as discussed in the <a href="rpi_initial_setup.html#12">RPi Initial Setup Guide - NetworkManager CLI</a>. VNC was discussed in <a href="rpi_initial_setup.html#11">RPi Initial Setup Guide - Connect to the Pi using VNC</a></p>
+<p><strong>NOTE: There are many security problems in current vnc implementations. Permit access to vnc servers on the local network only.</strong></p>
 <ul>
-<li><code>vncserver :1</code></li>
+<li><code>vncserver -nolisten tcp -nevershared -dontdisconnect :1</code></li>
 <li>From your browser connect to the pi's VNC</li>
 <li>Using the dialogs, connect to your Internet wifi SSID</li>
 </ul>
@@ -180,6 +184,32 @@ exit</code></pre>
 <li>View the active DHCP leases with, <code>cat /var/lib/dhcp/dhcpd.leases</code>.</li>
 <li>Use arp to more easily view active addresses, <code>arp</code>.</li>
 <li>Verify that VNC and SSH work as expected with the DHCP assigned addresses.</li>
+</ul>
+</section>
+<section id="add-a-guest-user" class="level2">
+<h2><a name="8"></a>Add a guest user</h2>
+<p>Core Pi may be accessed as a via point for novices. Novices should not have permission to run root commands. Only the pi user, <em>with a strong password</em>, should have root access.</p>
+<ul>
+<li><code>sudo adduser guest</code></li>
+<li>Enter a new password for guest, perhaps <em>raspberry</em></li>
+<li>Complete other information or skip as you choose</li>
+<li>Accept the new user</li>
+</ul>
+<p>The <em>guest</em> must now be given permission to connect using ssh.</p>
+<ul>
+<li><code>sudo nano /etc/ssh/sshd_config</code></li>
+<li>Add <em>guest</em> to AllowUsers
+<ul>
+<li>Should look like this <code>AllowUsers pi guest</code></li>
+</ul></li>
+<li>Reload the sshd_config, <code>sudo service ssh reload</code></li>
+</ul>
+</section>
+<section id="install-additional-packages" class="level2">
+<h2><a name="8"></a>Install additional packages</h2>
+<ul>
+<li>Make it easier to match pies to IPs, <code>sudo apt-get install avahi-utils</code></li>
+<li>Add the ability to resize partitions and therefore disk images on other SD cards. <code>sudo apt-get install gparted</code></li>
 </ul>
 </section>
 </section>

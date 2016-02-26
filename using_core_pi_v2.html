@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <meta name="dcterms.date" content="2016-02-26">
+          <title>Using Core Pi v2</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">Using Core Pi v2</h1>
+                        <h3 id="project_tagline">What is Core Pi used for?</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <p><a href="index.html">Home</a></p>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>Core Pi provides a local network for working with pies. This eases initial setup and provides a safe environment for novice learning.</p>
+</section>
+<section id="next-up" class="level1">
+<h1>Next up?</h1>
+<p>After reading this guide, you may be interested in reading:</p>
+<ul>
+<li><a href="beginner_guide_via_core_pi_v2.html">Beginner Guide via Core Pi v2</a></li>
+</ul>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>This how-to covers the various uses of a Core Pi. Of course, in order to use the Core Pi, one must be connected to it.</p>
+<ol type="1">
+<li><a href="#1">Connect the Core Pi</a></li>
+<li><a href="#2">Setup other pies</a></li>
+</ol>
+<section id="connect-the-core-pi" class="level2">
+<h2><a name="1"></a>Connect the Core Pi</h2>
+<p>Since corepiv2 already acts as a wifi access point, connect to its SSID.</p>
+<section id="ssh" class="level3">
+<h3>SSH</h3>
+<p>Now use SSH to connect to its IP address. If you used the settings given in <a href="core_pi_v2.html">Core Pi v2</a>, the IP address is <em>192.168.84.1</em>.</p>
+<ul>
+<li>Connect to the pi using an SSH session with <em>192.168.84.1</em>
+<ul>
+<li>If this fails, check your network connections. If the wifi to corepiv2 is not the only connection then maybe the OS is trying to route through the other connection. Disconnect the other connections.</li>
+</ul></li>
+</ul>
+</section>
+<section id="vnc" class="level3">
+<h3>VNC</h3>
+<p>VNC was discussed in <a href="rpi_initial_setup.html#11">RPi Initial Setup Guide - Connect to the Pi using VNC</a>.</p>
+<ul>
+<li>On the pi, <code>vncserver -nolisten tcp -nevershared -dontdisconnect :1</code></li>
+<li>From your VNC Viewer, connect to VNC at <em>192.168.84.1:1</em></li>
+<li>If not already connected, connect the pi to your wifi access point.</li>
+<li>Once connected to wifi, disconnect VNC and kill the service, <code>vncserver -kill :1</code>.</li>
+</ul>
+</section>
+<section id="connect-core-pi-to-your-wifi-internet" class="level3">
+<h3>Connect Core Pi to your WiFi Internet</h3>
+<p>From the VNC desktop, use the dialogs to connect to your Internet wifi SSID.</p>
+</section>
+</section>
+<section id="setup-other-pies" class="level2">
+<h2><a name="2"></a>Setup other pies</h2>
+<p>Core Pi makes it easy to set up a new pi, starting with an image written to a microSD card inserted into the new pi.</p>
+<ul>
+<li>Connect an Ethernet cable between the Core Pi and router's WAN port</li>
+<li>Connect an Ethernet cable from the router to the new pi</li>
+<li>Power up the new pi</li>
+<li>Begin your setup</li>
+</ul>
+</section>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

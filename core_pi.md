@@ -13,6 +13,8 @@ css: stylesheets/stylesheet.css
 pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html core_pi.md -o core_pi.html
 tags: rpi, guide, router, iot, accesspoint
 ---
+[Home](index.html)
+
 # Description
 
 Core Pi may seem an odd exercise but the point is to use a pi as the central point in providing Internet and initial setup for other pies in a wifi only environment. Core Pi connects to the Internet via wifi, provides a wifi access point, and acts as a DHCP router for a pi direct connected with Ethernet cable.
@@ -49,6 +51,8 @@ Start with a Raspberry Pi image. This is an image saved after following the [RPi
 5. [Set a static IP on eth0.](#5)
 6. [Configure NAT.](#6)
 7. [Connect and test.](#7)
+8. [Add a guest user](#8)
+9. [Install additional packages](#9)
 10. [Conclusion](#Conclusion).
 
 # Procedures
@@ -65,7 +69,9 @@ Since your pi already acts as a wifi access point, connect to its SSID. Now use 
 
 In this guide, I will use the desktop but nmcli may be used as discussed in the [RPi Initial Setup Guide - NetworkManager CLI](rpi_initial_setup.html#12). VNC was discussed in [RPi Initial Setup Guide - Connect to the Pi using VNC](rpi_initial_setup.html#11)
 
-+ `vncserver :1`
+**NOTE: There are many security problems in current vnc implementations. Permit  access to vnc servers on the local network only.**
+
++ `vncserver -nolisten tcp -nevershared -dontdisconnect :1`
 + From your browser connect to the pi's VNC
 + Using the dialogs, connect to your Internet wifi SSID
 
@@ -159,6 +165,27 @@ Next, connect to the interfaces and verify proper functioning of hostapd and dhc
 + View the active DHCP leases with, `cat /var/lib/dhcp/dhcpd.leases`.
 + Use arp to more easily view active addresses, `arp`.
 + Verify that VNC and SSH work as expected with the DHCP assigned addresses.
+
+## <a name="8"></a>Add a guest user
+
+Core Pi may be accessed as a via point for novices. Novices should not have permission to run root commands. Only the pi user, _with a strong password_, should have root access.
+
++ `sudo adduser guest`
++ Enter a new password for guest, perhaps _raspberry_
++ Complete other information or skip as you choose
++ Accept the new user
+
+The _guest_ must now be given permission to connect using ssh.
+
++ `sudo nano /etc/ssh/sshd_config`
++ Add _guest_ to AllowUsers
+    - Should look like this `AllowUsers pi guest`
++ Reload the sshd_config, `sudo service ssh reload`
+
+## <a name="8"></a>Install additional packages
+
++ Make it easier to match pies to IPs, `sudo apt-get install avahi-utils`
++ Add the ability to resize partitions and therefore disk images on other SD cards. `sudo apt-get install gparted`
 
 # <a name="Conclusion"></a>Conclusion
 

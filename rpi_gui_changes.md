@@ -2,7 +2,7 @@
 title: RPi Desktop Mods
 subtitle: Changes to the packages and defaults of the full Raspian
 author: Gary Dalton
-date: 3 February 2016
+date: 26 February 2016
 license: Creative Commons BY-SA
 github:
   user: gary-dalton
@@ -13,6 +13,8 @@ css: stylesheets/stylesheet.css
 pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html rpi_gui_changes.md -o rpi_gui_changes.html
 tags: rpi, desktop, guide, packages
 ---
+[Home](index.html)
+
 # Description
 
 The choice of what software to run on a pi is a personal choice. Rarely will two people make the same decisions. The default full Raspbian image includes many packages I will never use and does not include many I use everyday. I make many of the following changes to my installations but, please note, each addition or removal is optional.
@@ -86,6 +88,9 @@ The [Eric Python IDE](http://eric-ide.python-projects.org/index.html). Eric is a
 + `sudo apt-get install eric`
 + Start Eric and check your version
 + See the latest version at [Eric downloads](http://sourceforge.net/projects/eric-ide/files/eric6/stable/)
+
+### Optional
+
 + I often install the latest version at this point. Download the latest version.
 + `sudo apt-get remove eric`
 + The following packages upon which Eric depends will not be removed. _bicyclerepair bluez libmysqlclient18 libqt4-declarative libqt4-designer libqt4-help libqt4-script libqt4-scripttools libqt4-sql libqt4-sql-mysql libqt4-svg libqt4-test libqtassistantclient4 mysql-common ofono python3-pygments python3-pyqt4 python3-pyqt4.qsci python3-pyqt4.qtsql python3-sip vim-addon-manager_

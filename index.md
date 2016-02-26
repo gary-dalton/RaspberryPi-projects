@@ -2,7 +2,7 @@
 title: Raspberry Pi Projects
 subtitle: Documentation
 author: Gary Dalton
-date: 22 February 2016
+date: 26 February 2016
 license: Creative Commons BY-SA
 github:
   user: gary-dalton
@@ -20,14 +20,20 @@ tags: rpi, index
 - [RPi WiFi Access Point Guide](rpi_wifi_ap.html), Adding WiFi Access Point to your Raspberry Pi
 - [Raspberry Tor Guide](rpi_tor.html), Raspberry Pi used as a Tor router
 - [RPi Desktop Mods](rpi_gui_changes.html), Changes to the packages and defaults of the full Raspian
-- [Core Pi](core_pi.html), pi as the central point in providing Internet and initial setup for other pies in a wifi only environment.
+- [Core Pi v2](core_pi_v2.html), Pi as a wifi bridge providing safe subnet to wifi and Ethernet
 - [RPi Voice Recognition and Command](rpi_vr_command.html)
+- [Beginner Guide via Core Pi v2](beginner_guide_via_core_pi_v2.html), This guides a beginner to perform an initial setup of a Raspberry Pi.
 
 # How-tos
 
 - [Using the WiFi Access Point with captured portal](rpi_captured_portal.html)
-- [Using CorePi](using_core_pi.html)
+- [Using CorePi v2](using_core_pi_v2.html)
 
 # Discussions
 
 - [Which Wifi USB adapters](rpi_which_wifi_usb.html)
+- [SSH Hints](ssh_hints.html), hints and tricks for better leveraging SSH on the various platforms
+
+## Deprecated
+
+- [Core Pi](core_pi.html), superceded by Core Pi v2

@@ -29,7 +29,8 @@
 
     <div id="main_content_wrap" class="outer">
     <section id="main_content" class="inner">
-                <section id="description" class="level1">
+                <p><a href="index.html">Home</a></p>
+<section id="description" class="level1">
 <h1>Description</h1>
 <p>This guides the user through creation of a MicroSD image and then initial setup of the Raspberry Pi. It is necessary to have either a wired or WiFi network to complete this guide. Once a well functioning and secure Pi is completed, the user will save the image. Notice that a large part of this guide deals with security. Security is a primary concern when connecting things to the Internet.</p>
 </section>
@@ -131,7 +132,6 @@
 <li>Reboot your system <code>sudo reboot now</code>.</li>
 </ul>
 <p><strong>The pi may be shutdown from the command line with, <code>sudo shutdown now</code>. Wait about a minute and remove power.</strong></p>
-<hr />
 </section>
 <section id="connect-to-the-internet" class="level2">
 <h2><a name="5"></a>Connect to the Internet</h2>
@@ -444,13 +444,19 @@ COMMIT</code></pre>
 <h2><a name="11"></a>Connect to the Pi using VNC</h2>
 <p><em>Time to complete is about 20 minutes.</em></p>
 <p>(optional) Virtual Network Connection (VNC) is a way to remotely connect to your pi via the network and access the pi's GUI desktop. I usually do not use a VNC but there are circumstances (educational setting, inexperienced users) where it does prove useful. Generally, I connect using the Browser method. Good information from <a href="https://www.raspberrypi.org/documentation/remote-access/vnc/">rasperrypi.org</a>.</p>
-<p><strong>Note: VNC should only available on the local network.</strong></p>
-<p>If you feel you need to run an Internet accessible VNC Server, at a minimum, use SSH tunneling for all connections.</p>
+<p><strong>NOTE: There are many security problems in current vnc implementations. Permit access to vnc servers on the local network only.</strong></p>
+<p>If you feel you need to run an Internet accessible VNC Server, at a minimum, use SSH tunneling for all connections. Also view <a href="https://help.ubuntu.com/community/VNC/Servers">About VNC Servers</a></p>
 <ol type="1">
 <li>Update your sources, <code>sudo apt-get update</code>.</li>
 <li>Install TightVNC Server, <code>sudo apt-get install tightvncserver</code>.</li>
-<li>Start the server, <code>vncserver :1</code>.</li>
-<li>Enter the requested new vnc password. This will be required from the VNC Viewer we install later.</li>
+<li>Start the server, <code>vncserver -nolisten tcp -nevershared -dontdisconnect :1</code>.
+<ul>
+<li>Learn more with <code>man vncserver</code>, <code>man Xvnc</code>, and <code>Xvnc -help</code></li>
+</ul></li>
+<li>Enter the requested new vnc password, a view-only password is not needed. This will be required from the VNC Viewer we install later.
+<ul>
+<li>If you later wish to set a different password simply <code>rm .vnc/passwd</code></li>
+</ul></li>
 <li>Stop the server with <code>vncserver -kill :1</code>.</li>
 <li>The vncserver may be setup to run at boot but I do not recommend it.</li>
 <li>Update the iptables rule if needed. (this is from <em>Firewall with iptables (advanced)</em>)</li>

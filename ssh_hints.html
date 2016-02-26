@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <meta name="dcterms.date" content="2016-02-24">
+          <title>SSH Hints</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">SSH Hints</h1>
+                        <h3 id="project_tagline">Tricks</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <p><a href="index.html">Home</a></p>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>This is just a list of hints and tricks for better leveraging SSH on the various platforms.</p>
+</section>
+<section id="hints" class="level1">
+<h1>Hints</h1>
+<section id="chrome-browser-app" class="level2">
+<h2><a name="Chrome"></a>Chrome Browser App</h2>
+<ul>
+<li><a href="#Chrome_01">Remove SSH known_hosts</a></li>
+</ul>
+<section id="remove-ssh-known_hosts" class="level3">
+<h3><a name="Chrome_01"></a>Remove SSH known_hosts</h3>
+<p>When working with pies in a closed network, there are times when the host identification will change. When that happens, attempts to connect using the Secure Shell app will fail with the following message:</p>
+<pre><code>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED! @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ECDSA key sent by the remote host is
+d6:be:12:7e:22:23:c3:e1:56:30:d6:cd:65:b7:ab:42.
+Please contact your system administrator.
+Add correct host key in /.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in /.ssh/known_hosts:7
+ECDSA host key for xxxxxxxxxxxxx.yyy.au has changed and you have requested strict checking.
+Host key verification failed.
+NaCl plugin exited with status code 255.
+(R)econnect, (C)hoose another connection, or E(x)it?</code></pre>
+<p>This can only be fixed by removing the offending key. Make note of the number shown at the end of the line, <em>Offending ECDSA key in /.ssh/known_hosts:7</em>. That number depends on your system and is the index of the offending key.</p>
+<ul>
+<li>Open the JavaScript console, <code>CTRL +Shift +J</code></li>
+<li>Enter <code>term_.command.removeKnownHostByIndex(INDEX);</code> into the console. Replace <em>INDEX</em> by the index of your offending key.</li>
+<li>Clear all host keys with <code>term_.command.removeAllKnownHosts();</code></li>
+</ul>
+<p><em>from <a href="https://www.gaggl.com/2015/07/chromeos-removing-ssh-known_hosts-from-chromebook/">gaggl</a></em></p>
+</section>
+</section>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

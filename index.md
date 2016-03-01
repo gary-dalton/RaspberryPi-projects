@@ -28,6 +28,7 @@ tags: rpi, index
 
 - [Using the WiFi Access Point with captured portal](rpi_captured_portal.html)
 - [Using CorePi v2](using_core_pi_v2.html)
+- [Resize the SD image](resize_sd_image.html), Using GParted to shrink the disk size
 
 # Discussions
 

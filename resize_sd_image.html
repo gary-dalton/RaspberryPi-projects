@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <meta name="dcterms.date" content="2016-01-24">
+          <title>Resize the SD Image</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">Resize the SD Image</h1>
+                        <h3 id="project_tagline">Using GParted to shrink the disk size</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <p><a href="index.html">Home</a></p>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>The original image file for Raspbian is under 4 GB but after running the first time configuration, it is resized to fit the SD card. Depending on your SD card, this could be 16, 32, 64, or even 128 GB. A large image size makes it very difficult to make backups and to share with others. This is easily solved by shrinking the disk partition with GParted.</p>
+</section>
+<section id="parts-list" class="level1">
+<h1>Parts List</h1>
+<ul>
+<li>Raspberry Pi 2</li>
+<li><a href="http://www.amazon.com/s/?ie=UTF8&amp;keywords=usb+sd+card+adaptor">USB SD Card Reader</a></li>
+</ul>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Start with a pi running a full Raspbian install, including a vncserver. The pi should be easy to connect to and update. You also need a separate SD card with a disk you would like resized.</p>
+<ol type="1">
+<li><a href="#1">Insert the MicroSD and USB</a></li>
+<li><a href="#2">Install GParted</a></li>
+<li><a href="#3">Start GParted</a></li>
+<li><a href="#4">Select the partition</a></li>
+<li><a href="#5">Resize the partition</a></li>
+<li><a href="#6">Apply the resize</a></li>
+<li><a href="#7">Quit</a></li>
+<li><a href="#Conclusion">Conclusion</a>.</li>
+</ol>
+</section>
+<section id="procedures" class="level1">
+<h1>Procedures</h1>
+<section id="insert-the-microsd-and-usb" class="level2">
+<h2><a name="1"></a>Insert the MicroSD and USB</h2>
+<ul>
+<li>Insert the MicroSD into the USB card reader</li>
+<li>Insert the USB card reader into the pi</li>
+</ul>
+<figure>
+<img src="images/usb_card_reader.jpg" alt="Inserted USB Card Reader" /><figcaption>Inserted USB Card Reader</figcaption>
+</figure>
+<ul>
+<li>Boot the pi</li>
+<li>Verify the USB connects, <code>lsusb</code></li>
+<li>Check for correct reading of the disk, <code>sudo fdisk -l</code>
+<ul>
+<li>It should list at least 2 separate devices. On mine there is <em>/dev/mmcblk0</em> and <em>/dev/sda</em>. Each device has 2 partitions. <em>/dev/sda2</em> is the partition to be resized.</li>
+</ul></li>
+</ul>
+</section>
+<section id="install-gparted" class="level2">
+<h2><a name="2"></a>Install GParted</h2>
+<p><a href="http://gparted.org/">GParted</a> is a partition editor for graphically managing your disk partitions. Using standard installation methods, install GParted.</p>
+<ul>
+<li><code>sudo apt_get update</code></li>
+<li><code>sudo apt-get install gparted</code></li>
+</ul>
+</section>
+<section id="start-gparted" class="level2">
+<h2><a name="3"></a>Start GParted</h2>
+<p>GParted is graphical, so you need to connect to the desktop.</p>
+<ul>
+<li>Via SSH, <code>vncserver -nolisten tcp -nevershared -dontdisconnect :1</code></li>
+<li>From your browser connect to the pi's VNC</li>
+<li>Start a terminal</li>
+<li>Start GParted with root permissions, <code>gksudo gparted</code></li>
+</ul>
+</section>
+<section id="select-the-partition" class="level2">
+<h2><a name="4"></a>Select the partition</h2>
+<p>From the GUI, select the partition. For the example case, it is the second partition on <em>/dev/sda</em>. See image.</p>
+<figure>
+<img src="images/gpart_select_dev.png" alt="GParted, select device" /><figcaption>GParted, select device</figcaption>
+</figure>
+<ul>
+<li>Right click and unmount the selected partition.</li>
+</ul>
+</section>
+<section id="resize-the-partition" class="level2">
+<h2><a name="5"></a>Resize the partition</h2>
+<ul>
+<li>Right click the partition and choose <strong>Resize/Move</strong></li>
+<li>In the dialog box, make note of the <em>Minimum size</em>. (In example, it is 3829 MB)</li>
+<li>Enter the size you wish the partition to be in <strong>New size</strong>.
+<ul>
+<li>Make the new size larger than the minimum size</li>
+<li>I usually round up to the next 1/2 GB. Since 1 GB = 1024 MB, a 1/2 GB = 512 MB.</li>
+</ul></li>
+<li>Click <strong>Resize/Move</strong></li>
+</ul>
+<figure>
+<img src="images/gpart_resize.png" alt="GParted, resize dialog" /><figcaption>GParted, resize dialog</figcaption>
+</figure>
+</section>
+<section id="apply-the-resize" class="level2">
+<h2><a name="6"></a>Apply the resize</h2>
+<ul>
+<li>Click the green check mark to <em>Apply All Operations</em></li>
+<li>Verify your choice in the dialog</li>
+<li>If you receive an error, try again with a larger resize</li>
+</ul>
+</section>
+<section id="quit" class="level2">
+<h2><a name="7"></a>Quit</h2>
+<ul>
+<li>Quit GParted</li>
+<li>Disconnet from VNC</li>
+<li>From SSH, <code>vncserver -kill :1</code></li>
+<li><code>sudo shutdown now</code></li>
+<li>Power down</li>
+<li>Remove the USB and SD card</li>
+</ul>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1><a name="Conclusion"></a>Conclusion</h1>
+<p>Now that the disk is much smaller, it is much easier to save the image. Go ahead and write the image to disk. There is much more you can do with GParted.</p>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

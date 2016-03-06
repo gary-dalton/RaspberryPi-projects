@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <title>RPi Troubleshooting</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">RPi Troubleshooting</h1>
+                        <h3 id="project_tagline">Tips and tricks</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <p><a href="index.html">Home</a></p>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>Sometimes not everything goes smoothly -- something just goes awry. It might be specific to the hardware setup or the network configuration you are connecting to. The essence of hacking is making a thing work the way you want it to. This How-to will cover some simple fixes I have found and also some general methods to solving a problem.</p>
+</section>
+<section id="simple-fixes" class="level1">
+<h1>Simple fixes</h1>
+<ul>
+<li><a href="#1">Hiss from the headphone output of the pi</a></li>
+</ul>
+</section>
+<section id="problem-solving-methods" class="level1">
+<h1>Problem solving methods</h1>
+<ul>
+<li>Clearly state the problem</li>
+<li>Google is your friend</li>
+<li>Document all your changes</li>
+<li>Be fearless</li>
+</ul>
+<section id="hiss-from-the-headphone-output-of-the-pi" class="level2">
+<h2><a name=""></a>Hiss from the headphone output of the pi</h2>
+<p>This is especially noticeable when using Sonic Pi.</p>
+<ul>
+<li><code>sudo sh -c 'echo &quot;disable_audio_dither=1&quot; &gt;&gt; /boot/config.txt'</code>
+<ul>
+<li><a href="https://www.raspberrypi.org/forums/viewtopic.php?f=28&amp;t=85811">source</a></li>
+<li><a href="http://elinux.org/RPiconfig">/boot/config settings</a></li>
+</ul></li>
+</ul>
+</section>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

@@ -11,7 +11,7 @@ github:
 framework: minimal
 css: stylesheets/stylesheet.css
 pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html rpi_vr_command.md -o rpi_vr_command.html
-tags: rpi, guide, router, iot, accesspoint
+tags: rpi, guide, iot, voice, command, jasper, pocketsphinx
 ---
 # Description
 
@@ -46,9 +46,9 @@ Start with a Raspberry Pi image. This is an image saved after following the [RPi
 1. [Setup sound I/O](#1)
 2. [Test sound I/O](#2)
 3. [Virtual Environments](#3)
-4. [](#4)
-5. [](#5)
-6. [Install Jasper](#6)
+4. [Install Jasper](#4)
+5. [Install PocketSphinx and requirements](#5)
+6. [](#6)
 7. [Connect and test.](#7)
 10. [Conclusion](#Conclusion).
 
@@ -121,7 +121,36 @@ A Virtual Environment is a tool to keep the dependencies required by different p
 + Activate the environment, `. venv/bin/activate`
 + Install Jasper requirements, `pip install -r client/requirements.txt`. _This might take a while to compile_
 
+## <a name="5"></a>Install PocketSphinx and requirements
+
+This follows the [Jasper guide](https://jasperproject.github.io/documentation/installation/#installing-dependencies) closely.
+
++ Install PocketSphinx, `sudo apt-get install pocketsphinx`
++ Installing CMUCLMTK
+    - `sudo apt-get install subversion autoconf libtool automake gfortran g++`
+    - `svn co https://svn.code.sf.net/p/cmusphinx/code/trunk/cmuclmtk/`
+    - `cd cmuclmtk/`
+    - `./autogen.sh && make`, Check for errors prior to next step
+    - `sudo make install`
+    - `cd ~`
++ Installing OpenFST, Phonetisaurus, m2m-aligner and MITLM
+    - `sudo su -c "echo 'deb http://ftp.debian.org/debian experimental main contrib non-free' > /etc/apt/sources.list.d/experimental.list"`
+    - `sudo apt-get update`
+    - `sudo apt-get -t experimental install phonetisaurus m2m-aligner mitlm libfst-tools`
++ Building the Phonetisaurus FST model
+    - `wget https://www.dropbox.com/s/kfht75czdwucni1/g014b2b.tgz`
+    - `tar -xvf g014b2b.tgz`
+    - `cd g014b2b`
+    - `./compile-fst.sh`
+    - `cd ..`
+    - `mv ~/g014b2b ~/phonetisaurus`
 
 
+# References
 
-https://jasperproject.github.io/
++ [virtualenv](https://virtualenv.readthedocs.org/en/latest/userguide.html)
++ [Raspberry Pi 2 – Speech Recognition on device](https://wolfpaulus.com/journal/embedded/raspberrypi2-sr/)
++ [CMUSphinx](http://cmusphinx.sourceforge.net/wiki/raspberrypi)
++ [Jasper install](https://jasperproject.github.io/documentation/installation/)
++ [VoxForge](http://www.voxforge.org/home/downloads)
++ https://jasperproject.github.io/

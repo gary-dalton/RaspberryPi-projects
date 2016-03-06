@@ -2,7 +2,7 @@
 title: Raspberry Pi Projects
 subtitle: Documentation
 author: Gary Dalton
-date: 26 February 2016
+date: 5 March 2016
 license: Creative Commons BY-SA
 github:
   user: gary-dalton
@@ -11,7 +11,7 @@ github:
 framework: minimal
 css: stylesheets/stylesheet.css
 pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html index.md -o index.html
-tags: rpi, index
+tags: rpi, raspberrypi, guide, howto
 ---
 
 # Guides
@@ -26,6 +26,7 @@ tags: rpi, index
 
 # How-tos
 
+- [RPi Troubleshooting](rpi_troubleshoot.html), Tips and tricks
 - [Using the WiFi Access Point with captured portal](rpi_captured_portal.html)
 - [Using CorePi v2](using_core_pi_v2.html)
 - [Resize the SD image](resize_sd_image.html), Using GParted to shrink the disk size

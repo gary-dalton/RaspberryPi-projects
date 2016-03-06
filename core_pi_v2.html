@@ -8,8 +8,7 @@
     <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
 
           <meta name="author" content="Gary Dalton">
-              <meta name="dcterms.date" content="2016-02-25">
-          <title>Core Pi v2</title>
+              <title>Core Pi v2</title>
       <style type="text/css">code{white-space: pre;}</style>
       <!--[if lt IE 9]>
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -47,7 +46,7 @@
 <h1>Parts List</h1>
 <ul>
 <li>Raspberry Pi 2</li>
-<li>8GB (or larger) class 10 MicroSD card</li>
+<li>16GB (or larger) class 10 MicroSD card</li>
 <li>USB WiFi</li>
 <li>Pi Case</li>
 <li>Mini-USB power</li>
@@ -62,7 +61,7 @@
 </section>
 <section id="overview" class="level1">
 <h1>Overview</h1>
-<p>Start with a Raspberry Pi image. This is an image saved after following the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a> and <a href="rpi_gui_changes.html">RPi Desktop Mods</a>. The image should not be Lite. If you do not have such an image, start with a Raspbian image and follow the aforementioned guides before returning here.</p>
+<p>Start with a Raspberry Pi image. This is an image saved after following the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a> and <a href="rpi_gui_changes.html">RPi Desktop Mods</a>. The image should not be Lite. If you do not have such an image, start with a Raspbian image and follow the Initial Setup Guide until reaching <a href="rpi_initial_setup.html#6">Update and upgrade the Pi</a>. Now, jump to <a href="#4">Install Apt-Cacher-NG</a> of this guide before completing the Initial Setup Guide and the Desktop Mods. Once those are completed, return here.</p>
 <section id="wireless-router" class="level2">
 <h2>Wireless router</h2>
 <ol type="1">
@@ -80,12 +79,13 @@
 <li><a href="#1">Write the image to the MicroSD.</a></li>
 <li><a href="#2">Connect Pi to the router</a></li>
 <li><a href="#3">Connect to your WiFi.</a></li>
-<li><a href="#4">Setup the DHCP server.</a></li>
-<li><a href="#5">Set a static IP on eth0.</a></li>
-<li><a href="#6">Configure NAT.</a></li>
-<li><a href="#7">Shutdown and reconfigure</a></li>
-<li><a href="#8">Connect and test.</a></li>
-<li><a href="#9">Verify security</a></li>
+<li><a href="#4">Install Apt-Cacher-NG</a></li>
+<li><a href="#5">Setup the DHCP server.</a></li>
+<li><a href="#6">Set a static IP on eth0.</a></li>
+<li><a href="#7">Configure NAT.</a></li>
+<li><a href="#8">Shutdown and reconfigure</a></li>
+<li><a href="#9">Connect and test.</a></li>
+<li><a href="#10">Verify security</a></li>
 <li><a href="#Conclusion">Conclusion</a>.</li>
 </ol>
 </section>
@@ -156,8 +156,39 @@
 <li>Using the dialogs, connect to your Internet wifi SSID</li>
 </ul>
 </section>
+<section id="install-apt-cacher-ng" class="level2">
+<h2><a name="4"></a>Install Apt-Cacher-NG</h2>
+<p>Apt-Cacher-NG is a caching proxy server (or apt proxy) for Debian based distributions which caches the downloaded packages locally on your server. This follows the guide from <a href="http://www.tecmint.com/apt-cache-server-in-ubuntu/">Setting up an ‘Apt-Cache’ Server Using ‘Apt-Cacher-NG’ in Ubuntu 14.04 Server</a>. Also, review the <a href="https://www.unix-ag.uni-kl.de/~bloch/acng/html/index.html">Apt-Cacher-NG User Manual</a>.</p>
+<ul>
+<li>Install, <code>sudo apt-get install apt-cacher-ng</code></li>
+<li>Edit the config, <code>sudo nano /etc/apt-cacher-ng/acng.conf</code>
+<ul>
+<li>Listen only on IPv4, add <code>BindAddress: 0.0.0.0</code></li>
+<li>Enable the pid file, <code>PidFile: /var/run/apt-cacher-ng/pid</code></li>
+</ul></li>
+<li>Restart, <code>sudo service apt-cacher-ng restart</code></li>
+<li>Set the current machine to use the cache. Here, the assigned IP is use. It will be changed later after a static IP is assigned to corepi.
+<ul>
+<li>Get the inet address from <code>ifconfig</code></li>
+<li><code>sudo nano /etc/apt/apt.conf.d/02proxy</code></li>
+<li>Add <em>Acquire::http { Proxy &quot;http://inet_address:3142&quot;; };</em></li>
+</ul></li>
+</ul>
+<section id="test-apt-cacher-ng" class="level3">
+<h3>Test Apt-Cacher-NG</h3>
+<p>Browse to <strong>http://inet_address:3142/acng-report.html</strong> to view statistics from apt-cacher-ng.</p>
+<p>Now let's perform a system upgrade and see what happens.</p>
+<ul>
+<li><code>sudo apt-get update</code></li>
+<li><code>sudo apt-get upgrade</code></li>
+<li>Once the upgrade completes, click <em>Count Data</em> on the statistics page</li>
+<li>Also review the log file, <code>less /var/log/apt-cacher-ng/apt-cacher.log</code></li>
+</ul>
+<p>Apt-Cacher-NG is now prepared to serve cached apt-get requests. Clients must still be informed to use the cache but that will be covered in client configuration.</p>
+</section>
+</section>
 <section id="setup-the-dhcp-server" class="level2">
-<h2><a name="4"></a>Setup the DHCP server</h2>
+<h2><a name="5"></a>Setup the DHCP server</h2>
 <ul>
 <li>Install with, <code>sudo apt-get install isc-dhcp-server</code></li>
 <li><code>sudo nano /etc/default/isc-dhcp-server</code></li>
@@ -177,7 +208,7 @@ subnet 192.168.84.0 netmask 255.255.255.0 {
 }</code></pre>
 </section>
 <section id="set-a-static-ip-on-eth0" class="level2">
-<h2><a name="5"></a>Set a static IP on eth0</h2>
+<h2><a name="6"></a>Set a static IP on eth0</h2>
 <ul>
 <li><code>sudo nano /etc/network/interfaces</code></li>
 <li>Comment <code>#iface eth0 inet manual</code></li>
@@ -188,7 +219,7 @@ subnet 192.168.84.0 netmask 255.255.255.0 {
   netmask 255.255.255.0</code></pre>
 </section>
 <section id="configure-nat" class="level2">
-<h2><a name="6"></a>Configure NAT</h2>
+<h2><a name="7"></a>Configure NAT</h2>
 <ul>
 <li>Enable IP Forwarding
 <ul>
@@ -288,7 +319,7 @@ iptables-save &gt; /etc/iptables.up.rules
 exit</code></pre>
 </section>
 <section id="shutdown-and-reconfigure" class="level2">
-<h2><a name="7"></a>Shutdown and reconfigure</h2>
+<h2><a name="8"></a>Shutdown and reconfigure</h2>
 <p>Now the Core Pi v2 must be shutdown and physically reconfigured. If some of the pi settings are incorrect, you may have to connect to it using a console cable unless the wifi automatically connects to an access point.</p>
 <ul>
 <li><code>sudo shutdown now</code></li>
@@ -298,7 +329,7 @@ exit</code></pre>
 </ul>
 </section>
 <section id="connect-and-test" class="level2">
-<h2><a name="8"></a>Connect and Test</h2>
+<h2><a name="9"></a>Connect and Test</h2>
 <p>Connect to the SSID corpiv2 and browse to the <a href="http://192.168.42.1/Info.htm">router information page</a>. You should notice a WAN IP in the 192.168.84.0/24 subnet and LAN IP of 192.168.42.1. The IP address of the pi is <em>192.168.84.1</em>.</p>
 <ul>
 <li>Connect to the pi using an SSH session with <em>192.168.84.1</em>
@@ -313,7 +344,7 @@ exit</code></pre>
 <p>If SSH and VNC connected properly, well done. Otherwise, begin some troubleshooting.</p>
 </section>
 <section id="verify-security" class="level2">
-<h2><a name="9"></a>Verify security</h2>
+<h2><a name="10"></a>Verify security</h2>
 <p>Core Pi may be accessed as a via point for novices. Novices should not gain shell or VNC access.</p>
 <ul>
 <li>The pi user should have a strong password. If it is not, change it now with <code>sudo raspiconfig</code>.</li>

@@ -140,7 +140,12 @@ Start the configuration software to expand the filesystem, change the password, 
 + Select and execute **Expand Filesystem**
 + Select and execute **Change User Password**
 + Select and execute **Internationalization Options**
-    - **Change Locale** to your locale. Mine is en_US.UTF.
+    - **Change Locale** to your locale.
+        - Use spacebar to select/deselect
+        - Deselect en_GB.UTF-8 UTF-8
+        - Select en_US.UTF-8 UTF-8
+        - OK
+        - Select en_US.UTF-8 UTF-8 as default and then OK
     - **Change Timezone** to UTC.
 + Select **Advanced Options** and select and execute **Hostname**. _Pick a unique and easy to remember hostname. This will be used to connect later._
 + Reboot your system `sudo reboot now`.

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <title>RPi NetworkManager CLI</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">RPi NetworkManager CLI</h1>
+                        <h3 id="project_tagline">Raspberry Pi - working with nmcli</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <p><a href="index.html">Home</a></p>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>If the Pi will be used from the GUI destop or if it just needs to connect to one network and won't be moving around much, you don't need Network Manager. If you are likely to go mobile with your Pi and need to connect to multiple networks, consider using nmcli.</p>
+<p>NetworkManager is a set of tools that make networking simpler. Whether Wi-Fi, wired, bond, bridge, 3G, or Bluetooth, NetworkManager allows you to quickly move from one network to another: once a network has been configured and joined, it can be detected and re-joined automatically the next time its available. Nmcli is just the command line interface, CLI, to NetworkManager.</p>
+</section>
+<section id="next-up" class="level1">
+<h1>Next up?</h1>
+<p>After reading this guide, you may be interested in reading:</p>
+<ul>
+<li><a href="rpi_wifi_ap.html">RPi WiFi Access Point Guide</a></li>
+<li><a href="rpi_tor.html">Raspberry Tor</a></li>
+</ul>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<ol type="1">
+<li><a href="#1">Install NetworkManager CLI</a></li>
+<li><a href="#2">Using nmcli</a></li>
+<li><a href="#3">Service control</a></li>
+<li><a href="#4">Learn more</a></li>
+</ol>
+</section>
+<section id="procedures" class="level1">
+<h1>Procedures</h1>
+<section id="install-networkmanager-cli" class="level2">
+<h2><a name="1"></a>Install NetworkManager CLI</h2>
+<p><strong>This procedure will disable your wifi connection until it is reestablished in NetworkManager. So you will need a console or Ethernet connection.</strong></p>
+<ol type="1">
+<li>Update your sources, <code>sudo apt-get update</code></li>
+<li>Install NetworkManager, <code>sudo apt-get install network-manager</code>. This will install a number of other packages as well.</li>
+<li>Install links text-based browser to confirm on captive portals, <code>sudo apt-get install links</code>.</li>
+<li>NetworkManager does not manage any interface defined in /etc/network/interfaces by default. The easiest way to manage some interfaces using NetworkManager is to comment them out. <code>sudo nano /etc/network/interfaces</code>.</li>
+</ol>
+<pre><code>auto lo
+iface lo inet loopback
+
+# Managed by NetworkManager
+#iface eth0 inet manual
+
+# Managed by NetworkManager
+#auto wlan0
+#allow-hotplug wlan0
+#iface wlan0 inet dhcp
+#    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf</code></pre>
+<ul>
+<li>Review the <code>sudo nano /etc/NetworkManager/NetworkManager.conf</code> file. It should look similar to this. The previous <em>interfaces</em> file combined with the <em>managed=false</em> setting, informs NetworkManager to only manage interfaces that are not listed in <em>interfaces</em>.</li>
+</ul>
+<pre><code>[main]
+plugins=ifupdown,keyfile
+
+[ifupdown]
+managed=false</code></pre>
+</section>
+<section id="using-nmcli" class="level2">
+<h2><a name="2"></a>Using nmcli</h2>
+<ol type="1">
+<li>Reboot, <code>sudo reboot now</code>.</li>
+<li>Check network connection status, <code>ifconfig wlan0</code> and verify that the inet addr is empty.</li>
+<li>Start using nmcli by scanning the manual, <code>man nmcli</code>.</li>
+<li>There are 5 Objects but mainly, this guide uses <em>connection</em> and <em>device</em>. Learn more about these by, <code>nmcli con help</code> and <code>nmcli dev help</code>.</li>
+<li><code>nmcli dev status</code> displays a table. Notice that wlan0 is disconnected.</li>
+<li><code>nmcli dev wifi</code> displays a table of available wifi access points.</li>
+<li>Connects may be added using nmcli, for example <code>nmcli con add con-name HOMEOFFICE ifname wlan0 type wifi ssid MYSSID</code>, but I prefer to use nmtui.</li>
+<li><code>sudo nmtui</code> provides a text user interface that allows easy creation of wifi connection.</li>
+<li>Edit a connection.</li>
+<li>Add &gt;&gt; wifi</li>
+<li>Give your connection a name and set the fields needed for your access point.</li>
+<li>If you provided all the settings correctly and set the connection to connect automatically, it might already have connected. Check with <code>ifconfig wlan0</code>.</li>
+<li>Notice the changed out put from <code>nmcli dev status</code> and <code>nmcli dev wifi</code>.</li>
+<li>Show active connections with <code>nmcli con show -a</code>.</li>
+<li>Take down a connection with <code>sudo nmcli con down connection_name</code> and bring it back up with <code>sudo nmcli con up connection_name</code>.</li>
+</ol>
+</section>
+<section id="service-control" class="level2">
+<h2><a name="3"></a>Service control</h2>
+<p>NetworkManager service control is via systemctl, therefore it may be enabled with <code>sudo systemctl enable NetworkManager</code> and disabled with <code>sudo systemctl disable NetworkManager</code>. The service may also be monitored using <code>sudo service NetworkManager [status|start|stop|reload|restart]</code>.</p>
+</section>
+<section id="learn-more" class="level2">
+<h2><a name="4"></a>Learn more</h2>
+<p>Learn more about NetworkManager and nmcli from these,</p>
+<ul>
+<li><a href="https://www.mankier.com/1/nmcli">Man nmcli</a></li>
+<li><a href="https://www.mankier.com/5/nmcli-examples">Man nmcli examples</a></li>
+<li><a href="https://blogs.gnome.org/dcbw/2015/02/16/networkmanager-for-administrators-part-1/">NetworkManager for Administrators</a></li>
+<li><a href="https://wiki.archlinux.org/index.php/NetworkManager">Archlinux</a></li>
+<li><a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/Networking_Guide/sec-Using_the_NetworkManager_Command_Line_Tool_nmcli.html">Redhat</a></li>
+</ul>
+</section>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

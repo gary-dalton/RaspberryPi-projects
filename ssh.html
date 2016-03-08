@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <title>SSH Hints and Advanced</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">SSH Hints and Advanced</h1>
+                        <h3 id="project_tagline">Advanced usage with hints and tricks for leveraging SSH</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <p><a href="index.html">Home</a></p>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>SSH is very important for improved security when connecting to your pi. There are some unusual problems that may occur which are addressed in the <em>Hints</em> section. The <em>Advanced and Optional</em> section provides guidance to some more advanced SSH settings and methods. Some of these are for improved security and should not really be considered optional.</p>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<section id="advanced-and-optional-overview" class="level2">
+<h2>Advanced and Optional Overview</h2>
+<ol type="1">
+<li><a href="#1">Improving security</a></li>
+<li><a href="#2">Basic SSHd configuration</a></li>
+<li><a href="#3">SSH key authentication</a></li>
+<li><a href="#4">Public key SSHd configuration</a></li>
+</ol>
+</section>
+<section id="hints-overview" class="level2">
+<h2>Hints Overview</h2>
+<section id="chrome-browser-app" class="level3">
+<h3><a name="Chrome"></a>Chrome Browser App</h3>
+<ul>
+<li><a href="#Chrome_01">Remove SSH known_hosts</a></li>
+</ul>
+</section>
+</section>
+</section>
+<section id="advanced-and-optional-procedures" class="level1">
+<h1>Advanced and Optional Procedures</h1>
+<section id="improving-security" class="level2">
+<h2><a name="1"></a>Improving security</h2>
+<p>Some general rules to security are:</p>
+<ul>
+<li>Do not use default passwords</li>
+<li>Use multifactor authentication</li>
+<li>Do not provide shell access unless it is needed</li>
+<li>Do not provide services you do not need</li>
+<li>Do not needlessly expose services</li>
+<li>Apply security patches</li>
+<li>Prevent physical access</li>
+<li>Use quality cryptology</li>
+</ul>
+</section>
+<section id="basic-sshd-configuration" class="level2">
+<h2><a name="2"></a>Basic SSHd configuration</h2>
+<p>There are a few SSHd configuration changes that will improve SSH security. Since SSHd is likely a service you do want to provide and it gives shell access, this is important.</p>
+<ul>
+<li>Edit the configuration file, <code>sudo nano /etc/ssh/sshd_config</code></li>
+<li><p>Change the following:</p>
+<pre><code>PermitRootLogin no</code></pre></li>
+<li><p>Add the following:</p>
+<pre><code>AllowUsers pi
+# Even better if you use a non-default user</code></pre></li>
+</ul>
+</section>
+<section id="ssh-key-authentication" class="level2">
+<h2><a name="3"></a>SSH key authentication</h2>
+<p>Using public key authentication will greatly improve your SSHd security but sometimes seems complicated. Do it anyways.</p>
+<section id="linux" class="level3">
+<h3>Linux</h3>
+<ol type="1">
+<li>Generate a password protected key pair, <code>ssh-keygen</code>.</li>
+<li><p>You will be asked the name of the key file and the password to unlock the key. I usually name my key file according to the system it is used to connect to. The process should look something like this:</p>
+<pre><code>Generating public/private rsa key pair.
+Enter file in which to save the key (/home/user/.ssh/id_rsa): /home/user/.ssh/id_rsa_hostname
+Enter passphrase (empty for no passphrase):
+Enter same passphrase again:
+Your identification has been saved in /home/user/.ssh/id_rsa_hostname.
+Your public key has been saved in /home/user/.ssh/id_rsa_hostname.pub.
+The key fingerprint is:
+ac:6a:0f:32:2e:bd:aa:3d:46:cc:c0:21:cc:68:47:40 user@computer
+The key&#39;s randomart image is:
++---[RSA 2048]----+
+|=Eo.             |
+|o= .             |
+|+ o              |
+|..     .         |
+| +      S        |
+|  +    .         |
+| oo . .          |
+|.o+o.o           |
+|++++...          |
++-----------------+</code></pre></li>
+<li>Copy your public key to the pi, <code>ssh-copy-id -i ~/.ssh/id_rsa_hostname.pub pi@hostname.local</code>.</li>
+<li><p>You should see something like the following and also be asked for your password.</p></li>
+</ol>
+<pre><code>/usr/bin/ssh-copy-id: INFO: attempting to log in with the new key(s), to filter out any that are already installed
+/usr/bin/ssh-copy-id: INFO: 1 key(s) remain to be installed -- if you are prompted now it is to install the new keys
+pi@hostname.local&#39;s password:
+
+Number of key(s) added: 1
+
+Now try logging into the machine, with:   &quot;ssh &#39;pi@hostname.local&#39;&quot;
+and check to make sure that only the key(s) you wanted were added.</code></pre>
+<ul>
+<li>Go ahead and <code>ssh 'pi@hostname.local</code>. You should be asked for the password for your key.</li>
+</ul>
+<p>An excellent resource for learning more is from <a href="https://wiki.archlinux.org/index.php/SSH_keys">archlinux</a></p>
+</section>
+<section id="windows-putty" class="level3">
+<h3>Windows PuTTY</h3>
+<ol type="1">
+<li>Start <strong>PuTTYgen</strong></li>
+<li>Change the <em>Number of bits in a generated key</em> to 2048.</li>
+<li>Click <strong>Generate</strong> to generate a new key pair.</li>
+<li>Add a password to the <em>Key passphrase</em> and <em>Confirm passphrase</em>.</li>
+<li>Save your public and private keys. The private key should not be shared but the public key may be freely shared.</li>
+<li>On the pi,
+<ul>
+<li><code>mkdir ~/.ssh</code></li>
+<li><code>nano ~/.ssh/authorized_keys</code>.</li>
+</ul></li>
+<li>Copy the public key from the Windows PuTTYgen box and paste it into the authorized_keys file on your pi. Save the file.</li>
+<li>Close PuTTYgen.</li>
+<li>Open PuTTY.</li>
+<li>Save a new session named <em>hostname</em> and put <em>hostname.local</em> in the Host Name box.</li>
+<li>From the configuration Categories, select Connection &gt;&gt; SSH &gt;&gt; Auth.</li>
+<li>Browse to select the private key you created earlier for authentication.</li>
+<li>Save the session.</li>
+<li>Test by clicking Open.</li>
+<li>You should be required to enter in the username to log in with and also the password used to protect the key.</li>
+</ol>
+<p><strong>NOTE: Do not lose your private keys. Once the next configuration steps are complete, your private key and password are required to login remotely.</strong> You will still be able to login from the console or with a keyboard and monitor.</p>
+</section>
+</section>
+<section id="public-key-sshd-configuration" class="level2">
+<h2><a name="4"></a>Public key SSHd configuration</h2>
+<p>Time now to only allow remote logins using public key authentication. This configuration is on your pi.</p>
+<ol type="1">
+<li>Open the file, <code>sudo nano /etc/ssh/sshd_config</code></li>
+<li><p>Add the following lines to the file and save:</p>
+<pre><code>PasswordAuthentication no
+ChallengeResponseAuthentication no
+UsePAM no
+PubkeyAuthentication yes</code></pre></li>
+<li>Reload the sshd configuration, <code>sudo service sshd reload</code></li>
+<li><p>Test by trying to login without the key file.</p></li>
+</ol>
+</section>
+</section>
+<section id="hints" class="level1">
+<h1>Hints</h1>
+<section id="remove-ssh-known_hosts" class="level3">
+<h3><a name="Chrome_01"></a>Remove SSH known_hosts</h3>
+<p><em>for Chrome app Secure Shell</em></p>
+<p>When working with pies in a closed network, there are times when the host identification will change. When that happens, attempts to connect using the Secure Shell app will fail with the following message:</p>
+<pre><code>@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+@ WARNING: REMOTE HOST IDENTIFICATION HAS CHANGED! @
+@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@
+IT IS POSSIBLE THAT SOMEONE IS DOING SOMETHING NASTY!
+Someone could be eavesdropping on you right now (man-in-the-middle attack)!
+It is also possible that a host key has just been changed.
+The fingerprint for the ECDSA key sent by the remote host is
+d6:be:12:7e:22:23:c3:e1:56:30:d6:cd:65:b7:ab:42.
+Please contact your system administrator.
+Add correct host key in /.ssh/known_hosts to get rid of this message.
+Offending ECDSA key in /.ssh/known_hosts:7
+ECDSA host key for xxxxxxxxxxxxx.yyy.au has changed and you have requested strict checking.
+Host key verification failed.
+NaCl plugin exited with status code 255.
+(R)econnect, (C)hoose another connection, or E(x)it?</code></pre>
+<p>This can only be fixed by removing the offending key. Make note of the number shown at the end of the line, <em>Offending ECDSA key in /.ssh/known_hosts:7</em>. That number depends on your system and is the index of the offending key.</p>
+<ul>
+<li>Open the JavaScript console, <code>CTRL +Shift +J</code></li>
+<li>Enter <code>term_.command.removeKnownHostByIndex(INDEX);</code> into the console. Replace <em>INDEX</em> by the index of your offending key.</li>
+<li>Clear all host keys with <code>term_.command.removeAllKnownHosts();</code></li>
+</ul>
+<p><em>from <a href="https://www.gaggl.com/2015/07/chromeos-removing-ssh-known_hosts-from-chromebook/">gaggl</a></em></p>
+</section>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

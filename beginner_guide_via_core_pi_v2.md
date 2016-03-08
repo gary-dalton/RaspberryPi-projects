@@ -2,7 +2,7 @@
 title: Beginner Guide via Core Pi v2
 subtitle: RPi Initial setup using a Core Pi
 author: Gary Dalton
-date: 25 February 2016
+date: 6 March 2016
 license: Creative Commons BY-SA
 github:
   user: gary-dalton
@@ -158,6 +158,16 @@ _Time to complete is about 5 minutes. This does not include the amount of time r
 
 It is important to keep your pi's software up to date. This is commonly done using apt-get. The main keywords to know are _update_, _upgrade_, _install_, and _remove_. So let's make the system current.
 
+### Use the corepi cache
+
+The corepi system uses a cache to locally connected pies. A single line added to a configuration file makes this available.
+
++ `sudo nano /etc/apt/apt.conf.d/02proxy`
+    - Learn about _nano_, the editor used to write the configuration file. [The Beginner’s Guide to Nano](http://www.howtogeek.com/howto/42980/the-beginners-guide-to-nano-the-linux-command-line-text-editor/)
++ Add the line `Acquire::http { Proxy "http://192.168.84.1:3142"; };`
+
+### Upgrade
+
 + Update the packages list, `sudo apt-get update`.
 + Upgrade software packages to the current version, `sudo apt-get upgrade`.
 + Relax, this might take a while. Maybe grab lunch.
@@ -184,7 +194,6 @@ _Time to complete is about 5 minutes._
 There are a few SSHd configuration changes that will improve SSH security. Since SSHd is likely a service you do want to provide and it gives shell access, this is important.
 
 + Edit the configuration file, `sudo nano /etc/ssh/sshd_config`
-    - [The Beginner’s Guide to Nano](http://www.howtogeek.com/howto/42980/the-beginners-guide-to-nano-the-linux-command-line-text-editor/)
 + Change the following:
 
 ```

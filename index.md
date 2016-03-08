@@ -2,7 +2,7 @@
 title: Raspberry Pi Projects
 subtitle: Documentation
 author: Gary Dalton
-date: 5 March 2016
+date: 6 March 2016
 license: Creative Commons BY-SA
 github:
   user: gary-dalton
@@ -22,7 +22,8 @@ tags: rpi, raspberrypi, guide, howto
 - [RPi Desktop Mods](rpi_gui_changes.html), Changes to the packages and defaults of the full Raspian
 - [Core Pi v2](core_pi_v2.html), Pi as a wifi bridge providing safe subnet to wifi and Ethernet
 - [RPi Voice Recognition and Command](rpi_vr_command.html)
-- [Beginner Guide via Core Pi v2](beginner_guide_via_core_pi_v2.html), This guides a beginner to perform an initial setup of a Raspberry Pi.
+- [Beginner Guide via Core Pi v2](beginner_guide_via_core_pi_v2.html), This guides a beginner to perform an initial setup of a Raspberry Pi
+- [RPi NGINX Webserver](rpi_nginx.html), Using the NGINX to serve static pages
 
 # How-tos
 
@@ -30,11 +31,14 @@ tags: rpi, raspberrypi, guide, howto
 - [Using the WiFi Access Point with captured portal](rpi_captured_portal.html)
 - [Using CorePi v2](using_core_pi_v2.html)
 - [Resize the SD image](resize_sd_image.html), Using GParted to shrink the disk size
+- [SSH Hints and Advanced](ssh.html), Advanced usage with hints and tricks for leveraging SSH
+- [RPi NetworkManager CLI](rpi_nmcli.html), the command line interface, CLI, to NetworkManager
+- [RPi iptables](rpi_iptables.html), Using iptables for firewall with various configuration examples
 
 # Discussions
 
 - [Which Wifi USB adapters](rpi_which_wifi_usb.html)
-- [SSH Hints](ssh_hints.html), hints and tricks for better leveraging SSH on the various platforms
+
 
 ## Deprecated
 

@@ -11,7 +11,7 @@ github:
 framework: minimal
 css: stylesheets/stylesheet.css
 pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html core_pi_v2.md -o core_pi_v2.html
-tags: rpi, guide, router, iot, accesspoint
+tags: rpi, guide, router, iot, accesspoint, corepi, nginx
 ---
 [Home](index.html)
 
@@ -66,7 +66,9 @@ Start with a Raspberry Pi image. This is an image saved after following the [RPi
 8. [Shutdown and reconfigure](#8)
 9. [Connect and test.](#9)
 10. [Verify security](#10)
-11. [Conclusion](#Conclusion).
+11. [Install NGINX](#11)
+12. [Other packages](#12)
+13. [Conclusion](#Conclusion).
 
 # Procedures for wireless router
 
@@ -141,10 +143,10 @@ Apt-Cacher-NG is a caching proxy server (or apt proxy) for Debian based distribu
     - Listen only on IPv4, add `BindAddress: 0.0.0.0`
     - Enable the pid file, `PidFile: /var/run/apt-cacher-ng/pid`
 + Restart, `sudo service apt-cacher-ng restart`
-+ Set the current machine to use the cache. Here, the assigned IP is use. It will be changed later after a static IP is assigned to corepi.
++ Set the current machine to use the cache. Here, the assigned IP is used. It will be changed later after a static IP is assigned to corepi.
     - Get the inet address from `ifconfig`
     - `sudo nano /etc/apt/apt.conf.d/02proxy`
-    - Add _Acquire::http { Proxy "http://inet_address:3142"; };_
+    - Add _Acquire::http { Proxy "http://inetaddress:3142"; };_
 
 ### Test Apt-Cacher-NG
 
@@ -163,7 +165,7 @@ Apt-Cacher-NG is now prepared to serve cached apt-get requests. Clients must sti
 
 + Install with, `sudo apt-get install isc-dhcp-server`
 + `sudo nano /etc/default/isc-dhcp-server`
-+ `INTERFACES="eth0"`
+    - `INTERFACES="eth0"`
 + Now edit the DHCP configuration file, `sudo nano /etc/dhcp/dhcpd.conf`
 
 ```
@@ -187,6 +189,7 @@ subnet 192.168.84.0 netmask 255.255.255.0 {
 + Add
 
 ```
+auto eth0
 iface eth0 inet static
   address 192.168.84.1
   netmask 255.255.255.0
@@ -197,101 +200,10 @@ iface eth0 inet static
 + Enable IP Forwarding
     - `sudo nano /etc/sysctl.conf` at bottom add _net.ipv4.ip_forward=1_
     - `sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"`
-+ If you have not already completed [Firewall with iptables]((rpi_initial_setup.html#10), do so now
-+ Update iptables rules, `sudo nano /etc/iptables.test.rules`
-+ Update the file to this:
++ If you have not already completed [Persistant iptables](rpi_iptables.html#2), do so now
++ **Required** View [CorePi rule set]([Persistant iptables](rpi_iptables.html#4)) to complete iptables setup
 
-```
-*nat
 
-# Allow Access Point NAT
--A POSTROUTING -o wlan0 -j MASQUERADE
-
-# For Coder access
-#-A PREROUTING -p tcp -m tcp --dport 8080 -j REDIRECT --to-ports 8080
-#-A PREROUTING -p tcp -m tcp --dport 8081 -j REDIRECT --to-ports 8081
-
-# Force all SSH to stay on Core Pi
--A PREROUTING -p tcp -m tcp --dport 22 -j REDIRECT --to-ports 22
-
-COMMIT
-
-*filter
-
-# Allows all loopback (lo0) traffic and drop all traffic to 127/8 that
-# doesn't use lo0
--A INPUT -i lo -j ACCEPT
--A INPUT ! -i lo -d 127.0.0.0/8 -j REJECT
-
-# Accepts all established inbound connections
-#-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
--A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
-
-# Allows all outbound traffic
-# You could modify this to only allow certain traffic
--A OUTPUT -j ACCEPT
-
-# Allows HTTP and HTTPS connections from anywhere (the normal ports
-# for websites)
--A INPUT -p tcp --dport 80 -j ACCEPT
--A INPUT -p tcp --dport 443 -j ACCEPT
-# Coder
-#-A INPUT -p tcp --dport 8080 -j ACCEPT
-#-A INPUT -p tcp --dport 8081 -j ACCEPT
-
-# Allows SSH connections
-# The --dport number is the same as in /etc/ssh/sshd_config
--A INPUT -p tcp -m state --state NEW --dport 22 -j ACCEPT
-
-# Limit SSH abuse
-# The first rule records the IP address of each new attempt to access
-# port 22 using the recent module. The second rule checks to see if that
-# IP address has attempted to connect 4 or more times within the last
-# 60 seconds, and if not then the packet is accepted.
--A INPUT -p tcp -m state --state NEW -m recent --dport 22 --set --name ssh --rsource
--A INPUT -p tcp -m state --state NEW -m recent --dport 22 ! --rcheck --seconds 60 --hitcount 4 --name ssh --rsource -j ACCEPT
-
-# Allows vncserver connections. Uncomment this to allow VNC. Again, this is
-# best restricted to certain IPs
--A INPUT -p tcp -m state --state NEW --dport 5901 -j ACCEPT
-
-# Allow Zeroconf connections. (Bonjour and Avahi)
-#-A INPUT -p udp -m state --state NEW --dport 5353 -j ACCEPT
-
-# Allow ping
-# note that blocking other types of icmp packets is considered a bad idea
-# by some
-#  remove -m icmp --icmp-type 8 from this line to allow all kinds of icmp:
-#  https://security.stackexchange.com/questions/22711
--A INPUT -p icmp -m icmp --icmp-type 8 -j ACCEPT
-
-# Allow forwarded from wlan1 to permit NAT and Access Point
-#-A FORWARD -i wlan0 -o wlan1 -m state --state RELATED,ESTABLISHED -j ACCEPT
-#-A FORWARD -i wlan1 -o wlan0 -j ACCEPT
-
-# Allow forwarded from eth0 to permit NAT and Core Pi
--A FORWARD -i wlan0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
--A FORWARD -i eth0 -o wlan0 -j ACCEPT
-
-# log iptables denied calls (access via 'dmesg' command)
--A INPUT -m limit --limit 5/min -j LOG --log-prefix "iptables denied: " --log-level 7
-
-# Reject all other inbound - default deny unless explicitly allowed policy:
--A INPUT -j DROP
--A FORWARD -j DROP
-
-COMMIT
-```
-
-+ Load the rules, `sudo iptables-restore < /etc/iptables.test.rules`
-+ Verify rules, `sudo iptables -L`, `sudo iptables -S`, `sudo iptables -S -t nat`
-+ Save rules for booting,
-
-```
-sudo -i
-iptables-save > /etc/iptables.up.rules
-exit
-```
 ## <a name="8"></a>Shutdown and reconfigure
 
 Now the Core Pi v2 must be shutdown and physically reconfigured. If some of the pi settings are incorrect, you may have to connect to it using a console cable unless the wifi automatically connects to an access point.
@@ -301,9 +213,16 @@ Now the Core Pi v2 must be shutdown and physically reconfigured. If some of the 
 + Connect the Ethernet cable from the pi to the WAN port on the router
 + Boot up the pi
 
+### Reset local Apt-Cacher-NG
+
+Set the current machine to use the cache. Now we will use the static IP of _192.168.84.1_.
+
++ `sudo nano /etc/apt/apt.conf.d/02proxy`
++ Edit to _Acquire::http { Proxy "http://192.168.84.1:3142"; };_
+
 ## <a name="9"></a>Connect and Test
 
-Connect to the SSID corpiv2 and browse to the [router information page](http://192.168.42.1/Info.htm). You should notice a WAN IP in the 192.168.84.0/24 subnet and LAN IP of 192.168.42.1. The IP address of the pi is _192.168.84.1_.
+Connect to the SSID corepiv2 and browse to the [router information page](http://192.168.42.1/Info.htm). You should notice a WAN IP in the 192.168.84.0/24 subnet and LAN IP of 192.168.42.1. The IP address of the pi is _192.168.84.1_.
 
 + Connect to the pi using an SSH session with _192.168.84.1_
     - If this fails, check your network connections. If the wifi to corepiv2 is not the only connection then maybe the OS is trying to route through the other connection. Disconnect the other connections.
@@ -323,6 +242,17 @@ Core Pi may be accessed as a via point for novices. Novices should not gain shel
 + Set a strong password for VNC
     - If you need to change the VNC password, simply `rm .vnc/passwd`
 + Once the pi is connedted to wifi, `vncserver -kill :1`
+
+
+## <a name="11"></a>Install NGINX
+
+Often, it is convenient to run an efficient web server to serve static pages. The static pages can include these guides or other references and examples.
+
++ Install links to test proper installation, `sudo apt-get install links`
++ View the [RPi NGINX Webserver](rpi_nginx.html) guide
+
+
+## <a name="12"></a>Other packages
 
 # <a name="Conclusion"></a>Conclusion
 

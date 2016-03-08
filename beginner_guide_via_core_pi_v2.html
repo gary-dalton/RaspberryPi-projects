@@ -8,8 +8,7 @@
     <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
 
           <meta name="author" content="Gary Dalton">
-              <meta name="dcterms.date" content="2016-02-25">
-          <title>Beginner Guide via Core Pi v2</title>
+              <title>Beginner Guide via Core Pi v2</title>
       <style type="text/css">code{white-space: pre;}</style>
       <!--[if lt IE 9]>
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -168,11 +167,25 @@ NaCl plugin exited with status code 255.
 <h2><a name="4"></a>Update and upgrade</h2>
 <p><em>Time to complete is about 5 minutes. This does not include the amount of time required to upgrade. Upgrading your system may take an hour with a slow connection and many upgrades.</em></p>
 <p>It is important to keep your pi's software up to date. This is commonly done using apt-get. The main keywords to know are <em>update</em>, <em>upgrade</em>, <em>install</em>, and <em>remove</em>. So let's make the system current.</p>
+<section id="use-the-corepi-cache" class="level3">
+<h3>Use the corepi cache</h3>
+<p>The corepi system uses a cache to locally connected pies. A single line added to a configuration file makes this available.</p>
+<ul>
+<li><code>sudo nano /etc/apt/apt.conf.d/02proxy</code>
+<ul>
+<li>Learn about <em>nano</em>, the editor used to write the configuration file. <a href="http://www.howtogeek.com/howto/42980/the-beginners-guide-to-nano-the-linux-command-line-text-editor/">The Beginner’s Guide to Nano</a></li>
+</ul></li>
+<li>Add the line <code>Acquire::http { Proxy &quot;http://192.168.84.1:3142&quot;; };</code></li>
+</ul>
+</section>
+<section id="upgrade" class="level3">
+<h3>Upgrade</h3>
 <ul>
 <li>Update the packages list, <code>sudo apt-get update</code>.</li>
 <li>Upgrade software packages to the current version, <code>sudo apt-get upgrade</code>.</li>
 <li>Relax, this might take a while. Maybe grab lunch.</li>
 </ul>
+</section>
 </section>
 <section id="improving-security" class="level2">
 <h2><a name="5"></a>Improving security</h2>
@@ -193,10 +206,7 @@ NaCl plugin exited with status code 255.
 <p><em>Time to complete is about 5 minutes.</em></p>
 <p>There are a few SSHd configuration changes that will improve SSH security. Since SSHd is likely a service you do want to provide and it gives shell access, this is important.</p>
 <ul>
-<li>Edit the configuration file, <code>sudo nano /etc/ssh/sshd_config</code>
-<ul>
-<li><a href="http://www.howtogeek.com/howto/42980/the-beginners-guide-to-nano-the-linux-command-line-text-editor/">The Beginner’s Guide to Nano</a></li>
-</ul></li>
+<li>Edit the configuration file, <code>sudo nano /etc/ssh/sshd_config</code></li>
 <li>Change the following:</li>
 </ul>
 <pre><code>PermitRootLogin no</code></pre>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <title>RPi NGINX Webserver</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">RPi NGINX Webserver</h1>
+                        <h3 id="project_tagline">Using the NGINX to serve static pages</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <p><a href="index.html">Home</a></p>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>NGINX is an open source web server and reverse proxy that excels at large-scale web integration, application security, and web acceleration.</p>
+</section>
+<section id="next-up" class="level1">
+<h1>Next up?</h1>
+<p>After reading this guide, you may be interested in reading:</p>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<ol type="1">
+<li><a href="#1">Install NGINX</a></li>
+<li><a href="#2">Serve static content</a></li>
+<li><a href="#Conclusion">Conclusion</a>.</li>
+</ol>
+</section>
+<section id="procedures" class="level1">
+<h1>Procedures</h1>
+<section id="install-nginx" class="level2">
+<h2><a name="1"></a>Install NGINX</h2>
+<ul>
+<li><code>sudo apt-get install nginx</code></li>
+<li>Is it running? <code>sudo service nginx status</code></li>
+<li>Check if it is available,
+<ul>
+<li>locally, <code>links http://localhost/</code></li>
+<li>other device, browse to <a href="http://192.168.84.1" class="uri">http://192.168.84.1</a></li>
+<li>should see the <em>Welcome to nginx</em> page</li>
+</ul></li>
+</ul>
+</section>
+<section id="serve-static-content" class="level2">
+<h2><a name="2"></a>Serve static content</h2>
+<p>Your pi is all set to serve static content. The location of the files is <strong>/var/www/html</strong>.</p>
+<ul>
+<li><code>sudo nano /etc/nginx/sites-available/default</code>
+<ul>
+<li>Just after <em>root /var/www/html;</em> add the line
+<ul>
+<li><code>autoindex on;</code></li>
+</ul></li>
+</ul></li>
+<li>Add these Raspberry Pi guides
+<ul>
+<li><code>cd /var/www/html</code></li>
+<li><code>sudo git clone --branch gh-pages https://github.com/gary-dalton/RaspberryPi-projects.git rpi</code></li>
+</ul></li>
+<li>Download other resources
+<ul>
+<li><code>mkdir resources</code></li>
+<li><code>cd resources</code></li>
+<li><code>sudo links https://www.ualberta.ca/~enoch/Readings/The_Art_Of_War.pdf</code></li>
+<li><code>sudo wget &quot;http://www.hackerhighschool.org/lessons/HHS_en1_Being_a_Hacker.v2.pdf&quot;</code></li>
+</ul></li>
+</ul>
+</section>
+</section>
+<section id="save-the-image-to-a-file" class="level1">
+<h1><a name="Conclusion"></a>Save the image to a file</h1>
+<p>Now that you have spent all this time getting your Raspberry Pi set up just so, <strong>save it to an image</strong> for easy reuse. You will still have to change things like usernames, passwords, and hostnames.</p>
+<p>Instead of writing a file image to the MicroSD, use the same software to read the MicroSD to a file image. Then when you are ready to spin up your next pi, it will be as easy as, well, pie.</p>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

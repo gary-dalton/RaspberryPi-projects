@@ -14,6 +14,11 @@ pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.h
 tags: rpi, raspberrypi, guide, howto
 ---
 
+# Beginner
+
+- [Beginner Guide via Core Pi v2](beginner_guide_via_core_pi_v2.html), This guides a beginner to perform an initial setup of a Raspberry Pi
+
+
 # Guides
 
 - [RPi Initial Setup Guide](rpi_initial_setup.html), Raspberry Pi - Image and Initial Setup
@@ -22,7 +27,6 @@ tags: rpi, raspberrypi, guide, howto
 - [RPi Desktop Mods](rpi_gui_changes.html), Changes to the packages and defaults of the full Raspian
 - [Core Pi v2](core_pi_v2.html), Pi as a wifi bridge providing safe subnet to wifi and Ethernet
 - [RPi Voice Recognition and Command](rpi_vr_command.html)
-- [Beginner Guide via Core Pi v2](beginner_guide_via_core_pi_v2.html), This guides a beginner to perform an initial setup of a Raspberry Pi
 - [RPi NGINX Webserver](rpi_nginx.html), Using the NGINX to serve static pages
 
 # How-tos

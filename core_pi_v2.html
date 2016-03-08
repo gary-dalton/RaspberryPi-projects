@@ -86,6 +86,8 @@
 <li><a href="#8">Shutdown and reconfigure</a></li>
 <li><a href="#9">Connect and test.</a></li>
 <li><a href="#10">Verify security</a></li>
+<li><a href="#11">Install NGINX</a></li>
+<li><a href="#12">Other packages</a></li>
 <li><a href="#Conclusion">Conclusion</a>.</li>
 </ol>
 </section>
@@ -216,7 +218,8 @@ subnet 192.168.84.0 netmask 255.255.255.0 {
 <li>Comment <code>#iface eth0 inet manual</code></li>
 <li>Add</li>
 </ul>
-<pre><code>iface eth0 inet static
+<pre><code>auto eth0
+iface eth0 inet static
   address 192.168.84.1
   netmask 255.255.255.0</code></pre>
 </section>
@@ -277,6 +280,17 @@ subnet 192.168.84.0 netmask 255.255.255.0 {
 </ul></li>
 <li>Once the pi is connedted to wifi, <code>vncserver -kill :1</code></li>
 </ul>
+</section>
+<section id="install-nginx" class="level2">
+<h2><a name="11"></a>Install NGINX</h2>
+<p>Often, it is convenient to run an efficient web server to serve static pages. The static pages can include these guides or other references and examples.</p>
+<ul>
+<li>Install links to test proper installation, <code>sudo apt-get install links</code></li>
+<li>View the <a href="rpi_nginx.html">RPi NGINX Webserver</a> guide</li>
+</ul>
+</section>
+<section id="other-packages" class="level2">
+<h2><a name="12"></a>Other packages</h2>
 </section>
 </section>
 <section id="conclusion" class="level1">

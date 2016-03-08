@@ -129,7 +129,7 @@ You will now see a prompt to enter a password. The password is _raspberry_. If i
     NaCl plugin exited with status code 255.
     (R)econnect, (C)hoose another connection, or E(x)it?
 
-talk to your coach. Your coach may choose to follow this [SSH hint](ssh_hints.html#Chrome_01).
+talk to your coach. Your coach may choose to follow this [SSH hint](ssh.html#Chrome_01).
 
 ## <a name="3"></a>Run first boot setup
 

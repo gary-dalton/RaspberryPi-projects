@@ -11,7 +11,7 @@ github:
 framework: minimal
 css: stylesheets/stylesheet.css
 pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html rpi_nginx.md -o rpi_nginx.html
-tags: rpi, setup, guide, secure
+tags: rpi, setup, guide, nginx, webserver
 ---
 [Home](index.html)
 

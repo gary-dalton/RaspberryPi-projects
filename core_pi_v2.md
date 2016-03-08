@@ -11,7 +11,7 @@ github:
 framework: minimal
 css: stylesheets/stylesheet.css
 pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html core_pi_v2.md -o core_pi_v2.html
-tags: rpi, guide, router, iot, accesspoint, corepi, nginx
+tags: rpi, guide, router, iot, accesspoint, corepi
 ---
 [Home](index.html)
 

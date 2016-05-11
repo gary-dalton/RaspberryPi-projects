@@ -49,7 +49,7 @@ Some useful information is:
 The steps to follow for easy setup are:
 
 1. [Attach your pi](#1)
-2. [Connect to Core Pi](#2)
+2. [Connect to your Pi](#2)
 3. [Run first boot setup](#3)
 4. [Update and upgrade](#4)
 5. [Improving security](#5)
@@ -77,7 +77,7 @@ Use the Ethernet cable to connect your pi to the Ethernet switch. Provide power 
 
 Your pi is now attached.
 
-## <a name="2"></a>Connect to Core Pi
+## <a name="2"></a>Connect to your Pi
 
 _Time to complete is about 10 minutes._
 

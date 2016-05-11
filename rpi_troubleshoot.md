@@ -30,7 +30,7 @@ Sometimes not everything goes smoothly -- something just goes awry. It might be 
 + Document all your changes
 + Be fearless
 
-## <a name=""></a>Hiss from the headphone output of the pi
+## <a name="1"></a>Hiss from the headphone output of the pi
 
 This is especially noticeable when using Sonic Pi.
 

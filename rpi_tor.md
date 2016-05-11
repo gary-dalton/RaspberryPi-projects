@@ -83,7 +83,7 @@ Follow the [Adafruit Guide](https://learn.adafruit.com/adafruits-raspberry-pi-le
 
 ## <a name="4"></a>Adding a real time clock
 
-Tor network require accurate time keeping and, for anonymity, time keeping over the Internet should be disabled. Follow the [PiHut Guide](Adding a Real Time Clock to your Raspberry Pi).
+Tor network require accurate time keeping and, for anonymity, time keeping over the Internet should be disabled. Follow the [PiHut Guide](https://thepihut.com/blogs/raspberry-pi-tutorials/17209332-adding-a-real-time-clock-to-your-raspberry-pi).
 
 ## <a name="5"></a>Disable Internet date checking
 

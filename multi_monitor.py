@@ -1,9 +1,9 @@
-import smbus
 import os
 import RPi.GPIO as GPIO
 import time
-import random
 import boto3
+import smbus
+import datetime
 
 # Pins
 LED_FLASH_LOW = 40
@@ -22,32 +22,39 @@ GPIO.setup(leds, GPIO.OUT)
 
 # Setup general inputs
 
-
-#Use button to switch sensor, switch monitoring, or shutdown
-GPIO.setup(BUTTON, GPIO.IN, pull_up_down = GPIO.PUD_UP)
-GPIO.add_event_detect(BUTTON, GPIO.RISING, callback=button_press_switch, bouncetime=200)
-
 BUTTON_SHUTDOWN = 4
 BUTTON_MONITOR_SWITCH = 2
 BUTTON_SENSOR_SWITCH = 1
 BUTTON_NONE = 0
 SENSOR_TEMPERATURE = 0
 SENSOR_LIGHT = 1
+button_status = 0
+sensors = [SENSOR_LIGHT,  SENSOR_TEMPERATURE]
+
+# Setup the AWS SNS client
+client =  boto3.client('sns')
+endpoint = 'arn:aws:sns:us-east-1:796928799269:ServerAlarms'
 
 ## FUNCTIONS
 
 ## Callback function from button pressed
-def button_press_switch(BUTTON):
-    pressed_time = time.monotonic()
-    while GPIO.input(BUTTON):
-        time.sleep(1)
-    pressed_time = time.monotonic() - pressed_time
-    if pressed_time < 3:
-        button_status = BUTTON_SENSOR_SWITCH
-    elif pressed_time < 6:
+def button_press_switch(channel):
+    global button_status
+    GPIO. remove_event_detect(channel)
+    print('Button pressed')
+    pressed_time = datetime.datetime.now()
+    while not GPIO.input(channel):
+        time.sleep(.5)
+    dif = datetime.datetime.now() - pressed_time
+    pressed_time = dif.seconds
+    if pressed_time > 6:
+        button_status = BUTTON_SHUTDOWN
+    elif pressed_time > 2:
         button_status = BUTTON_MONITOR_SWITCH
     else:
-        button_status = BUTTON_SHUTDOWN
+        button_status = BUTTON_SENSOR_SWITCH
+    GPIO.add_event_detect(channel, GPIO.FALLING, callback=button_press_switch,  bouncetime=200)
+    print(button_status)
 ##
 
 ##
@@ -61,7 +68,7 @@ def getTemp(address):
     byte_tmsb = bus.read_byte_data(address,0x11)
     byte_tlsb = bus.read_byte_data(address,0x12)
     tinteger = (byte_tmsb & 0x7f) + ((byte_tmsb & 0x80) >> 7) * -2**8
-    tdecimal = (byte_tmsb >> 7) * 2**(-1) + ((byte_tmsb & 0x40) >> 6) * 2**(-2)
+    tdecimal = (byte_tlsb >> 7) * 2**(-1) + ((byte_tlsb & 0x40) >> 6) * 2**(-2)
     return tinteger + tdecimal
 ##
 
@@ -92,40 +99,49 @@ def RCtime (RCpin):
 ##
 
 ##
-# Release RTC 3231
-os.system('sudo rmmod rtc_ds1307')
+#Use button to switch sensor, switch monitoring, or shutdown
+GPIO.setup(BUTTON, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+GPIO.add_event_detect(BUTTON, GPIO.FALLING, callback=button_press_switch, bouncetime=200)
 
 # Setup RTC 3231 for temperature reading
+os.system('sudo rmmod rtc_ds1307')
 bus = smbus.SMBus(1)
 address = 0x68
 
 # Set some flags
-button_status = 0
 monitor_latch = True
-sensor_select = SENSOR_LIGHT
+sensor_select = sensors[0]
+counter = 0
 
 # Main loop
-while button_status < BUTTON_SHUTDOWN:
+while button_status < BUTTON_SHUTDOWN and counter < 10:
+    print ("counter = ",  counter)
+    print("button_status = ",  button_status)
+    print("sensor_select = ",  sensor_select)
     if button_status == BUTTON_MONITOR_SWITCH:
-        monitor_latch = !monitor_latch
+        monitor_latch = not monitor_latch
+    if button_status == BUTTON_SENSOR_SWITCH:
+        sensor_select = sensor_select[1:] + sensor_select[:1]
     if monitor_latch:
         if sensor_select == SENSOR_TEMPERATURE:
-            pass
+            Celsius = getTemp(address)
+            Fahrenheit = 9.0/5.0 * Celsius + 32
+            print (Fahrenheit, "*F /", Celsius, "*C")
         elif sensor_select == SENSOR_LIGHT:
             GPIO.output(leds, GPIO.LOW)
             GPIO.output(LED_GREEN, GPIO.HIGH)
             print(RCtime (LDR))
-            time.sleep(5)
         else:
-            #default
-            sensor_select = SENSOR_LIGHT
+            print("Error in sensor selection.")
     else:
+        print("Stop monitoring")
         break
-        time.sleep(2)
+    time.sleep(2)
     button_status = BUTTON_NONE
+    counter += 1
 
 #Run cleanup routines
-print "LEDs off"
+print ("LEDs off")
 GPIO.output(leds, GPIO.LOW)
 GPIO.cleanup()
 os.system('sudo modprobe rtc_ds1307')

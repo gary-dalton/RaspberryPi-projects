@@ -36,9 +36,9 @@ def convTemp(address):
     if byte_control & 32 == 0:
         bus.write_byte_data(address, 0x0E, byte_control|32)
     byte_control = bus.read_byte_data(address,0x0E)
-	while byte_control & 32 != 0:
-		time.sleep(1)
-		byte_control = bus.read_byte_data(address,0x0E)
+    while byte_control & 32 != 0:
+        time.sleep(1)
+        byte_control = bus.read_byte_data(address,0x0E)
     return True
 
 # Setup the AWS SNS client
@@ -111,8 +111,8 @@ while not GPIO.event_detected(BUTTON) and counter < 100:
                 Message='Temperature Critical! Meltdown Imminent')
             alert_critical_clear = False
 
-	counter = counter + 1
-	time.sleep(4)
+    counter = counter + 1
+    time.sleep(4)
 
 #Run cleanup routines
 print "LEDs off"

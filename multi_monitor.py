@@ -38,18 +38,18 @@ SENSOR_LIGHT = 1
 
 ## Callback function from button pressed
 def button_press_switch(BUTTON):
-	pressed_time = time.monotonic()
+    pressed_time = time.monotonic()
     while GPIO.input(BUTTON):
         time.sleep(1)
     pressed_time = time.monotonic() - pressed_time
-	if pressed_time < 3:
-		button_status = BUTTON_SENSOR_SWITCH
-	elif pressed_time < 6:
-		button_status = BUTTON_MONITOR_SWITCH
-	else:
-		button_status = BUTTON_SHUTDOWN
+    if pressed_time < 3:
+        button_status = BUTTON_SENSOR_SWITCH
+    elif pressed_time < 6:
+        button_status = BUTTON_MONITOR_SWITCH
+    else:
+        button_status = BUTTON_SHUTDOWN
 ##
-		
+
 ##
 def shutdown():  
     os.system("sudo shutdown -h now")
@@ -71,9 +71,9 @@ def convTemp(address):
     if byte_control & 32 == 0:
         bus.write_byte_data(address, 0x0E, byte_control|32)
     byte_control = bus.read_byte_data(address,0x0E)
-	while byte_control & 32 != 0:
-		time.sleep(1)
-		byte_control = bus.read_byte_data(address,0x0E)
+    while byte_control & 32 != 0:
+        time.sleep(1)
+        byte_control = bus.read_byte_data(address,0x0E)
     return True
 ##
 
@@ -106,23 +106,23 @@ sensor_select = SENSOR_LIGHT
 
 # Main loop
 while button_status < BUTTON_SHUTDOWN:
-	if button_status == BUTTON_MONITOR_SWITCH:
-		monitor_latch = !monitor_latch
-	if monitor_latch:
-		if sensor_select == SENSOR_TEMPERATURE:
-			pass
-		elif sensor_select == SENSOR_LIGHT:
-			GPIO.output(leds, GPIO.LOW)
+    if button_status == BUTTON_MONITOR_SWITCH:
+        monitor_latch = !monitor_latch
+    if monitor_latch:
+        if sensor_select == SENSOR_TEMPERATURE:
+            pass
+        elif sensor_select == SENSOR_LIGHT:
+            GPIO.output(leds, GPIO.LOW)
             GPIO.output(LED_GREEN, GPIO.HIGH)
             print(RCtime (LDR))
             time.sleep(5)
         else:
             #default
             sensor_select = SENSOR_LIGHT
-	else:
-		break
+    else:
+        break
         time.sleep(2)
-	button_status = BUTTON_NONE
+    button_status = BUTTON_NONE
 
 #Run cleanup routines
 print "LEDs off"
@@ -130,6 +130,6 @@ GPIO.output(leds, GPIO.LOW)
 GPIO.cleanup()
 os.system('sudo modprobe rtc_ds1307')
 
-# Really should only get here to shutdown	
+# Really should only get here to shutdown
 if button_status == BUTTON_SHUTDOWN:
-	shutdown()
+    shutdown()

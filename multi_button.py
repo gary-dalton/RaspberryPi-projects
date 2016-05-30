@@ -165,6 +165,7 @@ while button_status < BUTTON_SHUTDOWN and counter < 1000:
     else:
         logging.info("Monitoring paused")
         GPIO.output(leds, GPIO.LOW)
+        button_status = BUTTON_NONE
         while not monitor_latch:
             if button_status == BUTTON_MONITOR_SWITCH:
                 monitor_latch = not monitor_latch

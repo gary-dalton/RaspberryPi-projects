@@ -123,14 +123,14 @@ while button_status < BUTTON_SHUTDOWN and counter < 10:
         sensor_select = sensor_select[1:] + sensor_select[:1]
     if monitor_latch:
         if sensor_select == SENSOR_TEMPERATURE:
-            #Celsius = getTemp(address)
+            #Celsius = get_temperature(address)
             #Fahrenheit = 9.0/5.0 * Celsius + 32
             #print (Fahrenheit, "*F /", Celsius, "*C")
             print("Temperature sensor")
         elif sensor_select == SENSOR_LIGHT:
             GPIO.output(leds, GPIO.LOW)
             GPIO.output(LED_GREEN, GPIO.HIGH)
-            #print(RCtime (LDR))
+            #print(rc_time (LDR))
             print("Light sensor")
         else:
             print("Error in sensor selection.")

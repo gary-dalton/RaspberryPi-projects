@@ -70,6 +70,7 @@ def button_press_switch(channel):
     dif = datetime.datetime.now() - pressed_time
     pressed_time = dif.seconds
     if pressed_time > 6:
+        shutdown()
         button_status = BUTTON_SHUTDOWN
     elif pressed_time > 2:
         button_status = BUTTON_MONITOR_SWITCH
@@ -80,7 +81,17 @@ def button_press_switch(channel):
 ##
 
 ##
-def shutdown():  
+#Run cleanup routines
+def clean_up():
+    logging.info("Cleaning up")
+    GPIO.output(leds, GPIO.LOW)
+    GPIO.cleanup()
+    os.system('sudo modprobe rtc_ds1307')
+##
+
+##
+def shutdown():
+    clean_up()
     logging.info("Shutdowning down")
     os.system("sudo shutdown -h now")
 ##
@@ -162,8 +173,4 @@ while button_status < BUTTON_SHUTDOWN and counter < 1000:
     counter +=1
     time.sleep(120)
 
-#Run cleanup routines
-logging.info("Cleaning up")
-GPIO.output(leds, GPIO.LOW)
-GPIO.cleanup()
-os.system('sudo modprobe rtc_ds1307')
+clean_up()

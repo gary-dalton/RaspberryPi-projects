@@ -164,6 +164,7 @@ while button_status < BUTTON_SHUTDOWN and counter < 1000:
             logging.warning("No sensor selected")
     else:
         logging.info("Monitoring paused")
+        GPIO.output(leds, GPIO.LOW)
         while not monitor_latch:
             if button_status == BUTTON_MONITOR_SWITCH:
                 monitor_latch = not monitor_latch

@@ -28,6 +28,8 @@ tags: rpi, raspberrypi, guide, howto
 - [Core Pi v2](core_pi_v2.html), Pi as a wifi bridge providing safe subnet to wifi and Ethernet
 - [RPi Voice Recognition and Command](rpi_vr_command.html)
 - [RPi NGINX Webserver](rpi_nginx.html), Using the NGINX to serve static pages
+- [RTC DS3231 on the Raspberry Pi](rpi_RTCds3231), Hardware clock, temperature, and alarms
+- [Basic GPIO on the Raspberry Pi](rpi_gpio.html), I/O, interrupts, and notifications
 
 # How-tos
 

@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <meta name="dcterms.date" content="2016-05-15">
+          <title>RTC DS3231 on the Raspberry Pi</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">RTC DS3231 on the Raspberry Pi</h1>
+                        <h3 id="project_tagline">Hardware clock, temperature, and alarms</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <p><a href="index.html">Home</a></p>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>The DS3231M is a low-cost, extremely accurate I2C real-time clock (RTC) with temperature compensation. It incorporates a battery input and maintains accurate timekeeping when main power to the device is interrupted.</p>
+<p>The RTC maintains seconds, minutes, hours, day, date, month, and year information. The date at the end of the month is automatically adjusted for months with fewer than 31 days, including corrections for leap year. Two programmable time-of-day alarms and a programmable square-wave output are provided. Address and data are transferred through an I2C bus.</p>
+</section>
+<section id="next-up" class="level1">
+<h1>Next up?</h1>
+<p>After reading this guide, you may be interested in reading:</p>
+<ul>
+<li><a href="rpi_gpio.html">Basic GPIO on the Raspberry Pi</a></li>
+</ul>
+</section>
+<section id="parts-list" class="level1">
+<h1>Parts List</h1>
+<ul>
+<li>Raspberry Pi 2</li>
+<li>MicroSD card</li>
+<li><a href="http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&amp;field-keywords=ds3231">DS3231M RTC Module</a></li>
+</ul>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>This guide assumes you have an installed and functioning Raspberry Pi. If not please see the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a>. Here, we cover:</p>
+<ul>
+<li>Using the DS3231M module as the RTC for a raspberry pi.
+<ul>
+<li>This allows correct timekeeping, even without an Internet connection, through power down cycles.</li>
+</ul></li>
+<li>Extracting valid ambient temperature readings from the RTC.
+<ul>
+<li>Internally, the temperature is stored in 2s-complement format in the address registers. The temperature is also only updated every 64 seconds or by setting a bit flag.</li>
+</ul></li>
+<li>Alarms and calendars will not be covered in this guide.
+<ul>
+<li>The DS3231 is very capable of calendar and interrupt alarms. These types of alarms are useful for many devices, such as microcontrollers, but not as useful for a microcomputer like the pi.</li>
+</ul></li>
+</ul>
+<p>Using the clock will be demonstrated using python and shell programming. This will include:</p>
+<ul>
+<li>Setting up I2C on the pi and addressing the RTC</li>
+<li>Upon boot, initializing and using the RTC for timekeeping</li>
+<li>Reading and setting the time</li>
+<li>Converting and reading the temperature using register addressing and bit logic</li>
+</ul>
+<p>The steps to follow are:</p>
+<ol type="1">
+<li><a href="#1">Connect the RTC</a></li>
+<li><a href="#2">Configure I2C on your Pi</a></li>
+<li><a href="#3">Load the clock at boot</a></li>
+<li><a href="#4">Set date and time</a></li>
+<li><a href="#5">Converting and reading the temperature</a></li>
+<li><a href="#Conclusion">Conclusion</a></li>
+<li><a href="#References">References</a></li>
+</ol>
+<section id="connect-the-rtc" class="level2">
+<h2><a name="1"></a>Connect the RTC</h2>
+<p><strong>WARNING: The pi must be powered down whenever you are connecting or disconnecting pins.</strong></p>
+<p>The RTC DS3231M has the following pinouts which should be connected as shown:</p>
+<ul>
+<li>32K - 32kHz Output, don't use unless you have a special need.</li>
+<li>SQW - Active-Low Interrupt or Square-Wave, not used for this guide. These are more useful for microcontrollers.</li>
+<li>SCL - Serial Clock Input, <strong>connect to SCL</strong></li>
+<li>SDA - Serial Data Input/Output, <strong>connect to SDA</strong></li>
+<li>VCC - Supply voltage, <strong>connect to 3.3V</strong>.</li>
+<li>GND - Ground, <strong>connect to ground</strong></li>
+</ul>
+<p>Refer to the following images of the RTC and the pi's GPIO pinouts.</p>
+<figure>
+<img src="images/rtc_front.jpg" alt="RTC DS3231M front" /><figcaption>RTC DS3231M front</figcaption>
+</figure>
+<figure>
+<img src="images/pi_gpio.jpg" alt="Pi GPIO pinouts" /><figcaption>Pi GPIO pinouts</figcaption>
+</figure>
+<figure>
+<img src="images/pi_rtc_bb.jpg" alt="RTC and pi connections" /><figcaption>RTC and pi connections</figcaption>
+</figure>
+</section>
+<section id="configure-i2c-on-your-pi" class="level2">
+<h2><a name="2"></a>Configure I2C on your Pi</h2>
+<p>Unless you have done so previously, I2C must be enabled on your pi.</p>
+<section id="install-the-utilities" class="level3">
+<h3>Install the utilities</h3>
+<ul>
+<li><code>sudo apt-get update</code></li>
+<li><code>sudo apt-get install python-smbus</code></li>
+<li><code>sudo apt-get install i2c-tools</code></li>
+</ul>
+</section>
+<section id="enable-kernel-support" class="level3">
+<h3>Enable kernel support</h3>
+<ul>
+<li><code>sudo raspi-config</code>.</li>
+<li>Choose <em>Advanced Options</em> then <em>I2C</em> and select <em>yes</em> to enable the interface.</li>
+</ul>
+</section>
+<section id="edit-the-module-file" class="level3">
+<h3>Edit the module file</h3>
+<ul>
+<li><code>sudo nano /etc/modules</code></li>
+<li>Add the following to the to the end of this file</li>
+</ul>
+<pre><code>i2c-bcm2708
+i2c-dev
+rtc-ds1307</code></pre>
+</section>
+<section id="test-the-bus" class="level3">
+<h3>Test the bus</h3>
+<p>Check your I2C bus with, <code>sudo i2cdetect -y 1</code>. The output should be similar to</p>
+<figure>
+<img src="images/i2cdetect.jpg" alt="i2cdetect output" /><figcaption>i2cdetect output</figcaption>
+</figure>
+</section>
+</section>
+<section id="load-the-clock-at-boot" class="level2">
+<h2><a name="3"></a>Load the clock at boot</h2>
+<ul>
+<li><code>sudo nano /etc/rc.local</code></li>
+<li>Add the following lines before <em>exit 0</em></li>
+</ul>
+<pre><code>echo ds1307 0x68 &gt; /sys/class/i2c-adapter/i2c-1/new_device
+hwclock -s</code></pre>
+<ul>
+<li>Reboot</li>
+</ul>
+</section>
+<section id="set-date-and-time" class="level2">
+<h2><a name="4"></a>Set date and time</h2>
+<p>When connected to the Internet, the pi automatically gets the date and time from time servers. These are quite accurate. With the command <code>hwclock -s</code> in rc.local, we have set the pi to override this time to match the RTC. This is fine once we have the correct time on the RTC. So let's set it to the correct time.</p>
+<ul>
+<li><code>sudo nptd -g -q</code> - set the pi's system time to Internet time</li>
+<li><code>date</code> - check the system time</li>
+<li><code>sudo hwclock -r</code> - check the date and time of the RTC</li>
+<li><code>sudo hwclock -w</code> - write the system time to the RTC</li>
+<li><code>sudo hwclock -s</code> - set the system time from the RTC</li>
+</ul>
+</section>
+<section id="converting-and-reading-the-temperature" class="level2">
+<h2><a name="5"></a>Converting and reading the temperature</h2>
+<p>The DS3231M has an operating temperature range of -45 C to 85 C. The RTC stores its temperature data in two registers. The upper 8 bits, representing an integer, are stored in two's complement form in register 11h. The lower 2 bits, representing the fractional portion, are in register 12h.</p>
+<p>The RTC automatically converts the temperature (updates the registers) every 64s. The maximum allowed by the chip is once every second. A convert may be forced by setting the CONV bit of the Control register (0Eh) to 1. Once the convert is completed, the CONV is set to 0 and the temperature may be read.</p>
+<p>The following python code is used to convert, read, and display the temperature.</p>
+<pre><code>## python
+
+import smbus
+import os
+
+# Release RTC 3231
+os.system(&#39;sudo rmmod rtc_ds1307&#39;)
+
+# Setup RTC 3231 for temperature reading
+bus = smbus.SMBus(1)
+address = 0x68
+CONV = 32
+
+# Force a conversion and wait until it completes
+def convTemp(address):
+    byte_control = bus.read_byte_data(address,0x0E)
+    if byte_control&amp;CONV == 0:
+        bus.write_byte_data(address, 0x0E, byte_control|CONV)
+    byte_control = bus.read_byte_data(address,0x0E)
+    while byte_control&amp;CONV != 0:
+        time.sleep(1)
+        byte_control = bus.read_byte_data(address,0x0E)
+    return True
+
+# Get temperature in degrees C
+def getTemp(address):
+    convTemp(address)
+    byte_tmsb = bus.read_byte_data(address,0x11)
+    byte_tlsb = bus.read_byte_data(address,0x12)
+    tinteger = (byte_tmsb &amp; 0x7f) + ((byte_tmsb &amp; 0x80) &gt;&gt; 7) * -2**8
+    tdecimal = (byte_tmsb &gt;&gt; 7) * 2**(-1) + ((byte_tmsb &amp; 0x40) &gt;&gt; 6) * 2**(-2)
+    return tinteger + tdecimal
+
+Celsius = getTemp(address)
+Fahrenheit = 9.0/5.0 * Celsius + 32
+print Fahrenheit, &quot;*F /&quot;, Celsius, &quot;*C&quot;
+</code></pre>
+</section>
+<section id="conclusion" class="level2">
+<h2><a name="Conclusion"></a>Conclusion</h2>
+<p>Your pi now as a battery backed, accurate RTC installed and working. This allows quality data-logging and other applications. Additionally, the temperature data from the RTC is available for your use. In <a href="rpi_gpio.html">Basic GPIO on the Raspberry Pi</a>, temperature data is used to light LEDs and send alerts.</p>
+</section>
+<section id="references" class="level2">
+<h2><a name="References"></a>References</h2>
+<section id="adding-rtc-to-i2c" class="level3">
+<h3>Adding RTC to I2C</h3>
+<ul>
+<li><a href="https://datasheets.maximintegrated.com/en/ds/DS3231M.pdf">Datasheet</a></li>
+<li><a href="http://www.raspberrypi-spy.co.uk/2015/05/adding-a-ds3231-real-time-clock-to-the-raspberry-pi/">Adding a DS3231 Real Time Clock To The Raspberry Pi</a></li>
+<li><a href="https://thepihut.com/blogs/raspberry-pi-tutorials/17209332-adding-a-real-time-clock-to-your-raspberry-pi">Adding a Real Time Clock to your Raspberry Pi</a></li>
+<li><a href="https://www.element14.com/community/community/raspberry-pi/blog/2012/07/19/what-time-is-it-adding-a-rtc-to-the-raspberry-pi-via-i2c">What time is it? How to add a RTC to the Raspberry Pi via I2C</a></li>
+<li><a href="https://learn.adafruit.com/adding-a-real-time-clock-to-raspberry-pi?view=all">Adding a Real Time Clock to Raspberry Pi - Adafruit</a></li>
+<li><a href="https://learn.sparkfun.com/tutorials/raspberry-pi-spi-and-i2c-tutorial">Raspberry Pi SPI and I2C Tutorial</a></li>
+</ul>
+</section>
+<section id="get-temperature-and-conversion" class="level3">
+<h3>Get temperature and conversion</h3>
+<ul>
+<li><a href="https://www.raspberrypi.org/forums/viewtopic.php?t=59808&amp;p=956491">Accessing DS3231 Temperature</a></li>
+<li><a href="http://notes.pitfall.org/ds3231-rtc-control-and-theory-with-the-bus-pirate.html">DS3231 RTC Control and Theory with the Bus Pirate</a></li>
+<li><a href="https://en.wikipedia.org/wiki/Two%27s_complement">Two's complement</a></li>
+</ul>
+</section>
+</section>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

@@ -162,6 +162,8 @@ while button_status < BUTTON_SHUTDOWN and counter < 1000:
             logging.debug("Light sensor")
         if sensor_selected == SENSOR_NONE:
             logging.warning("No sensor selected")
+        counter += 1
+        time.sleep(120)
     else:
         logging.info("Monitoring paused")
         GPIO.output(leds, GPIO.LOW)
@@ -171,8 +173,7 @@ while button_status < BUTTON_SHUTDOWN and counter < 1000:
                 monitor_latch = not monitor_latch
             time.sleep(5)
         logging.info("Monitoring restarted")
+        GPIO.output(LED_YELLOW, GPIO.HIGH)
     button_status = BUTTON_NONE
-    counter += 1
-    time.sleep(120)
 
 clean_up()

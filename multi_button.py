@@ -5,7 +5,7 @@
 import os
 import RPi.GPIO as GPIO
 import time
-import boto3
+#import boto3
 import smbus
 import datetime
 import logging
@@ -44,8 +44,8 @@ SENSOR_LIGHT = 4
 sensors = [SENSOR_ALL, SENSOR_TEMPERATURE, SENSOR_LIGHT, SENSOR_NONE]
 
 # Setup the AWS SNS client
-client = boto3.client('sns')
-endpoint = 'arn:aws:sns:us-east-1:796928799269:ServerAlarms'
+#client = boto3.client('sns')
+#endpoint = 'arn:aws:sns:us-east-1:796928799269:ServerAlarms'
 
 # Setup RTC 3231 for temperature reading
 os.system('sudo rmmod rtc_ds1307')

@@ -22,6 +22,7 @@ Sometimes not everything goes smoothly -- something just goes awry. It might be 
 # Simple fixes
 
 + [Hiss from the headphone output of the pi](#1)
++ [MC line drawing in PuTTY](#2)
 
 # Problem solving methods
 
@@ -37,3 +38,11 @@ This is especially noticeable when using Sonic Pi.
 + `sudo sh -c 'echo "disable_audio_dither=1" >> /boot/config.txt'`
     - [source](https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=85811)
     - [/boot/config settings](http://elinux.org/RPiconfig)
+
+## <a name="2"></a>MC line drawing in PuTTY
+
+Instead of neat lines in mc, you see unusual characters while connected in PuTTY. This requires a simple setting change in PuTTY.
+
++ Load your PuTTY configuration
++ Navigate to _Window > Translation_
++ Change the Remote character set to match the setting on the server. Often, this will be _UTF-8_

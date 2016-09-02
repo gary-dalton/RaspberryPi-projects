@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <title>Raspberry Pi 3 as a Simple WiFi Access Point</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">Raspberry Pi 3 as a Simple WiFi Access Point</h1>
+                        <h3 id="project_tagline">Pi as a wifi bridge providing safe subnet to wifi and Ethernet</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <p><a href="index.html">Home</a></p>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>The Raspberry Pi 3 has a built in WiFi radio. This makes using it easier than ever. This guide will start with a basic Raspbian build, connected to a wired network, and add WiFi access point capabilities. I sometimes use this approach for building an IoT subnet.</p>
+</section>
+<section id="next-up" class="level1">
+<h1>Next up?</h1>
+<p>After reading this guide, you may be interested in reading:</p>
+<ul>
+<li><a href="rpi3_iot_hub.html">IoT hub</a></li>
+</ul>
+</section>
+<section id="parts-list" class="level1">
+<h1>Parts List</h1>
+<ul>
+<li>Raspberry Pi 3</li>
+<li>16GB (or larger) class 10 MicroSD card</li>
+<li>Mini-USB power</li>
+<li>Ethernet cable</li>
+</ul>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Start with a Raspberry Pi image. This is an image saved after following the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a>. This may be either a Lite image or a full desktop image.</p>
+<ol type="1">
+<li><a href="#1">Write the image to the MicroSD.</a></li>
+<li><a href="#2">Connect Pi to your Internet</a></li>
+<li><a href="#3">Install dnsmasq and hostapd</a></li>
+<li><a href="#4">Configure wlan0</a></li>
+<li><a href="#5">Configure hostapd</a></li>
+<li><a href="#6">Configure dnsmasq</a></li>
+<li><a href="#7">Iptables forwarding</a></li>
+<li><a href="#8">Load, Test and Reboot</a></li>
+<li><a href="#Conclusion">Conclusion</a>.</li>
+</ol>
+</section>
+<section id="procedures" class="level1">
+<h1>Procedures</h1>
+<p>This guide mostly follows the guide from <a href="https://frillip.com/using-your-raspberry-pi-3-as-a-wifi-access-point-with-hostapd/">frillip</a>. If this is not available, <a href="reference-docs/RaspberryPi3WiFiAccessPoint.pdf">try this PDF version</a>.</p>
+<section id="write-the-image" class="level2">
+<h2><a name="1"></a>Write the image</h2>
+<p>Write the image to the MicroSD as described in the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a>. Insert the MicroSD into the Pi and boot.</p>
+</section>
+<section id="connect-pi-to-your-internet" class="level2">
+<h2><a name="2"></a>Connect Pi to your Internet</h2>
+<p>Use an Ethernet cable to connect the pi to the network. DHCP will assign the pi an IP address. Find the address of your pi from your network's DHCP server.</p>
+<ul>
+<li>SSH to the pi at that IP address or yourpiname.local</li>
+</ul>
+</section>
+<section id="install-dnsmasq-and-hostapd" class="level2">
+<h2><a name="3"></a>Install dnsmasq and hostapd</h2>
+<p>More about <a href="https://en.wikipedia.org/wiki/Dnsmasq">dnsmasq</a> and <a href="https://en.wikipedia.org/wiki/Hostapd">hostapd</a>.</p>
+<ul>
+<li><code>sudo apt-get  update</code></li>
+<li><code>sudo apt-get upgrade</code></li>
+<li><code>sudo apt-get install dnsmasq hostapd</code></li>
+</ul>
+</section>
+<section id="configure-wlan0" class="level2">
+<h2><a name="4"></a>Configure wlan0</h2>
+<ul>
+<li>Inform dhcpd to ignore wlan0 by editing <code>sudo nano /etc/dhcpcd.conf</code>
+<ul>
+<li>To the end add <code>denyinterfaces wlan0</code></li>
+<li>This must be ABOVE any interface lines you may have added</li>
+</ul></li>
+<li>Configure the wlan IP, <code>sudo nano /etc/network/interfaces</code>
+<ul>
+<li>the wlan0 section should be changed to:</li>
+</ul></li>
+</ul>
+<pre><code>allow-hotplug wlan0  
+iface wlan0 inet static  
+    address 192.168.220.1
+    netmask 255.255.255.0
+    network 192.168.220.0
+    broadcast 192.168.220.255</code></pre>
+<ul>
+<li>Restart dhcpcd with <code>sudo service dhcpcd restart</code></li>
+<li>Reload wlan0 with <code>sudo ifdown wlan0; sudo ifup wlan0</code></li>
+</ul>
+</section>
+<section id="setup-hostapd" class="level2">
+<h2><a name="5"></a>Setup hostapd</h2>
+<ul>
+<li><code>sudo nano /etc/hostapd/hostapd.conf</code>
+<ul>
+<li>add the following</li>
+</ul></li>
+</ul>
+<pre><code>interface=wlan0
+driver=nl80211
+
+hw_mode=g
+channel=6
+ieee80211n=1
+wmm_enabled=1
+ht_capab=[HT40][SHORT-GI-20][DSSS_CCK-40]
+macaddr_acl=0
+ignore_broadcast_ssid=0
+
+# Use WPA2
+auth_algs=1
+wpa=2
+wpa_key_mgmt=WPA-PSK
+rsn_pairwise=CCMP
+
+# Change these to your choice
+# This is the name of the network
+ssid=Pi3-AP
+# The network passphrase
+wpa_passphrase=raspberry</code></pre>
+<ul>
+<li>Now edit the default configuration, <code>sudo nano /etc/default/hostapd</code>
+<ul>
+<li>Replace <em>#DAEMON_CONF=&quot;&quot;</em> with <code>DAEMON_CONF=&quot;/etc/hostapd/hostapd.conf&quot;</code></li>
+</ul></li>
+</ul>
+</section>
+<section id="configure-dnsmasq" class="level2">
+<h2><a name="6"></a>Configure dnsmasq</h2>
+<ul>
+<li>Rename the current configuration, <code>sudo mv /etc/dnsmasq.conf /etc/dnsmasq.conf.orig</code></li>
+<li>Create and edit the new configuration, <code>sudo nano /etc/dnsmasq.conf</code>
+<ul>
+<li>Add the following</li>
+</ul></li>
+</ul>
+<pre><code>interface=wlan0       # Use interface wlan0  
+listen-address=192.168.220.1   # Specify the address to listen on  
+bind-interfaces      # Bind to the interface
+server=8.8.8.8       # Use Google DNS  
+domain-needed        # Don&#39;t forward short names  
+bogus-priv           # Drop the non-routed address spaces.  
+dhcp-range=192.168.220.50,192.168.220.150,12h # IP range and lease time  </code></pre>
+</section>
+<section id="iptables-forwarding" class="level2">
+<h2><a name="7"></a>Iptables forwarding</h2>
+<p><em>(Optional)</em> Forwarding is required if any devices connected to your this access point need to connect to the Internet. I do not forward for many IoT devices which I expect to act as an isolated network.</p>
+<ul>
+<li>Enable IP Forwarding
+<ul>
+<li><code>sudo nano /etc/sysctl.conf</code> at bottom add <em>net.ipv4.ip_forward=1</em></li>
+<li><code>sudo sh -c &quot;echo 1 &gt; /proc/sys/net/ipv4/ip_forward&quot;</code></li>
+</ul></li>
+<li>If you have not already completed <a href="rpi_iptables.html#2">Persistant iptables</a>, do so now</li>
+<li><strong>Required</strong> View <a href="rpi_iptables.html#5">WiFi Access Point rule set</a> to complete iptables setup</li>
+</ul>
+</section>
+<section id="load-test-and-reboot" class="level2">
+<h2><a name="8"></a>Load, Test and Reboot</h2>
+<p>Load the services and test availability, connection and forwarding.</p>
+<ul>
+<li><code>sudo service hostapd start</code></li>
+<li><code>sudo service dnsmasq start</code></li>
+<li>Use any WiFi client to connect to your new rpi3 access point</li>
+<li>Verify connection of various services such as SSH</li>
+<li>If you chose IP Forwarding, verify that your connected device is able to connect to the Internet</li>
+<li>Once you have verified everything, <code>sudo reboot now</code></li>
+<li>Retest everything with the rebooted pi</li>
+</ul>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1><a name="Conclusion"></a>Conclusion</h1>
+<p>You now have a working WiFi access point which may be used to extend your wired network or as a hub for local IoT devices.</p>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

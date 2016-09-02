@@ -201,7 +201,7 @@ iface eth0 inet static
     - `sudo nano /etc/sysctl.conf` at bottom add _net.ipv4.ip_forward=1_
     - `sudo sh -c "echo 1 > /proc/sys/net/ipv4/ip_forward"`
 + If you have not already completed [Persistant iptables](rpi_iptables.html#2), do so now
-+ **Required** View [CorePi rule set]([Persistant iptables](rpi_iptables.html#4)) to complete iptables setup
++ **Required** View [CorePi rule set](rpi_iptables.html#4) to complete iptables setup
 
 
 ## <a name="8"></a>Shutdown and reconfigure

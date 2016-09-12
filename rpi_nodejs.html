@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <title>Node.js on Raspberry Pi</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">Node.js on Raspberry Pi</h1>
+                        <h3 id="project_tagline">Web and Pi</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <p><a href="index.html">Home</a></p>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>Node.js is a JavaScript runtime environment for developing server-side Web applications. It uses an asynchronous event driven framework that is designed to build scalable network applications. I install it on nearly all of my pi to provide a framework for building user interfaces that can actually do something.</p>
+<p>Learn more about node from <a href="https://nodejs.org/en/">Node.js</a>, <a href="http://expressjs.com/en/starter/hello-world.html">Express</a>, <a href="https://learn.adafruit.com/node-embedded-development/events">Adafruit</a>, and <a href="https://www.google.com/webhp?q=node.js%20raspberry%20pi">search</a>.</p>
+</section>
+<section id="next-up" class="level1">
+<h1>Next up?</h1>
+<p>After reading this guide, you may be interested in reading:</p>
+</section>
+<section id="parts-list" class="level1">
+<h1>Parts List</h1>
+<ul>
+<li>Installed network connected Raspberry Pi 2 or newer</li>
+</ul>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Start with a Raspberry Pi image. This is an image saved after following the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a>. This may be either a lite or a full desktop image.</p>
+<ol type="1">
+<li><a href="#1">Write the image to the MicroSD.</a></li>
+<li><a href="#2">Connect to your Pi</a></li>
+<li><a href="#3">Download and install the nodejs binaries</a></li>
+<li><a href="#4">Express framework</a></li>
+<li><a href="#5">Node-RED</a></li>
+<li><a href="#Conclusion">Conclusion</a></li>
+<li><a href="#references">References</a></li>
+</ol>
+</section>
+<section id="write-the-image" class="level1">
+<h1><a name="1"></a>Write the image</h1>
+<p>Write the image to the MicroSD as described in the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a>. Insert the MicroSD into the Pi and boot.</p>
+</section>
+<section id="connect-pi-to-your-internet" class="level1">
+<h1><a name="2"></a>Connect Pi to your Internet</h1>
+<p>Use an Ethernet cable to connect the pi to the network. DHCP will assign the pi an IP address. Find the address of your pi from your network's DHCP server.</p>
+<ul>
+<li>SSH to the pi at that IP address or yourpiname.local</li>
+</ul>
+</section>
+<section id="download-and-install-the-nodejs-binaries" class="level1">
+<h1><a name="3"></a>Download and install the nodejs binaries</h1>
+<p>The pi uses the ARM processor. Determine which instruction set version is included, <code>grep 'model name' /proc/cpuinfo</code>. This output should include ARMv6, ARMv7, and so forth. The Raspberry Pi 3 uses the ARMv7 processor.</p>
+<p>Visit the <a href="https://nodejs.org/en/download/">downloads page</a> and select <em>LTS Recommended for Most Users</em>. Now copy the link to the correct ARM binary. In the following steps, replace <em>node-v4.5.0-linux-armv7l</em> with the version for your system.</p>
+<ul>
+<li>Change to home directory on the pi, <code>cd ~</code></li>
+<li>Download the binary, <code>wget https://nodejs.org/dist/v6.5.0/node-v6.5.0-linux-armv7l.tar.xz</code>, replace the URL with the link you copied above.</li>
+<li>Extract the binary, <code>tar -xvf  node-v6.5.0-linux-armv7l.tar.xz</code></li>
+<li><code>cd node-v6.5.0-linux-armv7l</code></li>
+<li>Copy the files, <code>sudo cp -R * /usr/local/</code></li>
+<li>Rehash the shell, <code>hash -r</code></li>
+<li>Check the version, <code>node -v</code>. This should match what you downloaded.</li>
+<li>Check npm version, <code>npm -v</code>.</li>
+</ul>
+</section>
+<section id="express-framework" class="level1">
+<h1><a name="4"></a>Express framework</h1>
+<p>Express.js is one of the most essential web frameworks for Node.js. It is a minimalist framework for building a host of web and mobile applications as well as application programming interfaces (APIs). Express.js is offers various features, like template engines, simplified multiple routing, database integration and more.</p>
+<ul>
+<li>Install with <code>sudo npm install express --save</code></li>
+</ul>
+</section>
+<section id="references" class="level1">
+<h1><a name="references"></a>References</h1>
+<ul>
+<li><a href="https://blog.wia.io/installing-node-js-on-a-raspberry-pi-3">Installing Node.js on a Raspberry Pi 3</a></li>
+<li><a href="https://www.raspberrypi.org/forums/viewtopic.php?f=34&amp;t=140747">Installing newer version of NodeJS on Pi 3</a></li>
+</ul>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

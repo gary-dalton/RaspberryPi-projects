@@ -30,7 +30,7 @@ After reading this guide, you may be interested in reading:
 
 # Parts List
 
-* Raspberry Pi 2 or newer
+* Raspberry Pi 2
 * 4GB (or larger) class 10 MicroSD card
 * [USB WiFi dongle](http://www.amazon.com/Edimax-EW-7811Un-150Mbps-Raspberry-Supports/dp/B003MTTJOY/ref=pd_bxgy_147_2) _(optional)_
 * [USB to serial console cable](https://www.adafruit.com/product/954)  _(optional)_
@@ -47,11 +47,11 @@ After reading this guide, you may be interested in reading:
 8. [Connect to the Pi using SSH.](#8)
 9. [Improving security.](#9)
 10. [Firewalling with iptables.](#10)
-11. [Connect remotely to the Pi's desktop.](#11) _(optional)_
+11. [Connect to the Pi using VNC.](#11) _(optional)_
 12. [Advanced network management with nmcli.](#12) _(optional)_
-13. [Adafruit Raspberry Pi repository.](#13) _(deprecated)_
-14. [Node.js.](#14) _(optional)_
-15. [Occidentalis.](#15) _(deprecated)_
+13. [Add the Adafruit Raspberry Pi repository.](#13) _(optional)_
+14. [Install node.js.](#14) _(optional)_
+15. [Install occidentalis.](#15) _(optional)_
 16. [Conclusion](#Conclusion).
 
 The estimated time to complete each step is given. This time is for a novice performing the procedures for the first time. If you are familiar with some of the topics or have completed these procedures before, you should expect to use less time.
@@ -270,13 +270,55 @@ SSH is very important for improved security when connecting to your pi. The [SSH
 (advanced) At this point, your pi is functional, connected, and reasonably secure. It can be made more secure with iptables which will only allow the types of traffic you permit. See [RPi iptables](rpi_iptables) sections 1-3, start through Basic rule set.
 
 
-## <a name="11"></a>Connect remotely to the Pi's desktop
+## <a name="11"></a>Connect to the Pi using VNC
 
 _Time to complete is about 20 minutes._
 
-Sometimes, it is necessary to view the desktop interface of a Raspberry Pi from a remote location or without an attached keyboard and monitor. Both VNC and RDP are available to help. VNC and RDP are client-server remote desktop protocols.
+(optional) Virtual Network Connection (VNC) is a way to remotely connect to your pi via the network and access the pi's GUI desktop. I usually do not use a VNC but there are circumstances (educational setting, inexperienced users) where it does prove useful. Generally, I connect using the Browser method. Good information from [rasperrypi.org](https://www.raspberrypi.org/documentation/remote-access/vnc/).
 
-Moved to [Connect to the Raspberry Pi using VNC or RDP](rpi_vnc_rdp.html)
+**NOTE: There are many security problems in current vnc implementations. Permit  access to vnc servers on the local network only.**
+
+If you feel you need to run an Internet accessible VNC Server, at a minimum, use SSH tunneling for all connections. Also view [About VNC Servers](https://help.ubuntu.com/community/VNC/Servers)
+
+1. Update your sources, `sudo apt-get update`.
+2. Install TightVNC Server, `sudo apt-get install tightvncserver`.
+3. Start the server, `vncserver -nolisten tcp -nevershared -dontdisconnect :1`.
+    + Learn more with `man vncserver`, `man Xvnc`, and `Xvnc -help`
+4. Enter the requested new vnc password, a view-only password is not needed. This will be required from the VNC Viewer we install later.
+    + If you later wish to set a different password simply `rm .vnc/passwd`
+5. Stop the server with `vncserver -kill :1`.
+6. The vncserver may be setup to run at boot but I do not recommend it.
+7. Update the iptables rule if needed. [RPi iptables](rpi_iptables#3)]
+
+### Connect from Linux
+
++ From the desktop open either _Remote Desktop Viewer_ or the _Remmina Remote Desktop Client_.
+    - `sudo apt-get install remmina`
++ Change the connection protocol to VNC.
++ Connect to _hostname.local:1_.
++ Enter the vnc password.
++ When done, just close the window.
+
+### Connect from a browser
+
+Browser based VNC makes it easy for anyone to use this technology. I use the Google Chrome App from [RealVNC](https://www.realvnc.com/products/chrome/).
+
++ From the RealVNC page click _available in the chrome web store_
++ Add to Chrome
++ Launch the extension from Chrome Apps
++ Enter the address, _hostname.local:1_
++ Click _Connect_
++ Enter the vnc password.
++ When done, just close the window.
+
+### Connect from Windows
+
+1. Download the [TightVNC installer](http://www.tightvnc.com/download.php).
+2. Start the installer and choose **Custom Setup**.
+3. From Custom Setup, use the pull-down next to TightVNC Server to have **Entire feature will be unavailable**.
+4. Start the _Tight VNC Viewer_.
+5. Connect to the Remote Host, _hostname.local:1_.
+6. When done, just close the window.
 
 
 ## <a name="12"></a>NetworkManager CLI (advanced)
@@ -286,21 +328,33 @@ Moved to [RPi NetworkManager CLI](rpi_nmcli.html).
 
 ## <a name="13"></a>Add the Adafruit Raspberry Pi repository
 
-(deprecated) See [Adafruit Raspberry Pi repository](rpi_ada_repo.html)
+(optional) The [Adafruit repository](https://learn.adafruit.com/apt-adafruit-com/overiew) provides access to the most recent node packages and to a few other goodies useful to makers.
+
+1. Become root, `sudo -i`.
+2. Add the repository to the sources file, `echo "deb http://apt.adafruit.com/raspbian/ release main" >> /etc/apt/sources.list`. Replace _release_ with the current stable release. In Jan2016, it is jessie.
+3. Add the repository key, `wget -O - -q https://apt.adafruit.com/apt.adafruit.com.gpg.key | apt-key add -`.
+4. `apt-get update`.
+5. Exit root, `exit`.
+
 
 ## <a name="14"></a>Install node.js
 
-See [Node.js on Raspberry Pi](rpi_nodejs.html)
+(optional) Node.js is a JavaScript runtime environment for developing server-side Web applications. It uses an asynchronous event driven framework that is designed to build scalable network applications. I install it on nearly all of my pi to provide a framework for building user interfaces that can actually do something. _(requires Adafruit Raspberry Pi repository)_
 
-(optional) Node.js is a JavaScript runtime environment for developing server-side Web applications. It uses an asynchronous event driven framework that is designed to build scalable network applications. I install it on nearly all of my pi to provide a framework for building user interfaces that can actually do something.
+1. Update, `sudo apt-get update`.
+2. Install node, `sudo apt-get install node`.
+3. Now go learn more about node from [Node](https://nodejs.org/en/), [Express](http://expressjs.com/en/starter/hello-world.html), [Adafruit](https://learn.adafruit.com/node-embedded-development/events), and [search](https://www.google.com/webhp?q=node.js%20raspberry%20pi).
 
-Learn more about node from [Node.js](https://nodejs.org/en/), [Express](http://expressjs.com/en/starter/hello-world.html), [Adafruit](https://learn.adafruit.com/node-embedded-development/events), and [search](https://www.google.com/webhp?q=node.js%20raspberry%20pi).
+---
 
+## <a name="15"></a>Install occidentalis
 
-## <a name="15"></a>Occidentalis
+(optional) Occidentalis is a collection of drivers, configuration utilities, and other useful things for single-board computers from [Adafruit](https://github.com/adafruit/Adafruit-Occidentalis). _(requires Adafruit Raspberry Pi repository)_
 
-(deprecated) See [Occidentalis](occidentalis.html)
+1. Update, `sudo apt-get update`.
+2. Install occidentalis, `sudo apt-get install occidentalis`.
 
+---
 
 # <a name="Conclusion"></a>Save the image to a file
 

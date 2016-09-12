@@ -35,6 +35,7 @@ tags: rpi, raspberrypi, guide, howto
 # How-tos
 
 - [RPi Troubleshooting](rpi_troubleshoot.html), Tips and tricks
+- [Linux General Hints](linux_hints.html), General hints and how-tos for Linux systems
 - [Using the WiFi Access Point with captured portal](rpi_captured_portal.html)
 - [Using CorePi v2](using_core_pi_v2.html)
 - [Resize the SD image](resize_sd_image.html), Using GParted to shrink the disk size
@@ -46,6 +47,9 @@ tags: rpi, raspberrypi, guide, howto
 
 - [Which Wifi USB adapters](rpi_which_wifi_usb.html)
 
+# Links to other guides
+
+- [Add a Shutdown Button](https://www.element14.com/community/docs/DOC-78055/l/adding-a-shutdown-button-to-the-raspberry-pi-b), [local pdf](reference-docs/Adding a Shutdown Button to the Raspberry Pi B+ _ element14 Community.pdf)
 
 ## Deprecated
 

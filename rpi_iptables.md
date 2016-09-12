@@ -108,6 +108,9 @@ Rule set for a standard pi with nothing extra or unusual
 # best restricted to certain IPs
 #-A INPUT -p tcp -m state --state NEW --dport 5901 -j ACCEPT
 
+# Allows RDP connections. Uncomment this to allow RDP.
+#-A INPUT -p tcp -m state --state NEW --dport 3389 -j ACCEPT
+
 # Allow Zeroconf connections. (Bonjour and Avahi)
 -A INPUT -p udp -m state --state NEW --dport 5353 -j ACCEPT
 
@@ -201,6 +204,9 @@ COMMIT
 # best restricted to certain IPs
 -A INPUT -p tcp -m state --state NEW --dport 5901 -j ACCEPT
 
+# Allows RDP connections. Uncomment this to allow RDP.
+#-A INPUT -p tcp -m state --state NEW --dport 3389 -j ACCEPT
+
 # Allow Zeroconf connections. (Bonjour and Avahi)
 #-A INPUT -p udp -m state --state NEW --dport 5353 -j ACCEPT
 
@@ -252,7 +258,7 @@ Rule set for [RaspberryPi3 easy WiFi access point](rpi3_simple_wifi_ap.html)
 # Allow Access Point NAT
 -A POSTROUTING -o eth0 -j MASQUERADE
 
-# Do not permit SSH forwarding
+# Redirect SSH to local
 # -A PREROUTING -p tcp -m tcp --dport 22 -j REDIRECT --to-ports 22
 
 COMMIT
@@ -265,8 +271,10 @@ COMMIT
 -A INPUT ! -i lo -d 127.0.0.0/8 -j REJECT
 
 # Accepts all established inbound connections
-#-A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
 -A INPUT -m conntrack --ctstate ESTABLISHED,RELATED -j ACCEPT
+
+# Allows all inbound traffic from wlan0
+-A INPUT -i wlan0 -j ACCEPT
 
 # Allows all outbound traffic
 # You could modify this to only allow certain traffic
@@ -291,10 +299,13 @@ COMMIT
 
 # Allows vncserver connections. Uncomment this to allow VNC. Again, this is
 # best restricted to certain IPs
--A INPUT -p tcp -m state --state NEW --dport 5901 -j ACCEPT
+#-A INPUT -p tcp -m state --state NEW --dport 5901 -j ACCEPT
+
+# Allows RDP connections. Uncomment this to allow RDP.
+#-A INPUT -p tcp -m state --state NEW --dport 3389 -j ACCEPT
 
 # Allow Zeroconf connections. (Bonjour and Avahi)
-#-A INPUT -p udp -m state --state NEW --dport 5353 -j ACCEPT
+-A INPUT -p udp -m state --state NEW --dport 5353 -j ACCEPT
 
 # Allow ping
 # note that blocking other types of icmp packets is considered a bad idea

@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <meta name="generator" content="pandoc">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
+
+          <meta name="author" content="Gary Dalton">
+              <title>Connect to the Raspberry Pi using VNC or RDP</title>
+      <style type="text/css">code{white-space: pre;}</style>
+      <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+      <![endif]-->
+                  <link rel="stylesheet" href="stylesheets/stylesheet.css">
+            </head>
+
+<body>
+    
+    <div id="header_wrap" class="outer">
+    <header class="inner">
+                <a id="forkme_banner" href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub</a>
+                        <h1 id="project_title">Connect to the Raspberry Pi using VNC or RDP</h1>
+                        <h3 id="project_tagline">View the Pi's desktop remotely</h3>
+            </header>
+    </div>
+
+    <div id="main_content_wrap" class="outer">
+    <section id="main_content" class="inner">
+                <p><a href="index.html">Home</a></p>
+<section id="description" class="level1">
+<h1>Description</h1>
+<p>Sometimes, it is necessary to view the desktop interface of a Raspberry Pi (RPi) from a remote location or without an attached keyboard and monitor. Both VNC and RDP are available to help. VNC and RDP are client-server remote desktop protocols.</p>
+</section>
+<section id="next-up" class="level1">
+<h1>Next up?</h1>
+<p>After reading this guide, you may be interested in reading:</p>
+</section>
+<section id="parts-list" class="level1">
+<h1>Parts List</h1>
+<ul>
+<li>Installed network connected Raspberry Pi</li>
+</ul>
+</section>
+<section id="overview" class="level1">
+<h1>Overview</h1>
+<p>Start with a Raspberry Pi image. This is an image saved after following the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a>. This must be a full desktop image.</p>
+<ol type="1">
+<li><a href="#1">Write the image to the MicroSD.</a></li>
+<li><a href="#2">Connect to your Pi</a></li>
+<li><a href="#3">Choose VNC or RDP</a></li>
+<li><a href="#4">RDP</a>
+<ul>
+<li><a href="#4.1">Installing RDP</a></li>
+<li><a href="#4.2">The xrdp service</a></li>
+<li><a href="#4.3">Connecting from Windows</a></li>
+</ul></li>
+<li><a href="#5">VNC</a>
+<ul>
+<li><a href="#5.1">Installing VNC</a></li>
+<li><a href="#5.2">Connect from Linux</a></li>
+<li><a href="#5.3">Connect from a browser</a></li>
+<li><a href="#5.4">Connect from Windows</a></li>
+</ul></li>
+<li><a href="#Conclusion">Conclusion</a></li>
+</ol>
+</section>
+<section id="write-the-image" class="level1">
+<h1><a name="1"></a>Write the image</h1>
+<p>Write the image to the MicroSD as described in the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a>. Insert the MicroSD into the Pi and boot.</p>
+</section>
+<section id="connect-pi-to-your-internet" class="level1">
+<h1><a name="2"></a>Connect Pi to your Internet</h1>
+<p>Use an Ethernet cable to connect the pi to the network. DHCP will assign the pi an IP address. Find the address of your pi from your network's DHCP server.</p>
+<ul>
+<li>SSH to the pi at that IP address or yourpiname.local</li>
+</ul>
+</section>
+<section id="choose-vnc-or-rdp" class="level1">
+<h1><a name="3"></a>Choose VNC or RDP</h1>
+<p>There are benefits and drawbacks to each protocol. RDP is faster but is mostly available from Windows. VNC is universal but has lower security. Some other opinions from <a href="https://blog.codinghorror.com/vnc-vs-remote-desktop/">Coding Horror</a> and <a href="http://www.thetechvoid.com/rdp-vs-vnc-which-is-better-for-your-needs/">TheTechVoid</a>.</p>
+<p>It is reasonable to install both but not have them run on boot. This would require SSHing into the pi and starting the protocol of your choice. This guide covers the installation and connection to both VNC and RDP.</p>
+</section>
+<section id="rdp" class="level1">
+<h1><a name="4"></a>RDP</h1>
+<section id="installing-rdp" class="level2">
+<h2><a name="4.1"></a>Installing RDP</h2>
+<p>Installation is a breeze.</p>
+<ul>
+<li>Update your sources, <code>sudo apt-get update</code></li>
+<li>Install, <code>sudo apt-get install xrdp</code></li>
+<li>At this point RDP is ready to use on the pi</li>
+</ul>
+<p>If you are using the iptables firewall, see <a href="rpi_iptables.html">RPi iptables</a>, make certain the port is open.</p>
+<pre><code># Allows RDP connections. Uncomment this to allow RDP.
+-A INPUT -p tcp -m state --state NEW --dport 3389 -j ACCEPT</code></pre>
+</section>
+<section id="the-xrdp-service" class="level2">
+<h2><a name="4.2"></a>The xrdp service</h2>
+<p>xrdp installs itself as a running service which may be controlled via the following commands:</p>
+<ul>
+<li><code>sudo service xrdp status</code></li>
+<li><code>sudo service xrdp start</code></li>
+<li><code>sudo service xrdp stop</code></li>
+<li><code>sudo service xrdp restart</code></li>
+<li>Disable xrdp from starting at boot, <code>sudo update-rc.d xrdp disable</code></li>
+<li>Enable xrdp to start at boot, <code>sudo update-rc.d xrdp enable</code></li>
+</ul>
+</section>
+<section id="connecting-from-windows" class="level2">
+<h2><a name="4.3"></a>Connecting from Windows</h2>
+<p>An RDP client is a built-in feature of Windows. Just launch the client and enter the connection settings. Connection settings may be saved for easier reconnection. There are also some advanced options available.</p>
+<ul>
+<li><code>Windows-key r</code></li>
+<li>Enter <code>mstsc</code></li>
+<li>Connect to your pi</li>
+<li>Enter your pi's login credentials</li>
+<li>Shortly, you will see the desktop of your pi</li>
+</ul>
+<p><em>When done with the session, just close the window.</em></p>
+</section>
+</section>
+<section id="vnc" class="level1">
+<h1><a name="5"></a>VNC</h1>
+<section id="installing-vnc" class="level2">
+<h2><a name="5.1"></a>Installing VNC</h2>
+<p>Virtual Network Connection (VNC) is a way to remotely connect to your pi via the network and access the pi's GUI desktop. I usually do not use a VNC but there are circumstances (educational setting, inexperienced users) where it does prove useful. Generally, I connect using the Browser method. Good information from <a href="https://www.raspberrypi.org/documentation/remote-access/vnc/">rasperrypi.org</a>.</p>
+<p><strong>NOTE: There are many security problems in current vnc implementations. Permit access to vnc servers on the local network only.</strong></p>
+<p>If you feel you need to run an Internet accessible VNC Server, at a minimum, use SSH tunneling for all connections. Also view <a href="https://help.ubuntu.com/community/VNC/Servers">About VNC Servers</a></p>
+<ol type="1">
+<li>Update your sources, <code>sudo apt-get update</code>.</li>
+<li>Install TightVNC Server, <code>sudo apt-get install tightvncserver</code>.</li>
+<li>Start the server, <code>vncserver -nolisten tcp -nevershared -dontdisconnect :1</code>.
+<ul>
+<li>Learn more with <code>man vncserver</code>, <code>man Xvnc</code>, and <code>Xvnc -help</code></li>
+</ul></li>
+<li>Enter the requested new vnc password, a view-only password is not needed. This will be required from the VNC Viewer we install later.
+<ul>
+<li>If you later wish to set a different password simply <code>rm .vnc/passwd</code></li>
+</ul></li>
+<li>Stop the server with <code>vncserver -kill :1</code>.</li>
+<li>The vncserver may be setup to run at boot but I do not recommend it.</li>
+<li>Update the iptables rule if needed. <a href="rpi_iptables#3">RPi iptables</a>]</li>
+</ol>
+</section>
+<section id="connect-from-linux" class="level2">
+<h2><a name="5.2"></a>Connect from Linux</h2>
+<ul>
+<li>From the desktop open either <em>Remote Desktop Viewer</em> or the <em>Remmina Remote Desktop Client</em>.
+<ul>
+<li><code>sudo apt-get install remmina</code></li>
+</ul></li>
+<li>Change the connection protocol to VNC.</li>
+<li>Connect to <em>hostname.local:1</em>.</li>
+<li>Enter the vnc password.</li>
+<li>When done, just close the window.</li>
+</ul>
+</section>
+<section id="connect-from-a-browser" class="level2">
+<h2><a name="5.3"></a>Connect from a browser</h2>
+<p>Browser based VNC makes it easy for anyone to use this technology. I use the Google Chrome App from <a href="https://www.realvnc.com/products/chrome/">RealVNC</a>.</p>
+<ul>
+<li>From the RealVNC page click <em>available in the chrome web store</em></li>
+<li>Add to Chrome</li>
+<li>Launch the extension from Chrome Apps</li>
+<li>Enter the address, <em>hostname.local:1</em></li>
+<li>Click <em>Connect</em></li>
+<li>Enter the vnc password.</li>
+<li>When done, just close the window.</li>
+</ul>
+</section>
+<section id="connect-from-windows" class="level2">
+<h2><a name="5.4"></a>Connect from Windows</h2>
+<ol type="1">
+<li>Download the <a href="http://www.tightvnc.com/download.php">TightVNC installer</a>.</li>
+<li>Start the installer and choose <strong>Custom Setup</strong>.</li>
+<li>From Custom Setup, use the pull-down next to TightVNC Server to have <strong>Entire feature will be unavailable</strong>.</li>
+<li>Start the <em>Tight VNC Viewer</em>.</li>
+<li>Connect to the Remote Host, <em>hostname.local:1</em>.</li>
+<li>When done, just close the window.</li>
+</ol>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1><a name="Conclusion"></a>Conclusion</h1>
+<p>Viewing your desktop remotely is cool but remember, this may reduce security. VNC especially, should not be used unprotected over the Internet.</p>
+</section>
+            </section>
+    </div>
+
+    <!-- FOOTER  -->
+    <div id="footer_wrap" class="outer">
+    <footer class="inner">
+        <p>Published with <a href="http://pandoc.org/">Pandoc</a> onto
+        <a href="https://pages.github.com">GitHub Pages</a></p>
+    </footer>
+    </div>
+
+</body>
+</html>

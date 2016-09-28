@@ -10,7 +10,7 @@ github:
   branch: "gh-pages"
 framework: minimal
 css: stylesheets/stylesheet.css
-pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html rpi_initial_setup.md -o rpi_initial_setup.html
+pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html rpi_initial_setup_v1.md -o rpi_initial_setup_v1.html
 tags: rpi, setup, guide, secure
 ---
 [Home](index.html)

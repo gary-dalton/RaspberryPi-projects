@@ -31,6 +31,7 @@ tags: rpi, raspberrypi, guide, howto
 - [RTC DS3231 on the Raspberry Pi](rpi_RTCds3231), Hardware clock, temperature, and alarms
 - [Basic GPIO on the Raspberry Pi](rpi_gpio.html), I/O, interrupts, and notifications
 - [Raspberry Pi 3 as a Simple WiFi Access Point](rpi3_simple_wifi_ap.html)
+- [Dnsmasq Whitelist](dnsmasq_whitelist.html), Simple DNS domain whitelister
 
 # How-tos
 

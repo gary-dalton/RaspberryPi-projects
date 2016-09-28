@@ -1,0 +1,98 @@
+= Dnsmasq Whitelist
+:subtitle: Simple DNS domain whitelister
+:author: Gary Dalton
+:revnumber: 1.0
+:revdate: 27 September 2016
+:license: Creative Commons BY-SA
+:homepage: https://gary-dalton.github.io/
+:githubuser: gary-dalton
+:githubrepo: RaspberryPi-projects
+:githubbranch: gh-pages
+:description: A simple DNS domain whitelister using Dnsmasq on a Raspberry Pi.
+:css: stylesheets/stylesheet.css
+:cli: asciidoctor -a stylesheet=github.css -a stylesdir=stylesheets dnsmasq_whitelist.adoc
+:keywords: Dnsmasq, whitelist, raspberrypi
+:linkcss:
+:icons: font
+:toc: left
+:toclevels: 4
+:source-highlighter: coderay
+
+{description}
+
+https://github.com/{githubuser}/{githubrepo}/tree/{githubbranch}[View on GitHub image:images/GitHub-Mark-32px.png[]]
+
+## Overview
+
+This simple approach provides access only to whitelisted web sites. It does this by not performing DNS lookups. The methods used to block domains may be easily circumvented by those with a little knowledge and skill. I set up this whitelist in order to block my thirteen year old who lost electronic privileges for two weeks but still needed to access some sites for schoolwork.
+
+## Requirements
+
+A Raspberry Pi set up as a WiFi Access Point by following the link:rpi3_simple_wifi_ap.html[Raspberry Pi 3 as a Simple WiFi Access Point]. A Raspberry Pi 2 may also be used.
+
+NOTE: Hostapd, Dnsmasq, and Iptables forwarding must be setup and working.
+
+## Dnsmasq
+
+Only configuration changes to dnsmasq are needed. Each configuration change requires a reload, `sudo service dnsmasq force-reload`.
+
+Edit `sudo nano /etc/dnsmasq.conf` to:
+
+```
+interface=wlan0       # Use interface wlan0
+listen-address=192.168.220.1   # Specify the address to listen on
+bind-interfaces      # Bind to the interface
+# REMOVE server=8.8.8.8
+domain-needed        # Don't forward short names
+bogus-priv           # Drop the non-routed address spaces.
+dhcp-range=192.168.220.50,192.168.220.150,12h # IP range and lease time
+
+# REMOVE server=8.8.8.8
+
+# NEW ITEMS
+# Don't resolve any DNS, Blacklist all
+no-resolv
+# Log all queries to /var/log/daemon.log - optional but helpful
+log-queries
+
+# Whitelist domains to DNS lookup
+# uses opendns nameservers, substitute your choice
+# google nameservers are 8.8.8.8 and 8.8.4.4
+# opendns nameservers are 208.67.222.222 and 208.67.220.220
+
+server=/google.com/208.67.222.222
+server=/google.com/208.67.220.220
+server=/googleapis.com/208.67.222.222
+server=/googleapis.com/208.67.220.220
+server=/gstatic.com/208.67.222.222
+server=/gstatic.com/208.67.220.220
+server=/googleusercontent.com/208.67.222.222
+server=/googleusercontent.com/208.67.220.220
+
+server=/cpm.com/208.67.222.222
+server=/cpm.com/208.67.220.220
+server=/trello.com/208.67.222.222
+server=/trello.com/208.67.220.220
+server=/slack.com/208.67.222.222
+server=/slack.com/208.67.220.220
+
+# Needed if using opendns nameservers
+server=/opendns.com/208.67.222.222
+server=/opendns.com/208.67.220.220
+
+# Direct all other domains to
+address=/#/127.0.0.1
+```
+
+This will likely block a lot of domains that may be needed. While trying to use the whitelisted client, scan the logfile with `tail -F /var/log/daemon.log` (CTRL-c quits). Add any needed domains to the whitelist.
+
+## DNS Utilities
+
+I find dnsutils useful for troubleshooting, `sudo apt-get install dnsutils`
+
+## References
+
+* https://unix.stackexchange.com/questions/193427/dns-whitelist-domains
+* http://blogging.dragon.org.uk/howto-setup-dnsmasq-as-dns-dhcp/
+* https://serverfault.com/questions/351108/using-dnsmasq-to-resolve-all-hosts-to-the-same-address
+* http://www.thekelleys.org.uk/dnsmasq/doc.html

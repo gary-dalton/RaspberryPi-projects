@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.4">
+<meta name="description" content="A simple DNS domain whitelister using Dnsmasq on a Raspberry Pi.">
+<meta name="keywords" content="Dnsmasq, whitelist, raspberrypi">
+<meta name="author" content="Gary Dalton">
+<title>Dnsmasq Whitelist</title>
+<link rel="stylesheet" href="stylesheets/github.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="stylesheets/coderay-asciidoctor.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>Dnsmasq Whitelist</h1>
+<div class="details">
+<span id="author" class="author">Gary Dalton</span><br>
+<span id="revnumber">version 1.0,</span>
+<span id="revdate">27 September 2016</span>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_overview">Overview</a></li>
+<li><a href="#_requirements">Requirements</a></li>
+<li><a href="#_dnsmasq">Dnsmasq</a></li>
+<li><a href="#_dns_utilities">DNS Utilities</a></li>
+<li><a href="#_references">References</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>A simple DNS domain whitelister using Dnsmasq on a Raspberry Pi.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub <span class="image"><img src="images/GitHub-Mark-32px.png" alt="GitHub Mark 32px"></span></a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_overview">Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This simple approach provides access only to whitelisted web sites. It does this by not performing DNS lookups. The methods used to block domains may be easily circumvented by those with a little knowledge and skill. I set up this whitelist in order to block my thirteen year old who lost electronic privileges for two weeks but still needed to access some sites for schoolwork.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_requirements">Requirements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A Raspberry Pi set up as a WiFi Access Point by following the <a href="rpi3_simple_wifi_ap.html">Raspberry Pi 3 as a Simple WiFi Access Point</a>. A Raspberry Pi 2 may also be used.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Hostapd, Dnsmasq, and Iptables forwarding must be setup and working.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_dnsmasq">Dnsmasq</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Only configuration changes to dnsmasq are needed. Each configuration change requires a reload, <code>sudo service dnsmasq force-reload</code>.</p>
+</div>
+<div class="paragraph">
+<p>Edit <code>sudo nano /etc/dnsmasq.conf</code> to:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code>interface=wlan0       # Use interface wlan0
+listen-address=192.168.220.1   # Specify the address to listen on
+bind-interfaces      # Bind to the interface
+# REMOVE server=8.8.8.8
+domain-needed        # Don't forward short names
+bogus-priv           # Drop the non-routed address spaces.
+dhcp-range=192.168.220.50,192.168.220.150,12h # IP range and lease time
+
+# REMOVE server=8.8.8.8
+
+# NEW ITEMS
+# Don't resolve any DNS, Blacklist all
+no-resolv
+# Log all queries to /var/log/daemon.log - optional but helpful
+log-queries
+
+# Whitelist domains to DNS lookup
+# uses opendns nameservers, substitute your choice
+# google nameservers are 8.8.8.8 and 8.8.4.4
+# opendns nameservers are 208.67.222.222 and 208.67.220.220
+
+server=/google.com/208.67.222.222
+server=/google.com/208.67.220.220
+server=/googleapis.com/208.67.222.222
+server=/googleapis.com/208.67.220.220
+server=/gstatic.com/208.67.222.222
+server=/gstatic.com/208.67.220.220
+server=/googleusercontent.com/208.67.222.222
+server=/googleusercontent.com/208.67.220.220
+
+server=/cpm.com/208.67.222.222
+server=/cpm.com/208.67.220.220
+server=/trello.com/208.67.222.222
+server=/trello.com/208.67.220.220
+server=/slack.com/208.67.222.222
+server=/slack.com/208.67.220.220
+
+# Needed if using opendns nameservers
+server=/opendns.com/208.67.222.222
+server=/opendns.com/208.67.220.220
+
+# Direct all other domains to
+address=/#/127.0.0.1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This will likely block a lot of domains that may be needed. While trying to use the whitelisted client, scan the logfile with <code>tail -F /var/log/daemon.log</code> (CTRL-c quits). Add any needed domains to the whitelist.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_dns_utilities">DNS Utilities</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>I find dnsutils useful for troubleshooting, <code>sudo apt-get install dnsutils</code></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_references">References</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://unix.stackexchange.com/questions/193427/dns-whitelist-domains" class="bare">https://unix.stackexchange.com/questions/193427/dns-whitelist-domains</a></p>
+</li>
+<li>
+<p><a href="http://blogging.dragon.org.uk/howto-setup-dnsmasq-as-dns-dhcp/" class="bare">http://blogging.dragon.org.uk/howto-setup-dnsmasq-as-dns-dhcp/</a></p>
+</li>
+<li>
+<p><a href="https://serverfault.com/questions/351108/using-dnsmasq-to-resolve-all-hosts-to-the-same-address" class="bare">https://serverfault.com/questions/351108/using-dnsmasq-to-resolve-all-hosts-to-the-same-address</a></p>
+</li>
+<li>
+<p><a href="http://www.thekelleys.org.uk/dnsmasq/doc.html" class="bare">http://www.thekelleys.org.uk/dnsmasq/doc.html</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 1.0<br>
+Last updated 2016-09-28 08:14:52 Central Daylight Time
+</div>
+</div>
+</body>
+</html>

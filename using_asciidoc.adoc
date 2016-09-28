@@ -1,0 +1,90 @@
+= Using Asciidoctor
+:subtitle: My guide
+:author: Gary Dalton
+:revnumber: 1.0
+:revdate: 20 September 2016
+:license: Creative Commons BY-SA
+:homepage: https://gary-dalton.github.io/
+:githubuser: gary-dalton
+:githubrepo: RaspberryPi-projects
+:githubbranch: gh-pages
+:description: A few words of description.
+:css: stylesheets/stylesheet.css
+:cli: asciidoctor -a stylesheet=github.css -a stylesdir=stylesheets using_asciidoc.adoc
+:keywords: asciidoctor, basics, getting started
+:linkcss:
+:icons: font
+:toc: left
+:toclevels: 4
+:source-highlighter: coderay
+
+{description}
+
+https://github.com/{githubuser}/{githubrepo}/tree/{githubbranch}[View on GitHub image:images/GitHub-Mark-32px.png[]]
+
+## References
+
+* http://powerman.name/doc/asciidoc[AsciiDoc cheatsheet]
+* http://asciidoctor.org/docs/asciidoc-syntax-quick-reference/[AsciiDoc Syntax Quick Reference]
+* http://asciidoctor.org/docs/user-manual[Asciidoctor User Manual]
+* http://themes.asciidoctor.org/preview/[Themes preview]
+*
+
+## Contents
+
+[source, python]
+.app.py
+----
+## python
+
+import smbus
+import os
+
+# Release RTC 3231
+os.system('sudo rmmod rtc_ds1307')
+
+# Setup RTC 3231 for temperature reading
+bus = smbus.SMBus(1)
+address = 0x68
+CONV = 32
+
+# Force a conversion and wait until it completes
+def convTemp(address):
+    byte_control = bus.read_byte_data(address,0x0E)
+    if byte_control&CONV == 0:
+        bus.write_byte_data(address, 0x0E, byte_control|CONV)
+    byte_control = bus.read_byte_data(address,0x0E)
+	while byte_control&CONV != 0:
+		time.sleep(1)
+		byte_control = bus.read_byte_data(address,0x0E)
+    return True
+
+# Get temperature in degrees C
+def getTemp(address):
+    convTemp(address)
+    byte_tmsb = bus.read_byte_data(address,0x11)
+    byte_tlsb = bus.read_byte_data(address,0x12)
+    tinteger = (byte_tmsb & 0x7f) + ((byte_tmsb & 0x80) >> 7) * -2**8
+    tdecimal = (byte_tmsb >> 7) * 2**(-1) + ((byte_tmsb & 0x40) >> 6) * 2**(-2)
+    return tinteger + tdecimal
+
+Celsius = getTemp(address)
+Fahrenheit = 9.0/5.0 * Celsius + 32
+print Fahrenheit, "*F /", Celsius, "*C"
+----
+
+## Procedures
+
+NOTE: Pay attention to this
+
+TIP: Pay attention to this
+
+IMPORTANT: Pay attention to this
+
+WARNING: Pay attention to this
+
+CAUTION: Pay attention to this
+
+NOTE: Pay attention to this
+
+https://tedbergeron.github.io/2015/03/29/Atom-Editor-for-Ascii-Doc.html

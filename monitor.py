@@ -2,7 +2,6 @@ import smbus
 import os
 import RPi.GPIO as GPIO
 import time
-import random
 import boto3
 
 # Pins
@@ -27,7 +26,7 @@ def getTemp(address):
     byte_tmsb = bus.read_byte_data(address,0x11)
     byte_tlsb = bus.read_byte_data(address,0x12)
     tinteger = (byte_tmsb & 0x7f) + ((byte_tmsb & 0x80) >> 7) * -2**8
-    tdecimal = (byte_tmsb >> 7) * 2**(-1) + ((byte_tmsb & 0x40) >> 6) * 2**(-2)
+    tdecimal = (byte_tlsb >> 7) * 2**(-1) + ((byte_tlsb & 0x40) >> 6) * 2**(-2)
     return tinteger + tdecimal
 
 # Force a conversion and wait until it completes
@@ -72,7 +71,7 @@ alert_critical_clear = False
 while not GPIO.event_detected(BUTTON) and counter < 100:
     Celsius = getTemp(address)
     Fahrenheit = 9.0/5.0 * Celsius + 32
-    print Fahrenheit, "*F /", Celsius, "*C"
+    print(Fahrenheit, "*F /", Celsius, "*C")
     temperature = Fahrenheit
     if temperature < ALARM_LOW:
         GPIO.output(leds, GPIO.LOW)
@@ -115,7 +114,7 @@ while not GPIO.event_detected(BUTTON) and counter < 100:
     time.sleep(4)
 
 #Run cleanup routines
-print "LEDs off"
+print ("LEDs off")
 GPIO.output(leds, GPIO.LOW)
 GPIO.cleanup()
 os.system('sudo modprobe rtc_ds1307')

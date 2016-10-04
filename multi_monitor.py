@@ -35,11 +35,15 @@ sensors = [SENSOR_LIGHT,  SENSOR_TEMPERATURE]
 client =  boto3.client('sns')
 endpoint = 'arn:aws:sns:us-east-1:796928799269:ServerAlarms'
 
+# Setup RTC 3231 for temperature reading
+os.system('sudo rmmod rtc_ds1307')
+bus = smbus.SMBus(1)
+address = 0x68
+
 ## FUNCTIONS
 
-## Callback function from button pressed
+# Callback function from button pressed
 def button_press_switch(channel):
-    global button_status
     GPIO. remove_event_detect(channel)
     print('Button pressed')
     pressed_time = datetime.datetime.now()
@@ -47,14 +51,14 @@ def button_press_switch(channel):
         time.sleep(.5)
     dif = datetime.datetime.now() - pressed_time
     pressed_time = dif.seconds
-    if pressed_time > 6:
-        button_status = BUTTON_SHUTDOWN
-    elif pressed_time > 2:
-        button_status = BUTTON_MONITOR_SWITCH
+    if pressed_time < 2:
+        button_status = 1
+    elif pressed_time < 6:
+        button_status = 2
     else:
-        button_status = BUTTON_SENSOR_SWITCH
-    GPIO.add_event_detect(channel, GPIO.FALLING, callback=button_press_switch,  bouncetime=200)
+        button_status = 4
     print(button_status)
+    GPIO.add_event_detect(channel, GPIO.FALLING, callback=button_press_switch,  bouncetime=200)
 ##
 
 ##
@@ -103,11 +107,6 @@ def RCtime (RCpin):
 GPIO.setup(BUTTON, GPIO.IN, pull_up_down = GPIO.PUD_UP)
 GPIO.add_event_detect(BUTTON, GPIO.FALLING, callback=button_press_switch, bouncetime=200)
 
-# Setup RTC 3231 for temperature reading
-os.system('sudo rmmod rtc_ds1307')
-bus = smbus.SMBus(1)
-address = 0x68
-
 # Set some flags
 monitor_latch = True
 sensor_select = sensors[0]
@@ -124,20 +123,22 @@ while button_status < BUTTON_SHUTDOWN and counter < 10:
         sensor_select = sensor_select[1:] + sensor_select[:1]
     if monitor_latch:
         if sensor_select == SENSOR_TEMPERATURE:
-            Celsius = getTemp(address)
-            Fahrenheit = 9.0/5.0 * Celsius + 32
-            print (Fahrenheit, "*F /", Celsius, "*C")
+            #Celsius = get_temperature(address)
+            #Fahrenheit = 9.0/5.0 * Celsius + 32
+            #print (Fahrenheit, "*F /", Celsius, "*C")
+            print("Temperature sensor")
         elif sensor_select == SENSOR_LIGHT:
             GPIO.output(leds, GPIO.LOW)
             GPIO.output(LED_GREEN, GPIO.HIGH)
-            print(RCtime (LDR))
+            #print(rc_time (LDR))
+            print("Light sensor")
         else:
             print("Error in sensor selection.")
     else:
         print("Stop monitoring")
         break
     time.sleep(2)
-    button_status = BUTTON_NONE
+    #button_status = BUTTON_NONE
     counter += 1
 
 #Run cleanup routines

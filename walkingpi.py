@@ -6,6 +6,12 @@ import RPi.GPIO as GPIO
 import time
 import os
 import datetime
+import logging
+
+# Configure logging
+logfilename='/home/pi/Downloads/walkingpi.log'
+logformat = '%(asctime)s - %(levelname)s - %(message)s'
+logging.basicConfig(format=logformat, filename = logfilename, level=logging.DEBUG)
 
 # Use the Board Pin numbers
 GPIO.setmode(GPIO.BOARD)

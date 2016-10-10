@@ -3,6 +3,7 @@ import errno
 import logging
 import time
 import shlex
+import argparse
 
 def run_command(the_call):
     """
@@ -59,6 +60,16 @@ logfilename='/home/pi/Downloads/walkingpi.log'
 logformat = '%(asctime)s - %(levelname)s - %(message)s'
 logging.basicConfig(format=logformat, filename = logfilename, level=logging.DEBUG)
 
+parser = argparse.ArgumentParser()
+parser.add_argument("-n", "--nics", help="List wireless network interfaces.", action="store_true")
+parser.add_argument("-l", "--list", help="List wireless networks (specify adapter).", action="store_true")
+parser.add_argument("-i", "--iface", help="Specify interface.")
+parser.add_argument("-c", "--connect", help="Connect to network.", action="store_true")
+parser.add_argument("-s", "--ssid", help="Specify SSID")
+parser.add_argument("-t", "--type", help="Specify network type (OPEN, WEP, WPA, WPA2)")
+parser.add_argument("-p", "--passw", help="Specify password or key.")
+args = parser.parse_args()
+
 
 iface = 'wlan0'
 networks = get_networks(iface)
@@ -67,16 +78,12 @@ if networks:
     print
     "[+] Networks in range:"
     for network in networks:
-        print
-        " SSID:\t%s" % network['ssid']
-        print
-        " Sig:\t%s" % network['sig']
-        print
-        " BSSID:\t%s" % network['bssid']
-        print
-        " Flags:\t%s" % network['flag']
-        print
-        " Freq:\t%s\n" % network['freq']
+        print(network)
+        print(" SSID:\t%s" % network['ssid'])
+        print(" Sig:\t%s" % network['sig'])
+        print(" BSSID:\t%s" % network['bssid'])
+        print(" Flags:\t%s" % network['flag'])
+        print(" Freq:\t%s\n" % network['freq'])
 else:
     print
     "[W] No wireless networks detected :-("

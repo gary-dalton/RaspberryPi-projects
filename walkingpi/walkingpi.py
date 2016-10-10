@@ -7,6 +7,7 @@ import time
 import os
 import datetime
 import logging
+import wpa_sup_list
 
 # Configure logging
 logfilename='/home/pi/Downloads/walkingpi.log'
@@ -40,8 +41,10 @@ def shutdown(channel): # Change to lowercase function name
         time.sleep(.5)
     dif = datetime.datetime.now() - pressed_time
     pressed_time = dif.seconds
+    logging.debug('Pressed time = %s', pressed_time)
     if pressed_time > 2:
-        os.system("sudo shutdown -h now")
+        pass
+        #os.system("sudo shutdown -h now")
     GPIO.add_event_detect(channel, GPIO.FALLING, callback=shutdown, bouncetime=200)
 ##
 
@@ -89,7 +92,15 @@ while True:
         pass
 
 
-
+iface = 'wlan0'
+networks = wpa_sup_list.get_networks(iface)
+if networks:
+    networks = sorted(networks, key=lambda k: k['sig'])
+    for network in networks:
+        print(network)
+        logging.info('SSID:%s, Signal:%s, BSSID:%s, Security:%s, Freq:%s', network['ssid'], network['sig'], network['bssid'], network['flag'], network['freq'])
+else:
+    logging.info('No wireless networks detected')
 
 
 

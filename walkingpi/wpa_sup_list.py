@@ -1,3 +1,6 @@
+#!/bin/python
+# wpa_sup_list.py
+# Runs and parses 'wpa_cli -i wlan0 scan' and 'wpa_cli -i wlan0 scan_result'
 from subprocess import Popen, PIPE
 import errno
 import logging
@@ -53,12 +56,7 @@ def get_networks(iface, retry=10):
         time.sleep(0.5)
     logging.error('Failed to list networks')
 
-
-# Configure logging
-logfilename='/home/pi/Downloads/walkingpi.log'
-logformat = '%(asctime)s - %(levelname)s - %(message)s'
-logging.basicConfig(format=logformat, filename = logfilename, level=logging.INFO)
-
+'''
 iface = 'wlan0'
 networks = get_networks(iface)
 if networks:
@@ -68,3 +66,4 @@ if networks:
         logging.info('SSID:%s, Signal:%s, BSSID:%s, Security:%s, Freq:%s', network['ssid'], network['sig'], network['bssid'], network['flag'], network['freq'])
 else:
     logging.info('No wireless networks detected')
+'''

@@ -53,5 +53,33 @@ def get_networks(iface, retry=10):
         time.sleep(0.5)
     logging.error("Failed to list networks")
 
+
+# Configure logging
+logfilename='/home/pi/Downloads/walkingpi.log'
+logformat = '%(asctime)s - %(levelname)s - %(message)s'
+logging.basicConfig(format=logformat, filename = logfilename, level=logging.DEBUG)
+
+
+iface = 'wlan0'
+networks = get_networks(iface)
+if networks:
+    networks = sorted(networks, key=lambda k: k['sig'])
+    print
+    "[+] Networks in range:"
+    for network in networks:
+        print
+        " SSID:\t%s" % network['ssid']
+        print
+        " Sig:\t%s" % network['sig']
+        print
+        " BSSID:\t%s" % network['bssid']
+        print
+        " Flags:\t%s" % network['flag']
+        print
+        " Freq:\t%s\n" % network['freq']
+else:
+    print
+    "[W] No wireless networks detected :-("
+
 #wpa_cli -i wlan0 scan
 #wpa_cli -i wlan0 scan_result

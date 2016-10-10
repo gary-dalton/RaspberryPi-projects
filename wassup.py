@@ -1,8 +1,11 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+# Modified from:
 # glenn@sensepost.com / @glennzw
 # Handle wireless networking from Python
 # The name (evil.py) is a play on 'wicd'
+
 from subprocess import Popen, call, PIPE
 import errno
 from types import *
@@ -16,8 +19,7 @@ import shlex
 SUPPLICANT_LOG_FILE = "wpa_supplicant.log"
 
 """
-This bit of code allows you to control wireless networking
-via Python. I chose to encapsualte wpa_supplicant because
+Python encapsulation of wpa_supplicant because
 it has the most consistent output with greatest functionality.
 
 Currently supports OPEN, WPA[2], and WEP.
@@ -27,7 +29,7 @@ Currently supports OPEN, WPA[2], and WEP.
 >>> iface = get_wnics()[0]
 >>> start_wpa(iface)
 >>> networks = get_networks(iface)
->>> connect_to_network(iface, "myHomeNetwork", "WPA", "singehackshackscomounaniña")
+>>> connect_to_network(iface, "SSID", "WPA", "password")
 >>> is_associated(iface)
 True
 >>> do_dhcp(iface)
@@ -39,7 +41,7 @@ True
 logging.basicConfig(level=logging.DEBUG,
                     format='%(asctime)s %(levelname)s %(filename)s: %(message)s',
                     datefmt='%Y-%m-%d %H:%M:%S',
-                    filename='evil.log',
+                    filename='wassup.log',
                     filemode='w')
 
 

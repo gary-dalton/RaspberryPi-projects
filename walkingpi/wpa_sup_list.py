@@ -58,31 +58,19 @@ def get_networks(iface, retry=10):
 # Configure logging
 logfilename='/home/pi/Downloads/walkingpi.log'
 logformat = '%(asctime)s - %(levelname)s - %(message)s'
-logging.basicConfig(format=logformat, filename = logfilename, level=logging.DEBUG)
-
-parser = argparse.ArgumentParser()
-parser.add_argument("-n", "--nics", help="List wireless network interfaces.", action="store_true")
-parser.add_argument("-l", "--list", help="List wireless networks (specify adapter).", action="store_true")
-parser.add_argument("-i", "--iface", help="Specify interface.")
-parser.add_argument("-c", "--connect", help="Connect to network.", action="store_true")
-parser.add_argument("-s", "--ssid", help="Specify SSID")
-parser.add_argument("-t", "--type", help="Specify network type (OPEN, WEP, WPA, WPA2)")
-parser.add_argument("-p", "--passw", help="Specify password or key.")
-args = parser.parse_args()
-
+logging.basicConfig(format=logformat, filename = logfilename, level=logging.INFO)
 
 iface = 'wlan0'
 networks = get_networks(iface)
 if networks:
     networks = sorted(networks, key=lambda k: k['sig'])
-    print
-    "[+] Networks in range:"
     for network in networks:
         print(network)
-        print(" SSID:\t%s" % network['ssid'])
-        print(" Sig:\t%s" % network['sig'])
+        logging.info('SSID:%s, Signal:%s, BSSID:%s, Security:%s, Freq:%s', network['ssid'], network['sig'], network['bssid'], network['flag'], network['freq'])
+        print(" SSID:%s" % network['ssid'])
+        print(" Signal:\t%s" % network['sig'])
         print(" BSSID:\t%s" % network['bssid'])
-        print(" Flags:\t%s" % network['flag'])
+        print(" Security:\t%s" % network['flag'])
         print(" Freq:\t%s\n" % network['freq'])
 else:
     print
@@ -90,3 +78,4 @@ else:
 
 #wpa_cli -i wlan0 scan
 #wpa_cli -i wlan0 scan_result
+'%s before you %s', 'Look', 'leap!'

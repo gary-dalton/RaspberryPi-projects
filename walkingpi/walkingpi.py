@@ -56,6 +56,7 @@ def shutdown(channel): # Change to lowercase function name
 ##
 def collection_toggle(channel):
     global collection_flag
+    logging.debug('collection_flag=%s', collection_flag)
 
     collection_flag = ~collection_flag
     if collection_flag:
@@ -64,6 +65,7 @@ def collection_toggle(channel):
         collection_timer.start()
     else:
         collection_timer.stop()
+        wpa_sup_list.down_iface(IFACE)
         wpa_sup_list.up_iface(IFACE, INTERFACES_CONFIG)
 ##
 

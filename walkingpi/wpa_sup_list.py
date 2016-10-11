@@ -56,6 +56,19 @@ def get_networks(iface, retry=10):
         time.sleep(0.5)
     logging.error('Failed to list networks')
 
+#
+def down_iface(iface):
+    run_command('sudo ifdown %s' % iface)
+#
+
+#
+def up_iface(iface, config=False):
+    thecmd = 'sudo ifup ' + iface
+    if config:
+        thecmd += ' -i ' + config
+    run_command(thecmd)
+#
+
 '''
 iface = 'wlan0'
 networks = get_networks(iface)

@@ -54,7 +54,7 @@ def shutdown(channel): # Change to lowercase function name
 ##
 
 ##
-def collection_toggle():
+def collection_toggle(channel):
     global collection_flag
 
     collection_flag = ~collection_flag
@@ -68,7 +68,7 @@ def collection_toggle():
 ##
 
 ##
-def record_toggle():
+def record_toggle(channel):
     global record_flag
     record_flag = ~record_flag
 ##
@@ -119,6 +119,11 @@ GPIO.add_event_detect(BUTTON_RECORD, GPIO.FALLING, callback=record_toggle, bounc
 
 # Main loop
 collection_timer = RepeatedTimer(WIFI_SCAN_DELAY, scan_log_wifi, IFACE)
+
+# Start state
+wpa_sup_list.down_iface(IFACE)
+wpa_sup_list.up_iface(IFACE)
+collection_timer.start()
 
 while True:
     if collection_flag:

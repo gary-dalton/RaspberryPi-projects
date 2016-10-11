@@ -58,7 +58,7 @@ def collection_toggle(channel):
     global collection_flag
     logging.debug('collection_flag=%s', collection_flag)
 
-    collection_flag = ~collection_flag
+    collection_flag = not collection_flag
     if collection_flag:
         wpa_sup_list.down_iface(IFACE)
         wpa_sup_list.up_iface(IFACE)
@@ -72,7 +72,7 @@ def collection_toggle(channel):
 ##
 def record_toggle(channel):
     global record_flag
-    record_flag = ~record_flag
+    record_flag = not record_flag
 ##
 
 ##

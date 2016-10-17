@@ -141,6 +141,7 @@ rsn_pairwise=CCMP
 ssid=Pi3-AP
 # The network passphrase
 wpa_passphrase=raspberry</code></pre>
+<p>TIP: If the passphrase is too short, hostapd won't start.</p>
 <ul>
 <li>Now edit the default configuration, <code>sudo nano /etc/default/hostapd</code>
 <ul>
@@ -167,7 +168,8 @@ dhcp-range=192.168.220.50,192.168.220.150,12h # IP range and lease time  </code>
 </section>
 <section id="iptables-forwarding" class="level2">
 <h2><a name="7"></a>Iptables forwarding</h2>
-<p><em>(Optional)</em> Forwarding is required if any devices connected to your this access point need to connect to the Internet. I do not forward for many IoT devices which I expect to act as an isolated network.</p>
+<p><em>IMPORTANT: This section is optional.</em></p>
+<p>Forwarding is required if any devices connected to your this access point need to connect to the Internet. I do not forward for many IoT devices which I expect to act as an isolated network.</p>
 <ul>
 <li>Enable IP Forwarding
 <ul>

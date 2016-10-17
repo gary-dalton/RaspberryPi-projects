@@ -1,0 +1,57 @@
+= GPS on Raspberry Pi 3
+:subtitle: Installing GPS on RPi3
+:author: Gary Dalton
+:revnumber: 1.0
+:revdate: 13 October 2016
+:license: Creative Commons BY-SA
+:homepage: https://gary-dalton.github.io/
+:githubuser: gary-dalton
+:githubrepo: RaspberryPi-projects
+:githubbranch: gh-pages
+:description: Installation and basic use of the Adafruit Ultimate GPS breakout on a Raspberry Pi 3. The installation starts with GPS over USB but, after running some tests, moves the GPS to UART. Mostly follows https://learn.adafruit.com/adafruit-ultimate-gps-on-the-raspberry-pi/introduction
+:css: stylesheets/stylesheet.css
+:cli: asciidoctor -a stylesheet=github.css -a stylesdir=stylesheets rpi3_gps.adoc
+:keywords: gps, uart, installation, adafruit, raspberrypi
+:linkcss:
+:icons: font
+:toc: left
+:toclevels: 4
+:source-highlighter: coderay
+
+link:index.html[Raspberry Pi Projects] | https://gary-dalton.github.io/[Home]
+
+{description}
+
+https://github.com/{githubuser}/{githubrepo}/tree/{githubbranch}[View on GitHub image:images/GitHub-Mark-32px.png[]]
+
+== Requirements
+
+This guide will start with a basic Raspbian build, connected to a wired network. Follow the link:rpi_initial_setup.html[RPi Initial Setup Guide] to get started. A Raspberry Pi 2 may also be used.
+
+For full Kismet usage, GPS should be available on the pi. Follow the link:rpi_gps.html[GPS on Raspberry Pi 3] guide for GPS.
+
+== Parts List
+
+* Raspberry Pi 2 or 3
+* 16GB (or larger) class 10 MicroSD card
+* GPS breakout (https://www.adafruit.com/product/746[Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3])
+* USB Wifi with monitor mode (https://smile.amazon.com/gp/product/B00YI0AIRS[Detroit DIY Electronics Long Range WiFi])
+* RTC module (included in the GPS breakout)
+
+== Install Kismet
+
+
+* `sudo mv /boot/cmdline.txt /boot/cmdline.txt.orig`
+* `sudo nano /boot/cmdline.txt` add the line:
+** `dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait`
+
+=== Disable the serial getty service
+
+* `sudo systemctl stop serial-getty@ttyS0.service`
+* `sudo systemctl disable serial-getty@ttyS0.service`
+
+=== Force the CPU into a fixed frequency
+
+* `sudo nano /boot/config.txt`
+** At bottom add `enable_uart=1`
+* Reboot, `sudo reboot now`

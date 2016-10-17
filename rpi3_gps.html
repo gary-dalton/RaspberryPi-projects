@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.4">
+<meta name="description" content="Installation and basic use of the Adafruit Ultimate GPS breakout on a Raspberry Pi 3. The installation starts with GPS over USB but, after running some tests, moves the GPS to UART. Mostly follows https://learn.adafruit.com/adafruit-ultimate-gps-on-the-raspberry-pi/introduction">
+<meta name="keywords" content="gps, uart, installation, adafruit, raspberrypi">
+<meta name="author" content="Gary Dalton">
+<title>GPS on Raspberry Pi 3</title>
+<link rel="stylesheet" href="stylesheets/github.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="stylesheets/coderay-asciidoctor.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>GPS on Raspberry Pi 3</h1>
+<div class="details">
+<span id="author" class="author">Gary Dalton</span><br>
+<span id="revnumber">version 1.0,</span>
+<span id="revdate">13 October 2016</span>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_requirements">Requirements</a></li>
+<li><a href="#_parts_list">Parts List</a></li>
+<li><a href="#_install_kismet">Install Kismet</a>
+<ul class="sectlevel2">
+<li><a href="#_disable_the_serial_getty_service">Disable the serial getty service</a></li>
+<li><a href="#_force_the_cpu_into_a_fixed_frequency">Force the CPU into a fixed frequency</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="index.html">Raspberry Pi Projects</a> | <a href="https://gary-dalton.github.io/">Home</a></p>
+</div>
+<div class="paragraph">
+<p>Installation and basic use of the Adafruit Ultimate GPS breakout on a Raspberry Pi 3. The installation starts with GPS over USB but, after running some tests, moves the GPS to UART. Mostly follows <a href="https://learn.adafruit.com/adafruit-ultimate-gps-on-the-raspberry-pi/introduction" class="bare">https://learn.adafruit.com/adafruit-ultimate-gps-on-the-raspberry-pi/introduction</a></p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub <span class="image"><img src="images/GitHub-Mark-32px.png" alt="GitHub Mark 32px"></span></a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_requirements">Requirements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This guide will start with a basic Raspbian build, connected to a wired network. Follow the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a> to get started. A Raspberry Pi 2 may also be used.</p>
+</div>
+<div class="paragraph">
+<p>For full Kismet usage, GPS should be available on the pi. Follow the <a href="rpi_gps.html">GPS on Raspberry Pi 3</a> guide for GPS.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_parts_list">Parts List</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Raspberry Pi 2 or 3</p>
+</li>
+<li>
+<p>16GB (or larger) class 10 MicroSD card</p>
+</li>
+<li>
+<p>GPS breakout (<a href="https://www.adafruit.com/product/746">Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3</a>)</p>
+</li>
+<li>
+<p>USB Wifi with monitor mode (<a href="https://smile.amazon.com/gp/product/B00YI0AIRS">Detroit DIY Electronics Long Range WiFi</a>)</p>
+</li>
+<li>
+<p>RTC module (included in the GPS breakout)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_install_kismet">Install Kismet</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo mv /boot/cmdline.txt /boot/cmdline.txt.orig</code></p>
+</li>
+<li>
+<p><code>sudo nano /boot/cmdline.txt</code> add the line:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>dwc_otg.lpm_enable=0 console=tty1 root=/dev/mmcblk0p2 rootfstype=ext4 elevator=deadline rootwait</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_disable_the_serial_getty_service">Disable the serial getty service</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo systemctl stop serial-getty@ttyS0.service</code></p>
+</li>
+<li>
+<p><code>sudo systemctl disable serial-getty@ttyS0.service</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_force_the_cpu_into_a_fixed_frequency">Force the CPU into a fixed frequency</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo nano /boot/config.txt</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>At bottom add <code>enable_uart=1</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Reboot, <code>sudo reboot now</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 1.0<br>
+Last updated 2016-10-17 16:29:49 Central Daylight Time
+</div>
+</div>
+</body>
+</html>

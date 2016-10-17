@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.4">
+<meta name="description" content="A Raspberry Pi backpack cam. The intent is to capture photos at regular intervals for later geo-located processing.">
+<meta name="keywords" content="walkingpi, bodycam, backpack, wifi, gps, raspberrypi">
+<meta name="author" content="Gary Dalton">
+<title>WalkingPi</title>
+<link rel="stylesheet" href="stylesheets/github.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="stylesheets/coderay-asciidoctor.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>WalkingPi</h1>
+<div class="details">
+<span id="author" class="author">Gary Dalton</span><br>
+<span id="revnumber">version 1.0,</span>
+<span id="revdate">1 October 2016</span>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_parts_list">Parts List</a></li>
+<li><a href="#_requirements">Requirements</a></li>
+<li><a href="#_overview">Overview</a></li>
+<li><a href="#_push_buttons">Push buttons</a>
+<ul class="sectlevel2">
+<li><a href="#_shutdown_button">Shutdown button</a></li>
+<li><a href="#_collection_mode_and_detail_record_toggle_buttons">Collection mode and detail record toggle buttons</a></li>
+</ul>
+</li>
+<li><a href="#_logging">Logging</a></li>
+<li><a href="#_wireless">Wireless</a>
+<ul class="sectlevel2">
+<li><a href="#_transfer_mode">Transfer mode</a></li>
+</ul>
+</li>
+<li><a href="#_gps">GPS</a></li>
+<li><a href="#_kismet">Kismet</a></li>
+<li><a href="#_setup_camera">Setup Camera</a></li>
+<li><a href="#_rpi_test">rpi_test</a></li>
+<li><a href="#_next_up">Next up?</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="index.html">Raspberry Pi Projects</a> | <a href="https://gary-dalton.github.io/">Home</a></p>
+</div>
+<div class="paragraph">
+<p>A Raspberry Pi backpack cam. The intent is to capture photos at regular intervals for later geo-located processing.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub <span class="image"><img src="images/GitHub-Mark-32px.png" alt="GitHub Mark 32px"></span></a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_parts_list">Parts List</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Raspberry Pi 3</p>
+</li>
+<li>
+<p>64GB (or larger) class 10 MicroSD card</p>
+</li>
+<li>
+<p>Mini-USB battery pack</p>
+</li>
+<li>
+<p>Push buttons</p>
+</li>
+<li>
+<p>Raspberry Pi Camera</p>
+</li>
+<li>
+<p>GPS breakout (<a href="https://www.adafruit.com/product/746">Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3</a>)</p>
+</li>
+<li>
+<p>RTC module (included in the GPS breakout)</p>
+</li>
+<li>
+<p>Backpack</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_requirements">Requirements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This guide will start with a basic Raspbian build, connected to a wired network. Follow the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a> to get started. A Raspberry Pi 2 may also be used.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_overview">Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Walkingpi has a number of different modes and features that are intended to work well together. It has two main modes, the default is collection mode but it may be placed into transfer mode.</p>
+</div>
+<div class="paragraph">
+<p>In collection mode, the walkingpi:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>collects GPS data</p>
+</li>
+<li>
+<p>collects wifi scan data</p>
+</li>
+<li>
+<p>takes a photo every 30 seconds</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In transfer mode, the walkingpi:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>connects to its home base wifi</p>
+</li>
+<li>
+<p>securely connects to a data staging server</p>
+</li>
+<li>
+<p>transfers all collected data</p>
+</li>
+<li>
+<p>beeps when done</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Additionally, it may be placed into detail record mode when it records video instead of photos.</p>
+</div>
+<div class="paragraph">
+<p>Walkingpi accesses the GPIO using python. The <em>walkingpi.py</em> will start upon boot.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_push_buttons">Push buttons</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This project uses three push buttons, a shutdown button, a collection mode toggle, and a detail record toggle. All of the button code will be in the <em>walkingpi.py</em></p>
+</div>
+<div class="sect2">
+<h3 id="_shutdown_button">Shutdown button</h3>
+<div class="paragraph">
+<p>The shutdown button just calls the <code>sudo shutdown now</code> command. The code given here will be modified later as we add more interrupts and non-blocking threads. See <a href="https://www.element14.com/community/docs/DOC-78055/l/adding-a-shutdown-button-to-the-raspberry-pi-b">Add a Shutdown Button</a> or <a href="reference-docs/adding-a-shutdown-button-to-the-raspberry-pi-b.pdf">local pdf</a></p>
+</div>
+<div class="listingblock">
+<div class="title">walkingpi.py</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python"><span class="comment">#!/bin/python</span>
+<span class="comment"># Simple script for shutting down the raspberry Pi at the press of a button.</span>
+<span class="comment"># by Inderpreet Singh</span>
+
+<span class="keyword">import</span> <span class="include">RPi.GPIO</span> <span class="keyword">as</span> GPIO
+<span class="keyword">import</span> <span class="include">time</span>
+<span class="keyword">import</span> <span class="include">os</span>
+
+<span class="comment"># Use the Broadcom SOC Pin numbers</span>
+<span class="comment"># Setup the Pin with Internal pullups enabled and PIN in reading mode.</span>
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(<span class="integer">18</span>, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+
+<span class="comment"># Our function on what to do when the button is pressed</span>
+<span class="keyword">def</span> <span class="function">Shutdown</span>(channel):
+    os.system(<span class="string"><span class="delimiter">&quot;</span><span class="content">sudo shutdown -h now</span><span class="delimiter">&quot;</span></span>)
+
+<span class="comment"># Add our function to execute when the button pressed event happens</span>
+GPIO.add_event_detect(<span class="integer">18</span>, GPIO.FALLING, callback = Shutdown, bouncetime = <span class="integer">2000</span>)
+
+<span class="comment"># Now wait!</span>
+<span class="keyword">while</span> <span class="integer">1</span>:
+    time.sleep(<span class="integer">1</span>)</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_collection_mode_and_detail_record_toggle_buttons">Collection mode and detail record toggle buttons</h3>
+<div class="paragraph">
+<p>The collection mode toggle button switches between collection and transfer modes. The detail record toggle button starts and stops detail recording. Connect these buttons in the same way as the shutdown button.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In python, I am switching from the BCM to the Board numbering scheme for GPIO. Additionally, the shutdown button is moved to pin 11, the collection toggle is on pin 13, and the detail record toggle is on pin 15.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">walkingpi.py</div>
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python"><span class="comment">#!/bin/python</span>
+<span class="comment"># Walkingpi main script</span>
+<span class="comment"># Added Collection mode  and detail record toggle buttons</span>
+
+<span class="keyword">import</span> <span class="include">RPi.GPIO</span> <span class="keyword">as</span> GPIO
+<span class="keyword">import</span> <span class="include">time</span>
+<span class="keyword">import</span> <span class="include">os</span>
+<span class="keyword">import</span> <span class="include">datetime</span>
+
+<span class="comment"># Use the Board Pin numbers</span>
+GPIO.setmode(GPIO.BOARD)
+
+<span class="comment"># Pins</span>
+BUTTON_SHUTDOWN = <span class="integer">11</span>
+BUTTON_COLLECTION = <span class="integer">13</span>
+BUTTON_RECORD = <span class="integer">15</span>
+
+collection_flag = <span class="predefined-constant">True</span>
+record_flag = <span class="predefined-constant">False</span>
+recording = <span class="predefined-constant">False</span>
+
+<span class="comment"># Setup the Pin with Internal pullups enabled and PIN in reading mode.</span>
+GPIO.setup(BUTTON_SHUTDOWN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(BUTTON_COLLECTION, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(BUTTON_RECORD, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+<span class="comment">##</span>
+<span class="keyword">def</span> <span class="function">shutdown</span>(channel): <span class="comment"># Change to lowercase function name</span>
+    <span class="comment"># Modify function to require the shutdown button to be pressed and held</span>
+    <span class="comment"># for at least 2 seconds before shutting down.</span>
+    GPIO.remove_event_detect(channel)
+    pressed_time = datetime.datetime.now()
+    <span class="keyword">while</span> <span class="keyword">not</span> GPIO.input(channel):
+        time.sleep(<span class="float">.5</span>)
+    dif = datetime.datetime.now() - pressed_time
+    pressed_time = dif.seconds
+    <span class="keyword">if</span> pressed_time &gt; <span class="integer">2</span>:
+        os.system(<span class="string"><span class="delimiter">&quot;</span><span class="content">sudo shutdown -h now</span><span class="delimiter">&quot;</span></span>)
+    GPIO.add_event_detect(channel, GPIO.FALLING, callback=shutdown, bouncetime=<span class="integer">200</span>)
+<span class="comment">##</span>
+
+<span class="comment">##</span>
+<span class="keyword">def</span> <span class="function">collection_toggle</span>():
+    <span class="keyword">global</span> collection_flag
+    collection_flag = ~collection_flag
+<span class="comment">##</span>
+
+<span class="comment">##</span>
+<span class="keyword">def</span> <span class="function">record_toggle</span>():
+    <span class="keyword">global</span> record_flag
+    record_flag = ~record_flag
+<span class="comment">##</span>
+
+<span class="comment"># Add button pressed event detects</span>
+GPIO.add_event_detect(BUTTON_SHUTDOWN, GPIO.FALLING, callback=shutdown, bouncetime=<span class="integer">2000</span>)
+GPIO.add_event_detect(BUTTON_COLLECTION, GPIO.FALLING, callback=collection_toggle, bouncetime=<span class="integer">2000</span>)
+GPIO.add_event_detect(BUTTON_RECORD, GPIO.FALLING, callback=record_toggle, bouncetime=<span class="integer">2000</span>)
+
+<span class="comment"># Main loop</span>
+<span class="keyword">while</span> <span class="predefined-constant">True</span>:
+    <span class="keyword">if</span> collection_flag:
+        <span class="comment"># Collect data - fill in later</span>
+        <span class="comment"># Initiate GPS</span>
+        <span class="comment"># Log GPS</span>
+        <span class="comment"># Scan and log wifi</span>
+        <span class="comment"># Interval photos</span>
+        <span class="keyword">if</span> record_flag &gt; recording:
+            <span class="comment"># Stop interval photos</span>
+            <span class="comment"># Start detail recording</span>
+            record_flag = <span class="predefined-constant">False</span>
+            <span class="keyword">pass</span>
+        <span class="keyword">if</span> record_flag &amp; recording:
+            <span class="comment"># Stop detail recording</span>
+            <span class="comment"># Start interval photos</span>
+            record_flag = <span class="predefined-constant">False</span>
+            <span class="keyword">pass</span>
+        <span class="keyword">pass</span>
+    <span class="keyword">else</span>:
+        <span class="comment"># Stop collection</span>
+        <span class="comment"># Connect to home base</span>
+        <span class="comment"># Transfer data - fill in later</span>
+        <span class="comment"># Notify of completion</span>
+        <span class="keyword">pass</span></code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_logging">Logging</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>WalkingPi needs to log data. Logging is a large topic area but we will limit our logging to our very basic needs. Add the following just after the import section of <em>walkingpi.py</em>.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python"><span class="keyword">import</span> <span class="include">logging</span>
+
+<span class="comment"># Configure logging</span>
+logfilename=<span class="string"><span class="delimiter">'</span><span class="content">/home/pi/Downloads/walkingpi.log</span><span class="delimiter">'</span></span>
+logformat = <span class="string"><span class="delimiter">'</span><span class="content">%(asctime)s - %(levelname)s - %(message)s</span><span class="delimiter">'</span></span>
+logging.basicConfig(format=logformat, filename = logfilename, level=logging.DEBUG)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Send messages to the logfile with the following example code.</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python"><span class="comment"># TEST with this code</span>
+logging.debug(<span class="string"><span class="delimiter">'</span><span class="content">debug message</span><span class="delimiter">'</span></span>)
+logging.info(<span class="string"><span class="delimiter">'</span><span class="content">info message</span><span class="delimiter">'</span></span>)
+logging.warn(<span class="string"><span class="delimiter">'</span><span class="content">warn message</span><span class="delimiter">'</span></span>)
+logging.error(<span class="string"><span class="delimiter">'</span><span class="content">error message</span><span class="delimiter">'</span></span>)
+logging.critical(<span class="string"><span class="delimiter">'</span><span class="content">critical message</span><span class="delimiter">'</span></span>)
+
+<span class="comment"># Messages should be viewable at</span>
+<span class="comment"># cat /home/pi/Downloads/walkingpi.log</span></code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To learn more about logging see <a href="https://docs.python.org/2/howto/logging.html" class="bare">https://docs.python.org/2/howto/logging.html</a> and <a href="http://docs.python-guide.org/en/latest/writing/logging/" class="bare">http://docs.python-guide.org/en/latest/writing/logging/</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_wireless">Wireless</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>WiFi is needed in both collection and transfer modes. I use the Raspberry Pi 3 built-in wifi. The device name for the built-in wifi is wlan0.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+While the built-in wifi is very capable and sufficient for my project; if greater range, monitor mode, or packet injection is needed, use a quality USB wifi with antenna.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>There is more than one method to bring an interface up with a different result. For walkingpi, wlan0 should initially load without trying to connect to an access point. This makes it available for <em>wpa_cli</em> commands. An easy way to control wlan0 is to give two network configuration files.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><em>/etc/network/interfaces</em> is the standard configuration that is run at boot</p>
+</li>
+<li>
+<p><em>/etc/network/interfaces.base</em> is a new configuration used to connect to base</p>
+</li>
+<li>
+<p><code>sudo nano /etc/network/interfaces</code></p>
+</li>
+<li>
+<p>Add the following</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">/etc/network/interfaces</div>
+<div class="content">
+<pre>allow-hotplug wlan0
+iface wlan0 inet manual
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Copy the file, <code>sudo cp /etc/network/interfaces /etc/network/interfaces.base</code></p>
+</li>
+<li>
+<p><code>sudo nano /etc/network/interfaces.base</code></p>
+</li>
+<li>
+<p>Change the wlan0 section to</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">/etc/network/interfaces.base</div>
+<div class="content">
+<pre>allow-hotplug wlan0
+iface wlan0 inet dhcp
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.base.conf</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo cp /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.base.conf</code></p>
+</li>
+<li>
+<p><code>sudo nano /etc/wpa_supplicant/wpa_supplicant.base.conf</code></p>
+</li>
+<li>
+<p>Add the following to this file (remember to change replace <em>your_wifi_identifier</em> and <em>your_wifi_password</em> with your real values):</p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="title">/etc/wpa_supplicant/wpa_supplicant.base.conf</div>
+<div class="content">
+<pre>network={
+ssid="your_wifi_identifier"
+psk="your_wifi_password"
+proto=RSN
+key_mgmt=WPA-PSK
+pairwise=CCMP
+auth_alg=OPEN
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>What happens in action?</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Boots into wlan0 available for use but not connected</p>
+</li>
+<li>
+<p>Take wlan0 down, <code>sudo ifdown wlan0</code></p>
+</li>
+<li>
+<p>Connect wlan0 to base, <code>sudo ifup wlan0 -i /etc/network/interfaces.base</code></p>
+</li>
+<li>
+<p>Take wlan0 down, <code>sudo ifdown wlan0</code></p>
+</li>
+<li>
+<p>Bring wlan0 up but not connected, <code>sudo ifup wlan0</code></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_transfer_mode">Transfer mode</h3>
+<div class="paragraph">
+<p>For transfer mode, walkingpi connects to its home base.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_gps">GPS</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For installation and the basics, see <a href="rpi3_gps.html">GPS on Raspberry Pi 3</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_kismet">Kismet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="https://kismetwireless.net/">Kismet</a> is used for detecting and logging geolocated wireless networks.</p>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+At this time the built-in wifi does not support monitor mode.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>To check if your wifi is capable of monitor mode, try the following commands. <code>sudo ifdown wlan0</code> then <code>sudo iwconfig wlan0 mode monitor</code> and finally check with <code>iwconfig</code>. If you are using a USB wifi with monitor mode support, give Kismet a load. See <a href="rpi3_kismet.html">Kismet on Raspberry Pi 3</a></p>
+</div>
+<div class="paragraph">
+<p>There is an effort to get the built-in to support monitor mode. See <a href="https://github.com/seemoo-lab/bcm-rpi3" class="bare">https://github.com/seemoo-lab/bcm-rpi3</a>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_setup_camera">Setup Camera</h2>
+<div class="sectionbody">
+
+</div>
+</div>
+<div class="sect1">
+<h2 id="_rpi_test">rpi_test</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>echo ds1307 0x68 &gt; /sys/class/i2c-adapter/i2c-1/new_device
+hwclock -s</p>
+</div>
+<div class="paragraph">
+<p>python /usr/local/scripts/monitor_sensors.py &amp;</p>
+</div>
+<div class="paragraph">
+<p><a href="http://www.exiv2.org/getting-started.html" class="bare">http://www.exiv2.org/getting-started.html</a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_up">Next up?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After reading this guide, you may be interested in reading:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="processing_image_data.html">Processing image data</a> (<strong>pending</strong>)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 1.0<br>
+Last updated 2016-10-14 21:08:14 Central Daylight Time
+</div>
+</div>
+</body>
+</html>

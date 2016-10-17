@@ -1,0 +1,317 @@
+= WalkingPi
+:subtitle: Basically a bodycam
+:author: Gary Dalton
+:revnumber: 1.0
+:revdate: 1 October 2016
+:license: Creative Commons BY-SA
+:homepage: https://gary-dalton.github.io/
+:githubuser: gary-dalton
+:githubrepo: RaspberryPi-projects
+:githubbranch: gh-pages
+:description: A Raspberry Pi backpack cam. The intent is to capture photos at regular intervals for later geo-located processing.
+:css: stylesheets/stylesheet.css
+:cli: asciidoctor -a stylesheet=github.css -a stylesdir=stylesheets walkingpi.adoc
+:keywords: walkingpi, bodycam, backpack, wifi, gps, raspberrypi
+:linkcss:
+:icons: font
+:toc: left
+:toclevels: 4
+:source-highlighter: coderay
+
+link:index.html[Raspberry Pi Projects] | https://gary-dalton.github.io/[Home]
+
+{description}
+
+https://github.com/{githubuser}/{githubrepo}/tree/{githubbranch}[View on GitHub image:images/GitHub-Mark-32px.png[]]
+
+== Parts List
+
+* Raspberry Pi 3
+* 64GB (or larger) class 10 MicroSD card
+* Mini-USB battery pack
+* Push buttons
+* Raspberry Pi Camera
+* GPS breakout (https://www.adafruit.com/product/746[Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3])
+* RTC module (included in the GPS breakout)
+* Backpack
+
+== Requirements
+
+This guide will start with a basic Raspbian build, connected to a wired network. Follow the link:rpi_initial_setup.html[RPi Initial Setup Guide] to get started. A Raspberry Pi 2 may also be used.
+
+== Overview
+
+Walkingpi has a number of different modes and features that are intended to work well together. It has two main modes, the default is collection mode but it may be placed into transfer mode.
+
+In collection mode, the walkingpi:
+
+* collects GPS data
+* collects wifi scan data
+* takes a photo every 30 seconds
+
+In transfer mode, the walkingpi:
+
+* connects to its home base wifi
+* securely connects to a data staging server
+* transfers all collected data
+* beeps when done
+
+Additionally, it may be placed into detail record mode when it records video instead of photos.
+
+Walkingpi accesses the GPIO using python. The _walkingpi.py_ will start upon boot.
+
+== Push buttons
+
+This project uses three push buttons, a shutdown button, a collection mode toggle, and a detail record toggle. All of the button code will be in the _walkingpi.py_
+
+=== Shutdown button
+
+The shutdown button just calls the `sudo shutdown now` command. The code given here will be modified later as we add more interrupts and non-blocking threads. See https://www.element14.com/community/docs/DOC-78055/l/adding-a-shutdown-button-to-the-raspberry-pi-b[Add a Shutdown Button] or link:reference-docs/adding-a-shutdown-button-to-the-raspberry-pi-b.pdf[local pdf]
+
+[source, python]
+.walkingpi.py
+----
+#!/bin/python
+# Simple script for shutting down the raspberry Pi at the press of a button.
+# by Inderpreet Singh
+
+import RPi.GPIO as GPIO
+import time
+import os
+
+# Use the Broadcom SOC Pin numbers
+# Setup the Pin with Internal pullups enabled and PIN in reading mode.
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(18, GPIO.IN, pull_up_down = GPIO.PUD_UP)
+
+# Our function on what to do when the button is pressed
+def Shutdown(channel):
+    os.system("sudo shutdown -h now")
+
+# Add our function to execute when the button pressed event happens
+GPIO.add_event_detect(18, GPIO.FALLING, callback = Shutdown, bouncetime = 2000)
+
+# Now wait!
+while 1:
+    time.sleep(1)
+----
+
+=== Collection mode and detail record toggle buttons
+
+The collection mode toggle button switches between collection and transfer modes. The detail record toggle button starts and stops detail recording. Connect these buttons in the same way as the shutdown button.
+
+NOTE: In python, I am switching from the BCM to the Board numbering scheme for GPIO. Additionally, the shutdown button is moved to pin 11, the collection toggle is on pin 13, and the detail record toggle is on pin 15.
+
+[source, python]
+.walkingpi.py
+----
+#!/bin/python
+# Walkingpi main script
+# Added Collection mode  and detail record toggle buttons
+
+import RPi.GPIO as GPIO
+import time
+import os
+import datetime
+
+# Use the Board Pin numbers
+GPIO.setmode(GPIO.BOARD)
+
+# Pins
+BUTTON_SHUTDOWN = 11
+BUTTON_COLLECTION = 13
+BUTTON_RECORD = 15
+
+collection_flag = True
+record_flag = False
+recording = False
+
+# Setup the Pin with Internal pullups enabled and PIN in reading mode.
+GPIO.setup(BUTTON_SHUTDOWN, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(BUTTON_COLLECTION, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(BUTTON_RECORD, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+##
+def shutdown(channel): # Change to lowercase function name
+    # Modify function to require the shutdown button to be pressed and held
+    # for at least 2 seconds before shutting down.
+    GPIO.remove_event_detect(channel)
+    pressed_time = datetime.datetime.now()
+    while not GPIO.input(channel):
+        time.sleep(.5)
+    dif = datetime.datetime.now() - pressed_time
+    pressed_time = dif.seconds
+    if pressed_time > 2:
+        os.system("sudo shutdown -h now")
+    GPIO.add_event_detect(channel, GPIO.FALLING, callback=shutdown, bouncetime=200)
+##
+
+##
+def collection_toggle():
+    global collection_flag
+    collection_flag = ~collection_flag
+##
+
+##
+def record_toggle():
+    global record_flag
+    record_flag = ~record_flag
+##
+
+# Add button pressed event detects
+GPIO.add_event_detect(BUTTON_SHUTDOWN, GPIO.FALLING, callback=shutdown, bouncetime=2000)
+GPIO.add_event_detect(BUTTON_COLLECTION, GPIO.FALLING, callback=collection_toggle, bouncetime=2000)
+GPIO.add_event_detect(BUTTON_RECORD, GPIO.FALLING, callback=record_toggle, bouncetime=2000)
+
+# Main loop
+while True:
+    if collection_flag:
+        # Collect data - fill in later
+        # Initiate GPS
+        # Log GPS
+        # Scan and log wifi
+        # Interval photos
+        if record_flag > recording:
+            # Stop interval photos
+            # Start detail recording
+            record_flag = False
+            pass
+        if record_flag & recording:
+            # Stop detail recording
+            # Start interval photos
+            record_flag = False
+            pass
+        pass
+    else:
+        # Stop collection
+        # Connect to home base
+        # Transfer data - fill in later
+        # Notify of completion
+        pass
+----
+
+== Logging
+
+WalkingPi needs to log data. Logging is a large topic area but we will limit our logging to our very basic needs. Add the following just after the import section of _walkingpi.py_.
+
+[source, python]
+----
+import logging
+
+# Configure logging
+logfilename='/home/pi/Downloads/walkingpi.log'
+logformat = '%(asctime)s - %(levelname)s - %(message)s'
+logging.basicConfig(format=logformat, filename = logfilename, level=logging.DEBUG)
+----
+
+Send messages to the logfile with the following example code.
+
+[source, python]
+----
+# TEST with this code
+logging.debug('debug message')
+logging.info('info message')
+logging.warn('warn message')
+logging.error('error message')
+logging.critical('critical message')
+
+# Messages should be viewable at
+# cat /home/pi/Downloads/walkingpi.log
+----
+
+To learn more about logging see https://docs.python.org/2/howto/logging.html and http://docs.python-guide.org/en/latest/writing/logging/.
+
+== Wireless
+
+WiFi is needed in both collection and transfer modes. I use the Raspberry Pi 3 built-in wifi. The device name for the built-in wifi is wlan0.
+
+TIP: While the built-in wifi is very capable and sufficient for my project; if greater range, monitor mode, or packet injection is needed, use a quality USB wifi with antenna.
+
+There is more than one method to bring an interface up with a different result. For walkingpi, wlan0 should initially load without trying to connect to an access point. This makes it available for _wpa_cli_ commands. An easy way to control wlan0 is to give two network configuration files.
+
+* _/etc/network/interfaces_ is the standard configuration that is run at boot
+* _/etc/network/interfaces.base_ is a new configuration used to connect to base
+
+* `sudo nano /etc/network/interfaces`
+* Add the following
+
+./etc/network/interfaces
+----
+allow-hotplug wlan0
+iface wlan0 inet manual
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+----
+
+* Copy the file, `sudo cp /etc/network/interfaces /etc/network/interfaces.base`
+* `sudo nano /etc/network/interfaces.base`
+* Change the wlan0 section to
+
+./etc/network/interfaces.base
+----
+allow-hotplug wlan0
+iface wlan0 inet dhcp
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.base.conf
+----
+
+* `sudo cp /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.base.conf`
+* `sudo nano /etc/wpa_supplicant/wpa_supplicant.base.conf`
+* Add the following to this file (remember to change replace _your_wifi_identifier_ and _your_wifi_password_ with your real values):
+
+./etc/wpa_supplicant/wpa_supplicant.base.conf
+----
+network={
+ssid="your_wifi_identifier"
+psk="your_wifi_password"
+proto=RSN
+key_mgmt=WPA-PSK
+pairwise=CCMP
+auth_alg=OPEN
+}
+----
+
+What happens in action?
+
+* Boots into wlan0 available for use but not connected
+* Take wlan0 down, `sudo ifdown wlan0`
+* Connect wlan0 to base, `sudo ifup wlan0 -i /etc/network/interfaces.base`
+* Take wlan0 down, `sudo ifdown wlan0`
+* Bring wlan0 up but not connected, `sudo ifup wlan0`
+
+=== Transfer mode
+
+For transfer mode, walkingpi connects to its home base.
+
+
+== GPS
+
+For installation and the basics, see link:rpi3_gps.html[GPS on Raspberry Pi 3].
+
+== Kismet
+
+https://kismetwireless.net/[Kismet] is used for detecting and logging geolocated wireless networks.
+
+WARNING: At this time the built-in wifi does not support monitor mode.
+
+To check if your wifi is capable of monitor mode, try the following commands. `sudo ifdown wlan0` then `sudo iwconfig wlan0 mode monitor` and finally check with `iwconfig`. If you are using a USB wifi with monitor mode support, give Kismet a load. See link:rpi3_kismet.html[Kismet on Raspberry Pi 3]
+
+There is an effort to get the built-in to support monitor mode. See https://github.com/seemoo-lab/bcm-rpi3.
+
+
+== Setup Camera
+
+
+== rpi_test
+
+echo ds1307 0x68 > /sys/class/i2c-adapter/i2c-1/new_device
+hwclock -s
+
+python /usr/local/scripts/monitor_sensors.py &
+
+
+http://www.exiv2.org/getting-started.html
+
+== Next up?
+
+After reading this guide, you may be interested in reading:
+
+- link:processing_image_data.html[Processing image data] (*pending*)

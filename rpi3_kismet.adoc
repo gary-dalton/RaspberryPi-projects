@@ -1,0 +1,131 @@
+= Kismet on Raspberry Pi
+:subtitle: Installing and using Kismet on a Raspberry Pi
+:author: Gary Dalton
+:revnumber: 1.0
+:revdate: 13 October 2016
+:license: Creative Commons BY-SA
+:homepage: https://gary-dalton.github.io/
+:githubuser: gary-dalton
+:githubrepo: RaspberryPi-projects
+:githubbranch: gh-pages
+:description: Installation and basic use of Kismet on a Raspberry Pi 3. Kismet is a wireless network detector, sniffer, and intrusion detection system.
+:css: stylesheets/stylesheet.css
+:cli: asciidoctor -a stylesheet=github.css -a stylesdir=stylesheets rpi3_kismet.adoc
+:keywords: kismet, installation, ids, wifi, gps, raspberrypi
+:linkcss:
+:icons: font
+:toc: left
+:toclevels: 4
+:source-highlighter: coderay
+
+link:index.html[Raspberry Pi Projects] | https://gary-dalton.github.io/[Home]
+
+{description}
+
+https://github.com/{githubuser}/{githubrepo}/tree/{githubbranch}[View on GitHub image:images/GitHub-Mark-32px.png[]]
+
+== Requirements
+
+This guide will start with a basic Raspbian build, connected to a wired network. Follow the link:rpi_initial_setup.html[RPi Initial Setup Guide] to get started. A Raspberry Pi 2 may also be used.
+
+For full Kismet usage, GPS should be available on the pi. Follow the link:rpi_gps.html[GPS on Raspberry Pi 3] guide for GPS.
+
+== Parts List
+
+* Raspberry Pi 2 or 3
+* 16GB (or larger) class 10 MicroSD card
+* GPS breakout (https://www.adafruit.com/product/746[Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3])
+* USB Wifi with monitor mode (https://smile.amazon.com/gp/product/B00YI0AIRS[Detroit DIY Electronics Long Range WiFi])
+* RTC module (included in the GPS breakout)
+
+== Install Kismet
+
+Kismet is a wireless network detector, sniffer, and intrusion detection system. Kismet works predominately with Wi-Fi (IEEE 802.11) networks, but can be expanded via plug-ins to handle other network types.
+
+=== Install dependencies
+
+* `sudo apt-get update`
+* `sudo apt-get upgrade`
+* `sudo apt-get install gpsd gpsd-clients`
+* `sudo apt-get install libncurses5 libncurses5-dev`
+* `sudo apt-get install libnl1 libnl-dev`
+* `sudo apt-get install libpcap-dev libpcap0.8 libpcap0.8-dev`
+
+=== Match MAC addresses to manufacturers
+
+* `wget -O manuf "https://code.wireshark.org/review/gitweb?p=wireshark.git;a=blob_plain;f=manuf"`
+* `sudo cp manuf /etc/`
+
+=== Download and extract Kismet
+
+* `wget https://www.kismetwireless.net/code/kismet-2016-07-R1.tar.xz`
+* `sudo tar –xf kismet-2016-07-R1.tar.xz`
+* `cd kismet-2016-07-R1`
+
+=== Make and install Kismet
+
+* `sudo ./configure`
+* `sudo make dep`
+* `sudo make`
+* Install with suid-root, `sudo make suidinstall`
+
+=== Add user pi to group kismet
+
+Allows the user pi to run kismet without using _sudo_.
+
+* `sudo usermod -a -G kismet pi`
+
+== Configure Kismet
+
+* `sudo mkdir /var/log/kismet`
+* `sudo chmod 777 /var/log/kismet`
+* `sudo nano /usr/local/etc/kismet.conf`
+
+----
+# Set the log prefix
+logprefix=/var/log/kismet
+
+# Set the wireless network source interface
+ncsource=wlan0
+
+# Change the write interval from 300 to 60 seconds
+writeinterval=60
+----
+
+== Run Kismet
+
+Before starting kismet, I make certain my GPS is running and has a fix.
+
+* `sudo gpsd /dev/ttyUSB0 -F /var/run/gpsd.sock`
+* Once it has a fix verify with `cgps`
+
+Start kismet
+
+* `kismet`
+* Follow the prompts to start the server and view the UI.
+* When done, stop and exit kismet with ``
+
+== GISKismet
+
+GISKismet converts the data into a format viewable in Google Earth. GISKismet first converts the access point data from the Kismet data file into a SQLLite database and then into a KML data file. KML is the format used by Google Earth.
+
+=== Installation
+
+* Choose your location, `cd ~/Downloads`
+* Download giskismet, `git clone https://github.com/xtr4nge/giskismet.git`
+* Install prerequisites, `sudo apt-get install libxml-libxml-perl libdbi-perl libdbd-sqlite3-perl`
+* `cd giskismet`
+* `perl Makefile.PL`
+* `make`
+* `sudo make install`
+
+giskismet -x /var/log/kismet/Kismet-20161015-15-18-56-1.netxml --database ~/Downloads/wireless.dbl
+
+giskismet -q "select * from wireless" -o ~/Downloads/ex1.kml --database ~/Downloads/wireless.dbl
+
+== References
+
+* http://www.teambsf.com/wireless/war-pi-2-0/
+* https://github.com/seemoo-lab/bcm-rpi3
+* https://www.sans.org/reading-room/whitepapers/networkdevs/war-pi-34435
+* https://kismetwireless.net/

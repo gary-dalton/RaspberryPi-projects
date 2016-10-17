@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.4">
+<meta name="description" content="Installation and basic use of Kismet on a Raspberry Pi 3. Kismet is a wireless network detector, sniffer, and intrusion detection system.">
+<meta name="keywords" content="kismet, installation, ids, wifi, gps, raspberrypi">
+<meta name="author" content="Gary Dalton">
+<title>Kismet on Raspberry Pi</title>
+<link rel="stylesheet" href="stylesheets/github.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="stylesheets/coderay-asciidoctor.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>Kismet on Raspberry Pi</h1>
+<div class="details">
+<span id="author" class="author">Gary Dalton</span><br>
+<span id="revnumber">version 1.0,</span>
+<span id="revdate">13 October 2016</span>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_requirements">Requirements</a></li>
+<li><a href="#_parts_list">Parts List</a></li>
+<li><a href="#_install_kismet">Install Kismet</a>
+<ul class="sectlevel2">
+<li><a href="#_install_dependencies">Install dependencies</a></li>
+<li><a href="#_match_mac_addresses_to_manufacturers">Match MAC addresses to manufacturers</a></li>
+<li><a href="#_download_and_extract_kismet">Download and extract Kismet</a></li>
+<li><a href="#_make_and_install_kismet">Make and install Kismet</a></li>
+<li><a href="#_add_user_pi_to_group_kismet">Add user pi to group kismet</a></li>
+</ul>
+</li>
+<li><a href="#_configure_kismet">Configure Kismet</a></li>
+<li><a href="#_run_kismet">Run Kismet</a></li>
+<li><a href="#_giskismet">GISKismet</a>
+<ul class="sectlevel2">
+<li><a href="#_installation">Installation</a></li>
+</ul>
+</li>
+<li><a href="#_references">References</a></li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="index.html">Raspberry Pi Projects</a> | <a href="https://gary-dalton.github.io/">Home</a></p>
+</div>
+<div class="paragraph">
+<p>Installation and basic use of Kismet on a Raspberry Pi 3. Kismet is a wireless network detector, sniffer, and intrusion detection system.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub <span class="image"><img src="images/GitHub-Mark-32px.png" alt="GitHub Mark 32px"></span></a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_requirements">Requirements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This guide will start with a basic Raspbian build, connected to a wired network. Follow the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a> to get started. A Raspberry Pi 2 may also be used.</p>
+</div>
+<div class="paragraph">
+<p>For full Kismet usage, GPS should be available on the pi. Follow the <a href="rpi_gps.html">GPS on Raspberry Pi 3</a> guide for GPS.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_parts_list">Parts List</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Raspberry Pi 2 or 3</p>
+</li>
+<li>
+<p>16GB (or larger) class 10 MicroSD card</p>
+</li>
+<li>
+<p>GPS breakout (<a href="https://www.adafruit.com/product/746">Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3</a>)</p>
+</li>
+<li>
+<p>USB Wifi with monitor mode (<a href="https://smile.amazon.com/gp/product/B00YI0AIRS">Detroit DIY Electronics Long Range WiFi</a>)</p>
+</li>
+<li>
+<p>RTC module (included in the GPS breakout)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_install_kismet">Install Kismet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kismet is a wireless network detector, sniffer, and intrusion detection system. Kismet works predominately with Wi-Fi (IEEE 802.11) networks, but can be expanded via plug-ins to handle other network types.</p>
+</div>
+<div class="sect2">
+<h3 id="_install_dependencies">Install dependencies</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo apt-get update</code></p>
+</li>
+<li>
+<p><code>sudo apt-get upgrade</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install gpsd gpsd-clients</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install libncurses5 libncurses5-dev</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install libnl1 libnl-dev</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install libpcap-dev libpcap0.8 libpcap0.8-dev</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_match_mac_addresses_to_manufacturers">Match MAC addresses to manufacturers</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>wget -O manuf "https://code.wireshark.org/review/gitweb?p=wireshark.git;a=blob_plain;f=manuf"</code></p>
+</li>
+<li>
+<p><code>sudo cp manuf /etc/</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_download_and_extract_kismet">Download and extract Kismet</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>wget <a href="https://www.kismetwireless.net/code/kismet-2016-07-R1.tar.xz" class="bare">https://www.kismetwireless.net/code/kismet-2016-07-R1.tar.xz</a></code></p>
+</li>
+<li>
+<p><code>sudo tar –xf kismet-2016-07-R1.tar.xz</code></p>
+</li>
+<li>
+<p><code>cd kismet-2016-07-R1</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_make_and_install_kismet">Make and install Kismet</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo ./configure</code></p>
+</li>
+<li>
+<p><code>sudo make dep</code></p>
+</li>
+<li>
+<p><code>sudo make</code></p>
+</li>
+<li>
+<p>Install with suid-root, <code>sudo make suidinstall</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_add_user_pi_to_group_kismet">Add user pi to group kismet</h3>
+<div class="paragraph">
+<p>Allows the user pi to run kismet without using <em>sudo</em>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo usermod -a -G kismet pi</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_configure_kismet">Configure Kismet</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo mkdir /var/log/kismet</code></p>
+</li>
+<li>
+<p><code>sudo chmod 777 /var/log/kismet</code></p>
+</li>
+<li>
+<p><code>sudo nano /usr/local/etc/kismet.conf</code></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># Set the log prefix
+logprefix=/var/log/kismet
+
+# Set the wireless network source interface
+ncsource=wlan0
+
+# Change the write interval from 300 to 60 seconds
+writeinterval=60</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_run_kismet">Run Kismet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before starting kismet, I make certain my GPS is running and has a fix.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo gpsd /dev/ttyUSB0 -F /var/run/gpsd.sock</code></p>
+</li>
+<li>
+<p>Once it has a fix verify with <code>cgps</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Start kismet</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>kismet</code></p>
+</li>
+<li>
+<p>Follow the prompts to start the server and view the UI.</p>
+</li>
+<li>
+<p>When done, stop and exit kismet with ``</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_giskismet">GISKismet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>GISKismet converts the data into a format viewable in Google Earth. GISKismet first converts the access point data from the Kismet data file into a SQLLite database and then into a KML data file. KML is the format used by Google Earth.</p>
+</div>
+<div class="sect2">
+<h3 id="_installation">Installation</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Choose your location, <code>cd ~/Downloads</code></p>
+</li>
+<li>
+<p>Download giskismet, <code>git clone <a href="https://github.com/xtr4nge/giskismet.git" class="bare">https://github.com/xtr4nge/giskismet.git</a></code></p>
+</li>
+<li>
+<p>Install prerequisites, <code>sudo apt-get install libxml-libxml-perl libdbi-perl libdbd-sqlite3-perl</code></p>
+</li>
+<li>
+<p><code>cd giskismet</code></p>
+</li>
+<li>
+<p><code>perl Makefile.PL</code></p>
+</li>
+<li>
+<p><code>make</code></p>
+</li>
+<li>
+<p><code>sudo make install</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>giskismet -x /var/log/kismet/Kismet-20161015-15-18-56-1.netxml --database ~/Downloads/wireless.dbl</p>
+</div>
+<div class="paragraph">
+<p>giskismet -q "select * from wireless" -o ~/Downloads/ex1.kml --database ~/Downloads/wireless.dbl</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_references">References</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p><a href="http://www.teambsf.com/wireless/war-pi-2-0/" class="bare">http://www.teambsf.com/wireless/war-pi-2-0/</a></p>
+</li>
+<li>
+<p><a href="https://github.com/seemoo-lab/bcm-rpi3" class="bare">https://github.com/seemoo-lab/bcm-rpi3</a></p>
+</li>
+<li>
+<p><a href="https://www.sans.org/reading-room/whitepapers/networkdevs/war-pi-34435" class="bare">https://www.sans.org/reading-room/whitepapers/networkdevs/war-pi-34435</a></p>
+</li>
+<li>
+<p><a href="https://kismetwireless.net/" class="bare">https://kismetwireless.net/</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 1.0<br>
+Last updated 2016-10-17 10:06:58 Central Daylight Time
+</div>
+</div>
+</body>
+</html>

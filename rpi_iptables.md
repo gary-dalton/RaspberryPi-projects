@@ -337,7 +337,15 @@ sudo -i
 iptables-save > /etc/iptables.up.rules
 exit
 ```
+# Block an IP address
 
+Sometimes, it is neccessary to block an IP address or range of addresses. There are many ways to use IP blacklists but that will not be covered.
+
++ Block a single IP
+    + CLI `iptables -I INPUT -s 216.58.216.206 -j DROP`
+    + Config `-A INPUT -s 216.58.216.206/32 -j DROP`
+
+See, [Blocking IP addresses in Linux with iptables](https://linux-audit.com/blocking-ip-addresses-in-linux-with-iptables/)
 
 # <a name="Conclusion"></a>Save the image to a file
 

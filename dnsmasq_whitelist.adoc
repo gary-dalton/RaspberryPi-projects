@@ -18,6 +18,8 @@
 :toclevels: 4
 :source-highlighter: coderay
 
+link:index.html[Raspberry Pi Projects] | https://gary-dalton.github.io/[Home]
+
 {description}
 
 https://github.com/{githubuser}/{githubrepo}/tree/{githubbranch}[View on GitHub image:images/GitHub-Mark-32px.png[]]

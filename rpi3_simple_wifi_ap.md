@@ -120,6 +120,8 @@ ssid=Pi3-AP
 wpa_passphrase=raspberry
 ```
 
+TIP: If the passphrase is too short, hostapd won't start.
+
 + Now edit the default configuration, `sudo nano /etc/default/hostapd`
     - Replace _#DAEMON_CONF=""_ with `DAEMON_CONF="/etc/hostapd/hostapd.conf"`
 
@@ -141,7 +143,9 @@ dhcp-range=192.168.220.50,192.168.220.150,12h # IP range and lease time
 
 ## <a name="7"></a>Iptables forwarding
 
-*(Optional)* Forwarding is required if any devices connected to your this access point need to connect to the Internet. I do not forward for many IoT devices which I expect to act as an isolated network.
+*IMPORTANT: This section is optional.*
+
+Forwarding is required if any devices connected to your this access point need to connect to the Internet. I do not forward for many IoT devices which I expect to act as an isolated network.
 
 + Enable IP Forwarding
     - `sudo nano /etc/sysctl.conf` at bottom add _net.ipv4.ip_forward=1_

@@ -340,6 +340,18 @@ iptables-save &gt; /etc/iptables.up.rules
 exit</code></pre>
 </section>
 </section>
+<section id="block-an-ip-address" class="level1">
+<h1>Block an IP address</h1>
+<p>Sometimes, it is neccessary to block an IP address or range of addresses. There are many ways to use IP blacklists but that will not be covered.</p>
+<ul>
+<li>Block a single IP
+<ul>
+<li>CLI <code>iptables -I INPUT -s 216.58.216.206 -j DROP</code></li>
+<li>Config <code>-A INPUT -s 216.58.216.206/32 -j DROP</code></li>
+</ul></li>
+</ul>
+<p>See, <a href="https://linux-audit.com/blocking-ip-addresses-in-linux-with-iptables/">Blocking IP addresses in Linux with iptables</a></p>
+</section>
 <section id="save-the-image-to-a-file" class="level1">
 <h1><a name="Conclusion"></a>Save the image to a file</h1>
 <p>Now that you have spent all this time getting your Raspberry Pi set up just so, <strong>save it to an image</strong> for easy reuse. You will still have to change things like usernames, passwords, and hostnames.</p>

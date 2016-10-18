@@ -27,6 +27,7 @@
 <li><a href="#_overview">Overview</a></li>
 <li><a href="#_requirements">Requirements</a></li>
 <li><a href="#_dnsmasq">Dnsmasq</a></li>
+<li><a href="#_easily_switch">Easily switch</a></li>
 <li><a href="#_dns_utilities">DNS Utilities</a></li>
 <li><a href="#_references">References</a></li>
 </ul>
@@ -136,6 +137,30 @@ address=/#/127.0.0.1</code></pre>
 </div>
 </div>
 <div class="sect1">
+<h2 id="_easily_switch">Easily switch</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The whitelist will block many domains including those needed to update the pi.  To easily get around this, I made 2 dnsmasq.confs. One named <em>dnsmasq.conf.lockdown</em> which is shown above and the other named <em>dnsmasq.conf.open</em> shown in the <a href="rpi3_simple_wifi_ap.html#6">Raspberry Pi 3 as a Simple WiFi Access Point</a>.</p>
+</div>
+<div class="paragraph">
+<p>To switch simply:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Lockdown, <code>sudo cp /etc/dnsmasq.conf.lockdown /etc/dnsmasq.conf</code></p>
+</li>
+<li>
+<p>Open <code>sudo cp /etc/dnsmasq.conf.open /etc/dnsmasq.conf</code></p>
+</li>
+<li>
+<p>Restart dnsmasp, <code>sudo service dnsmasq restart</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_dns_utilities">DNS Utilities</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -168,7 +193,7 @@ address=/#/127.0.0.1</code></pre>
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2016-10-03 07:02:17 Central Daylight Time
+Last updated 2016-10-17 16:55:58 Central Daylight Time
 </div>
 </div>
 </body>

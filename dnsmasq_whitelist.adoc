@@ -24,17 +24,17 @@ link:index.html[Raspberry Pi Projects] | https://gary-dalton.github.io/[Home]
 
 https://github.com/{githubuser}/{githubrepo}/tree/{githubbranch}[View on GitHub image:images/GitHub-Mark-32px.png[]]
 
-## Overview
+== Overview
 
 This simple approach provides access only to whitelisted web sites. It does this by not performing DNS lookups. The methods used to block domains may be easily circumvented by those with a little knowledge and skill. I set up this whitelist in order to block my thirteen year old who lost electronic privileges for two weeks but still needed to access some sites for schoolwork.
 
-## Requirements
+== Requirements
 
 A Raspberry Pi set up as a WiFi Access Point by following the link:rpi3_simple_wifi_ap.html[Raspberry Pi 3 as a Simple WiFi Access Point]. A Raspberry Pi 2 may also be used.
 
 NOTE: Hostapd, Dnsmasq, and Iptables forwarding must be setup and working.
 
-## Dnsmasq
+== Dnsmasq
 
 Only configuration changes to dnsmasq are needed. Each configuration change requires a reload, `sudo service dnsmasq force-reload`.
 
@@ -88,11 +88,21 @@ address=/#/127.0.0.1
 
 This will likely block a lot of domains that may be needed. While trying to use the whitelisted client, scan the logfile with `tail -F /var/log/daemon.log` (CTRL-c quits). Add any needed domains to the whitelist.
 
-## DNS Utilities
+== Easily switch
+
+The whitelist will block many domains including those needed to update the pi.  To easily get around this, I made 2 dnsmasq.confs. One named _dnsmasq.conf.lockdown_ which is shown above and the other named _dnsmasq.conf.open_ shown in the link:rpi3_simple_wifi_ap.html#6[Raspberry Pi 3 as a Simple WiFi Access Point].
+
+To switch simply:
+
+* Lockdown, `sudo cp /etc/dnsmasq.conf.lockdown /etc/dnsmasq.conf`
+* Open `sudo cp /etc/dnsmasq.conf.open /etc/dnsmasq.conf`
+* Restart dnsmasp, `sudo service dnsmasq restart`
+
+== DNS Utilities
 
 I find dnsutils useful for troubleshooting, `sudo apt-get install dnsutils`
 
-## References
+== References
 
 * https://unix.stackexchange.com/questions/193427/dns-whitelist-domains
 * http://blogging.dragon.org.uk/howto-setup-dnsmasq-as-dns-dhcp/

@@ -34,7 +34,6 @@ This guide will start with a basic Raspbian build, connected to a wired network.
 * 16GB (or larger) class 10 MicroSD card
 * GPS breakout (https://www.adafruit.com/product/746[Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3])
 * USB to TLL Serial cable (https://www.adafruit.com/products/954)
-* RTC module (included in the GPS breakout)
 * (Optional) https://www.adafruit.com/products/960[External GPS antenna] and https://www.adafruit.com/products/851[SMA to u.FL adapter cable]
 
 == GPS Breakout
@@ -77,6 +76,8 @@ Attach the colored wires from the USB to TLL cable to the GPS breakout thusly:
 * Green to RX
 * White to TX
 
+image:images/adafruit_gps_half.jpg[]
+
 Insert the USB part of the cable into the pi.
 
 === Which USB
@@ -104,12 +105,19 @@ TIP: Before testing with cgps, it is good for the unit to have a location fix.
 
 Attach the colored wires from the USB to TLL cable to the GPS breakout thusly:
 
-* VIN to 5V GPIO pin 04
-* GND to Ground GPIO pin 06
-* RX to TXD0 GPIO pin 08
-* TX to RXD0 GPIO pin 10
+* VIN to GPIO 5V pin 04
+* GND to GPIO GND pin 06
+* RX to GPIO TXD0 pin 08
+* TX to GPIO RXD0 pin 10
 
-image:images/pi_gpio_1-12.jpg[]
+_Optional_
+
+* FIX to GPIO 17 pin 11 (to output fix signal, same as LED)
+* PPS to GPIO 27 pin 13 (to output timing PPS, for accurate clock)
+* EN to GPIO 22 pin 15 (to turn off GPS)
+
+image:images/pi_gpio_1-18.jpg[]
+
 
 === Edit /boot/cmdline.txt
 
@@ -136,6 +144,132 @@ image:images/pi_gpio_1-12.jpg[]
 
 TIP: Before testing with cgps, it is good for the unit to have a location fix.
 
+== Starting at boot
+
+NOTE: For UART connection only.
+
+* `sudo killall gpsd`
+* `sudo nano /etc/default/gpsd`
+
+----
+# change the options.
+START_DAEMON="true"
+DEVICES="/dev/ttyAMA0"
+GPSD_OPTIONS="-n"
+# -n  : don't wait for client connects to poll GPS
+#     : needed for proper time service polling
+----
+
+* `sudo systemctl enable gpsd.socket`
+* `sudo systemctl start gpsd.socket`
+* `sudo reboot now`
+* Test with cgps
+
+== Time Services
+
+=== PPS
+
+Pulse per second (PPS or 1PPS) is signal that accurately repeats once per second. Precision clocks align a PPS signal to the UTC second and converts it to a useful time.
+
+Raspbian has PPS support built-in but it does require some configuration.
+
+* `sudo nano /boot/config.txt`
+** Add `dtoverlay=pps-gpio,gpiopin=27`
+** Choose the gpiopin that you attached the PPS to
+* `sudo nano /etc/modules`
+** Add `pps-gpio`
+* `sudo reboot now`
+
+Proper functioning may be checked with `ppstest`.
+
+* `sudo apt-get install pps-tools`
+* Check with `lsmod | grep pps`
+* Now test with `sudo ppstest /dev/pps0`
+* The output should be similar to that shown below
+
+image:images/pps_output.png[]
+
+=== NTP with PPS support
+
+The version of NTP supplied with the Raspberry Pi Linux does not support PPS. This means that a version with NTP support must be compiled and installed. Do not fear to tread through this section.
+
+==== Make NTP with PPS support
+
+This follows closely the advice given at http://www.satsignal.eu/ntp/Raspberry-Pi-NTP.html#compile-ntp.
+
+* Install some dependencies, `sudo apt-get install libcap-dev libssl-dev`
+* Create and change to a make directory
+** `mkdir ~/Downloads/ntp`
+** `cd ~/Downloads/ntp`
+* Download the latest tarball
+** Visit http://www.ntp.org/downloads.html
+** Copy the _download link_ to the production version of NTP
+** Download, `wget  _download link_`
+** For version 4.2.8p8, `wget http://www.eecis.udel.edu/~ntp/ntp_spool/ntp4/ntp-4.2/ntp-4.2.8p8.tar.gz`
+* Untar and change directory
+** `tar -xzvf ntp-4.2.8p8.tar.gz`
+** `cd ntp-4.2.8p8`
+
+Now lets make and install:
+
+* `./configure --enable-linuxcaps`
+* `make -j5`
+* `sudo make install`
+* `sudo service ntp stop`
+* `sudo cp /usr/local/bin/ntp* /usr/bin/`
+* `sudo cp /usr/local/sbin/ntp* /usr/sbin/`
+* `sudo service ntp start`
+* `sudo service ntp status`
+
+
+==== Configure NTP
+
+* `sudo cp /etc/ntp.conf /etc/ntp.conf.orig`
+* `sudo nano /etc/ntp.conf`
+
+----
+# Add
+# Server from shared memory provided by gpsd
+# Not needed if you are Internet connected
+server 127.127.28.0 minpoll 4 prefer
+fudge  127.127.28.0 time1 0.000 refid SHM stratum 2
+
+# Add
+# PPS type 22 clock for precise seconds
+server 127.127.22.0 minpoll 4 maxpoll 4
+fudge 127.127.22.0  refid PPS
+
+# Change
+# pool.ntp.org maps to about 1000 low-stratum NTP servers.  Your server will
+# pick a different set every time it starts up.  Please consider joining the
+# pool: <http://www.pool.ntp.org/join.html>
+server 0.debian.pool.ntp.org iburst
+server 1.debian.pool.ntp.org iburst
+server 2.debian.pool.ntp.org iburst
+server 3.debian.pool.ntp.org iburst
+#pool us.pool.ntp.org iburst
+----
+
+NOTE: One of the servers must be marked as prefer. Above I show the gpsd provided server but if you use a LAN or Internet server instead, one of those must be preferred.
+
+==== Test the new NTP with PPS
+
+* `sudo service ntp restart`
+* Print list of servers used  and their status, `ntpq -p -n`
+** The character in the left margin indicates the fate of this peer.
+** *space* reject
+** *x*  falsetick is discarded
+** *.*  excess is discarded if not among the first ten peers
+** *-*  outlyer is discarded as an outlyer
+** *+*  candidate is a survivor for the combining algorithm
+** *#*  selected is a survivor, but not among the first six peers
+** ***  sys.peer is the system peer and is used for system time
+** *o*  pps.peer is the system peer, however; system time is derived from PPS
+
+Your preferred server should have an *** by it and the PPS server should have a *o*. Additionally, the reach of available servers should eventually get to 377. The offset and the jitter from the PPS source should be very low.
+
+image:images/ntp_pps_test.png[]
+
 == References
 
 * https://www.raspberrypi.org/forums/viewtopic.php?p=947968#p947968
@@ -144,3 +278,7 @@ TIP: Before testing with cgps, it is good for the unit to have a location fix.
 * https://cdn-learn.adafruit.com/downloads/pdf/adafruit-ultimate-gps-on-the-raspberry-pi.pdf
 * http://catb.org/gpsd/
 * http://www.danmandle.com/blog/getting-gpsd-to-work-with-python/
+* http://www.catb.org/gpsd/gpsd-time-service-howto.html
+* http://www.satsignal.eu/ntp/Raspberry-Pi-NTP.html
+* http://www.ntp.org/
+* http://ava.upuaut.net/?p=726

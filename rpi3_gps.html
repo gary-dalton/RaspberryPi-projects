@@ -44,6 +44,19 @@
 <li><a href="#_connect_gpsd_to_uart_and_test">Connect gpsd to UART and test</a></li>
 </ul>
 </li>
+<li><a href="#_starting_at_boot">Starting at boot</a></li>
+<li><a href="#_time_services">Time Services</a>
+<ul class="sectlevel2">
+<li><a href="#_pps">PPS</a></li>
+<li><a href="#_ntp_with_pps_support">NTP with PPS support</a>
+<ul class="sectlevel3">
+<li><a href="#_make_ntp_with_pps_support">Make NTP with PPS support</a></li>
+<li><a href="#_configure_ntp">Configure NTP</a></li>
+<li><a href="#_test_the_new_ntp_with_pps">Test the new NTP with PPS</a></li>
+</ul>
+</li>
+</ul>
+</li>
 <li><a href="#_references">References</a></li>
 </ul>
 </div>
@@ -86,9 +99,6 @@
 </li>
 <li>
 <p>USB to TLL Serial cable (<a href="https://www.adafruit.com/products/954" class="bare">https://www.adafruit.com/products/954</a>)</p>
-</li>
-<li>
-<p>RTC module (included in the GPS breakout)</p>
 </li>
 <li>
 <p>(Optional) <a href="https://www.adafruit.com/products/960">External GPS antenna</a> and <a href="https://www.adafruit.com/products/851">SMA to u.FL adapter cable</a></p>
@@ -198,6 +208,9 @@ Make certain to get the correct adapter cable as RP-SMA and SMA, while they look
 </ul>
 </div>
 <div class="paragraph">
+<p><span class="image"><img src="images/adafruit_gps_half.jpg" alt="adafruit gps half"></span></p>
+</div>
+<div class="paragraph">
 <p>Insert the USB part of the cable into the pi.</p>
 </div>
 </div>
@@ -268,21 +281,37 @@ Before testing with cgps, it is good for the unit to have a location fix.
 <div class="ulist">
 <ul>
 <li>
-<p>VIN to 5V GPIO pin 04</p>
+<p>VIN to GPIO 5V pin 04</p>
 </li>
 <li>
-<p>GND to Ground GPIO pin 06</p>
+<p>GND to GPIO GND pin 06</p>
 </li>
 <li>
-<p>RX to TXD0 GPIO pin 08</p>
+<p>RX to GPIO TXD0 pin 08</p>
 </li>
 <li>
-<p>TX to RXD0 GPIO pin 10</p>
+<p>TX to GPIO RXD0 pin 10</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p><span class="image"><img src="images/pi_gpio_1-12.jpg" alt="pi gpio 1 12"></span></p>
+<p><em>Optional</em></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>FIX to GPIO 17 pin 11 (to output fix signal, same as LED)</p>
+</li>
+<li>
+<p>PPS to GPIO 27 pin 13 (to output timing PPS, for accurate clock)</p>
+</li>
+<li>
+<p>EN to GPIO 22 pin 15 (to turn off GPS)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/pi_gpio_1-18.jpg" alt="pi gpio 1 18"></span></p>
 </div>
 </div>
 <div class="sect2">
@@ -369,6 +398,319 @@ Before testing with cgps, it is good for the unit to have a location fix.
 </div>
 </div>
 <div class="sect1">
+<h2 id="_starting_at_boot">Starting at boot</h2>
+<div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+For UART connection only.
+</td>
+</tr>
+</table>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo killall gpsd</code></p>
+</li>
+<li>
+<p><code>sudo nano /etc/default/gpsd</code></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># change the options.
+START_DAEMON="true"
+DEVICES="/dev/ttyAMA0"
+GPSD_OPTIONS="-n"
+# -n  : don't wait for client connects to poll GPS
+#     : needed for proper time service polling</pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo systemctl enable gpsd.socket</code></p>
+</li>
+<li>
+<p><code>sudo systemctl start gpsd.socket</code></p>
+</li>
+<li>
+<p><code>sudo reboot now</code></p>
+</li>
+<li>
+<p>Test with cgps</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_time_services">Time Services</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_pps">PPS</h3>
+<div class="paragraph">
+<p>Pulse per second (PPS or 1PPS) is signal that accurately repeats once per second. Precision clocks align a PPS signal to the UTC second and converts it to a useful time.</p>
+</div>
+<div class="paragraph">
+<p>Raspbian has PPS support built-in but it does require some configuration.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo nano /boot/config.txt</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Add <code>dtoverlay=pps-gpio,gpiopin=27</code></p>
+</li>
+<li>
+<p>Choose the gpiopin that you attached the PPS to</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>sudo nano /etc/modules</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Add <code>pps-gpio</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>sudo reboot now</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Proper functioning may be checked with <code>ppstest</code>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo apt-get install pps-tools</code></p>
+</li>
+<li>
+<p>Check with <code>lsmod | grep pps</code></p>
+</li>
+<li>
+<p>Now test with <code>sudo ppstest /dev/pps0</code></p>
+</li>
+<li>
+<p>The output should be similar to that shown below</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/pps_output.png" alt="pps output"></span></p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_ntp_with_pps_support">NTP with PPS support</h3>
+<div class="paragraph">
+<p>The version of NTP supplied with the Raspberry Pi Linux does not support PPS. This means that a version with NTP support must be compiled and installed. Do not fear to tread through this section.</p>
+</div>
+<div class="sect3">
+<h4 id="_make_ntp_with_pps_support">Make NTP with PPS support</h4>
+<div class="paragraph">
+<p>This follows closely the advice given at <a href="http://www.satsignal.eu/ntp/Raspberry-Pi-NTP.html#compile-ntp" class="bare">http://www.satsignal.eu/ntp/Raspberry-Pi-NTP.html#compile-ntp</a>.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Install some dependencies, <code>sudo apt-get install libcap-dev libssl-dev</code></p>
+</li>
+<li>
+<p>Create and change to a make directory</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>mkdir ~/Downloads/ntp</code></p>
+</li>
+<li>
+<p><code>cd ~/Downloads/ntp</code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Download the latest tarball</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Visit <a href="http://www.ntp.org/downloads.html" class="bare">http://www.ntp.org/downloads.html</a></p>
+</li>
+<li>
+<p>Copy the <em>download link</em> to the production version of NTP</p>
+</li>
+<li>
+<p>Download, <code>wget  <em>download link</em></code></p>
+</li>
+<li>
+<p>For version 4.2.8p8, <code>wget <a href="http://www.eecis.udel.edu/~ntp/ntp_spool/ntp4/ntp-4.2/ntp-4.2.8p8.tar.gz" class="bare">http://www.eecis.udel.edu/~ntp/ntp_spool/ntp4/ntp-4.2/ntp-4.2.8p8.tar.gz</a></code></p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Untar and change directory</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>tar -xzvf ntp-4.2.8p8.tar.gz</code></p>
+</li>
+<li>
+<p><code>cd ntp-4.2.8p8</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Now lets make and install:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>./configure --enable-linuxcaps</code></p>
+</li>
+<li>
+<p><code>make -j5</code></p>
+</li>
+<li>
+<p><code>sudo make install</code></p>
+</li>
+<li>
+<p><code>sudo service ntp stop</code></p>
+</li>
+<li>
+<p><code>sudo cp /usr/local/bin/ntp* /usr/bin/</code></p>
+</li>
+<li>
+<p><code>sudo cp /usr/local/sbin/ntp* /usr/sbin/</code></p>
+</li>
+<li>
+<p><code>sudo service ntp start</code></p>
+</li>
+<li>
+<p><code>sudo service ntp status</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_configure_ntp">Configure NTP</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo cp /etc/ntp.conf /etc/ntp.conf.orig</code></p>
+</li>
+<li>
+<p><code>sudo nano /etc/ntp.conf</code></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># Add
+# Server from shared memory provided by gpsd
+# Not needed if you are Internet connected
+server 127.127.28.0 minpoll 4 prefer
+fudge  127.127.28.0 time1 0.000 refid SHM stratum 2
+
+# Add
+# PPS type 22 clock for precise seconds
+server 127.127.22.0 minpoll 4 maxpoll 4
+fudge 127.127.22.0  refid PPS
+
+# Change
+# pool.ntp.org maps to about 1000 low-stratum NTP servers.  Your server will
+# pick a different set every time it starts up.  Please consider joining the
+# pool: &lt;http://www.pool.ntp.org/join.html&gt;
+server 0.debian.pool.ntp.org iburst
+server 1.debian.pool.ntp.org iburst
+server 2.debian.pool.ntp.org iburst
+server 3.debian.pool.ntp.org iburst
+#pool us.pool.ntp.org iburst</pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+One of the servers must be marked as prefer. Above I show the gpsd provided server but if you use a LAN or Internet server instead, one of those must be preferred.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_test_the_new_ntp_with_pps">Test the new NTP with PPS</h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo service ntp restart</code></p>
+</li>
+<li>
+<p>Print list of servers used  and their status, <code>ntpq -p -n</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>The character in the left margin indicates the fate of this peer.</p>
+</li>
+<li>
+<p><strong>space</strong> reject</p>
+</li>
+<li>
+<p><strong>x</strong>  falsetick is discarded</p>
+</li>
+<li>
+<p><strong>.</strong>  excess is discarded if not among the first ten peers</p>
+</li>
+<li>
+<p><strong>-</strong>  outlyer is discarded as an outlyer</p>
+</li>
+<li>
+<p><strong>+</strong>  candidate is a survivor for the combining algorithm</p>
+</li>
+<li>
+<p><strong>#</strong>  selected is a survivor, but not among the first six peers</p>
+</li>
+<li>
+<p><strong>*</strong>  sys.peer is the system peer and is used for system time</p>
+</li>
+<li>
+<p><strong>o</strong>  pps.peer is the system peer, however; system time is derived from PPS</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Your preferred server should have an <strong>*</strong> by it and the PPS server should have a <strong>o</strong>. Additionally, the reach of available servers should eventually get to 377. The offset and the jitter from the PPS source should be very low.</p>
+</div>
+<div class="paragraph">
+<p><span class="image"><img src="images/ntp_pps_test.png" alt="ntp pps test"></span></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_references">References</h2>
 <div class="sectionbody">
 <div class="ulist">
@@ -391,6 +733,18 @@ Before testing with cgps, it is good for the unit to have a location fix.
 <li>
 <p><a href="http://www.danmandle.com/blog/getting-gpsd-to-work-with-python/" class="bare">http://www.danmandle.com/blog/getting-gpsd-to-work-with-python/</a></p>
 </li>
+<li>
+<p><a href="http://www.catb.org/gpsd/gpsd-time-service-howto.html" class="bare">http://www.catb.org/gpsd/gpsd-time-service-howto.html</a></p>
+</li>
+<li>
+<p><a href="http://www.satsignal.eu/ntp/Raspberry-Pi-NTP.html" class="bare">http://www.satsignal.eu/ntp/Raspberry-Pi-NTP.html</a></p>
+</li>
+<li>
+<p><a href="http://www.ntp.org/" class="bare">http://www.ntp.org/</a></p>
+</li>
+<li>
+<p><a href="http://ava.upuaut.net/?p=726" class="bare">http://ava.upuaut.net/?p=726</a></p>
+</li>
 </ul>
 </div>
 </div>
@@ -399,7 +753,7 @@ Before testing with cgps, it is good for the unit to have a location fix.
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2016-10-17 21:11:32 Central Daylight Time
+Last updated 2016-10-22 20:38:45 Central Daylight Time
 </div>
 </div>
 </body>

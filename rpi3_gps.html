@@ -6,7 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 1.5.4">
 <meta name="description" content="Installation and basic use of the Adafruit Ultimate GPS breakout on a Raspberry Pi 3. The installation starts with GPS over USB but, after running some tests, moves the GPS to UART. Mostly follows https://learn.adafruit.com/adafruit-ultimate-gps-on-the-raspberry-pi">
-<meta name="keywords" content="gps, uart, installation, adafruit, raspberrypi">
+<meta name="keywords" content="gps, uart, installation, adafruit, raspberrypi, guide, ntp, pps, time, gpsd, uart">
 <meta name="author" content="Gary Dalton">
 <title>GPS on Raspberry Pi 3</title>
 <link rel="stylesheet" href="stylesheets/github.css">
@@ -19,7 +19,7 @@
 <div class="details">
 <span id="author" class="author">Gary Dalton</span><br>
 <span id="revnumber">version 1.0,</span>
-<span id="revdate">13 October 2016</span>
+<span id="revdate">22 October 2016</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -276,7 +276,7 @@ Before testing with cgps, it is good for the unit to have a location fix.
 <div class="sect2">
 <h3 id="_connections_2">Connections</h3>
 <div class="paragraph">
-<p>Attach the colored wires from the USB to TLL cable to the GPS breakout thusly:</p>
+<p>Connect wires from the GPS breakout to the pi, either directly or via a breadboard.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -456,7 +456,7 @@ GPSD_OPTIONS="-n"
 <div class="sect2">
 <h3 id="_pps">PPS</h3>
 <div class="paragraph">
-<p>Pulse per second (PPS or 1PPS) is signal that accurately repeats once per second. Precision clocks align a PPS signal to the UTC second and converts it to a useful time.</p>
+<p>Pulse per second (PPS or 1PPS) is a signal that accurately repeats once per second. Precision clocks align a PPS signal to the UTC second and convert it to a useful time.</p>
 </div>
 <div class="paragraph">
 <p>Raspbian has PPS support built-in but it does require some configuration.</p>
@@ -701,7 +701,7 @@ One of the servers must be marked as prefer. Above I show the gpsd provided serv
 </ul>
 </div>
 <div class="paragraph">
-<p>Your preferred server should have an <strong>*</strong> by it and the PPS server should have a <strong>o</strong>. Additionally, the reach of available servers should eventually get to 377. The offset and the jitter from the PPS source should be very low.</p>
+<p>Your preferred server should have an <strong>*</strong> by it and the PPS server should have an <strong>o</strong>. Additionally, the reach of available servers should eventually get to 377. The offset and the jitter from the PPS source should be very low.</p>
 </div>
 <div class="paragraph">
 <p><span class="image"><img src="images/ntp_pps_test.png" alt="ntp pps test"></span></p>
@@ -753,7 +753,7 @@ One of the servers must be marked as prefer. Above I show the gpsd provided serv
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2016-10-22 20:38:45 Central Daylight Time
+Last updated 2016-10-22 20:54:24 Central Daylight Time
 </div>
 </div>
 </body>

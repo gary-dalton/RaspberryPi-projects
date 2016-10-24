@@ -27,11 +27,13 @@ Which wifi USB adapter makes the best purchase? The cheapest? The highest rated?
 3. [Range, power suppply, and antenna.](#3)
 4. [As an access point.](#4) (caution)
 5. [Change a MAC address.](#5)(caution)
-6. [Commands for information.](#6)
-7. [Using two wifi adapters.](#7)(caution)
-8. [Solution to wlan0 and wlan1 confusion.](#8)
-9. [Test the solution.](#9)
-11. [Conclusion](#Conclusion).
+6. [Monitor and inject](#6)(caution)
+7. [Commands for information.](#7)
+8. [Using two wifi adapters.](#8)(caution)
+9. [Solution to wlan0 and wlan1 confusion.](#9)
+10. [Test the solution.](#10)
+11. [Conclusion](#Conclusion)
+12. [References](#References)
 
 # Discussion
 
@@ -43,6 +45,7 @@ The adapters I have used in these guides are:
 
 + [Edimax EW-7811Un](http://www.amazon.com/Edimax-EW-7811Un-150Mbps-Raspberry-Supports/dp/B003MTTJOY/ref=pd_bxgy_147_2)
 + [CanaKit Raspberry Pi WiFi Wireless Adapter](http://www.amazon.com/CanaKit-Raspberry-Wireless-Adapter-Dongle/dp/B00GFAN498)
++ [TP-Link WN722N](https://smile.amazon.com/dp/B002SZEOLG)
 
 ## <a name="2"></a>Define your needs
 
@@ -74,7 +77,29 @@ This chipset does not work out-of-the-box as an access point with _hostpad_. Ins
 
 Notice that the second wifi card in the [Raspberry Tor Guide](rpi_tor.html) has a Ralink chipset.
 
-## <a name="6"></a>Commands for information
+## <a name="6"></a>Monitor and inject
+
+**(caution)** If you need to do advanced reconnaissance or security assessment, you will need an adapter capable of monitor and inject modes. Most wifi chipsets do not support this. The _TP-Link WN722N_ supports the full range of wifi modes and is a highly recommended adapter.
+
+I use this adapter in the [WalkingPi](walkingpi.html) and [Kismet on Raspberry Pi](rpi3_kismet.html) guides. The _TP-Link WN722N_ also works well with Kali Linux and aircrack-ng.
+
+How to determine if your wifi is monitor and inject capable. These commands are testing the wlan0 wifi.
+
++ `sudo ifconfig wlan0 down`
++ `sudo iwconfig wlan0 mode monitor`
+    + Error message indicates the monitor mode is not supported
+
+If monitor mode seems supported, install aircrack-ng for further tests.
+
++ `sudo apt-get install aircrack-ng`
++ `sudo airodump-ng wlan0`
+    + If monitor mode is supported, then found wifis will display
++ `sudo aireplay-ng -9 wlan0`
+    + Returns result which includes _Injection is working!_
+
+For more injection testing see [Injection test](https://www.aircrack-ng.org/doku.php?id=injection_test).
+
+## <a name="7"></a>Commands for information
 
 There are some basic commands to determine information about your USB devices.
 
@@ -84,7 +109,7 @@ There are some basic commands to determine information about your USB devices.
     - Lists the current and permanent MAC address of the device.
 + Verbose list of devices, `lsusb -vv`.
 
-## <a name="7"></a>Using two wifi adapters
+## <a name="8"></a>Using two wifi adapters
 
 **(caution)** In order to build a wifi to wifi access point, two wifi adapters are needed. If these adapters are built using the same chipset or have the same capabilities then you should experience no problems.
 
@@ -92,7 +117,7 @@ If wifi adapters with different capabilities are used, you may need to do some e
 
 Moving to the [Raspberry Tor Guide](rpi_tor.html), we start with the completed access point but now want to change the MAC address on wlan1. This is not possible with the RealTek chipset. In order to change the MAC address, the wlan1 adapter is changed to a Ralink chipset. This solves the problem of MAC address but introduces the problem of which adapter is assigned by udev to the wlan0 and wlan1 identifiers.
 
-## <a name="8"></a>Solution to wlan0 and wlan1 confusion
+## <a name="9"></a>Solution to wlan0 and wlan1 confusion
 
 To ensure consistency on wlan0 and wlan1, a persistence rule must be generated for udev.
 
@@ -121,7 +146,7 @@ KERNEL!="ath*|wlan*[0-9]|msh*|ra*|sta*|ctc*|lcs*|hsi*", \
 
 * [Solution source](https://www.raspberrypi.org/forums/viewtopic.php?f=29&t=55527)
 
-## <a name="9"></a>Test the solution
+## <a name="10"></a>Test the solution
 
 The easiest way to check for persistence is to boot your pi with the wlan0 adapter missing. The `ifconfig` will not display wlan0 but only wlan1.
 
@@ -135,3 +160,7 @@ Also test this by changing the MAC on the Ralink chipset adapter, wlan0.
 # <a name="Conclusion"></a>Conclusion
 
 The gist of this discussion is that one should choose the wifi adapter with care and foresight.
+
+# <a name="References"></a>References
+
++ [Injection test](https://www.aircrack-ng.org/doku.php?id=injection_test)

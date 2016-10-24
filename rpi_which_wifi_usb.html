@@ -44,11 +44,13 @@
 <li><a href="#3">Range, power suppply, and antenna.</a></li>
 <li><a href="#4">As an access point.</a> (caution)</li>
 <li><a href="#5">Change a MAC address.</a>(caution)</li>
-<li><a href="#6">Commands for information.</a></li>
-<li><a href="#7">Using two wifi adapters.</a>(caution)</li>
-<li><a href="#8">Solution to wlan0 and wlan1 confusion.</a></li>
-<li><a href="#9">Test the solution.</a></li>
-<li><a href="#Conclusion">Conclusion</a>.</li>
+<li><a href="#6">Monitor and inject</a>(caution)</li>
+<li><a href="#7">Commands for information.</a></li>
+<li><a href="#8">Using two wifi adapters.</a>(caution)</li>
+<li><a href="#9">Solution to wlan0 and wlan1 confusion.</a></li>
+<li><a href="#10">Test the solution.</a></li>
+<li><a href="#Conclusion">Conclusion</a></li>
+<li><a href="#References">References</a></li>
 </ol>
 </section>
 <section id="discussion" class="level1">
@@ -60,6 +62,7 @@
 <ul>
 <li><a href="http://www.amazon.com/Edimax-EW-7811Un-150Mbps-Raspberry-Supports/dp/B003MTTJOY/ref=pd_bxgy_147_2">Edimax EW-7811Un</a></li>
 <li><a href="http://www.amazon.com/CanaKit-Raspberry-Wireless-Adapter-Dongle/dp/B00GFAN498">CanaKit Raspberry Pi WiFi Wireless Adapter</a></li>
+<li><a href="https://smile.amazon.com/dp/B002SZEOLG">TP-Link WN722N</a></li>
 </ul>
 </section>
 <section id="define-your-needs" class="level2">
@@ -90,8 +93,34 @@
 <p><strong>(caution)</strong> The RealTek RTL8188CUS chipset does not support modifying the MAC address. If changing the MAC on your wifi is important, try an adapter based on a Ralink chipset. In fact, the Ralink chipset should be your choice if you need to monitor or inject as well.</p>
 <p>Notice that the second wifi card in the <a href="rpi_tor.html">Raspberry Tor Guide</a> has a Ralink chipset.</p>
 </section>
+<section id="monitor-and-inject" class="level2">
+<h2><a name="6"></a>Monitor and inject</h2>
+<p><strong>(caution)</strong> If you need to do advanced reconnaissance or security assessment, you will need an adapter capable of monitor and inject modes. Most wifi chipsets do not support this. The <em>TP-Link WN722N</em> supports the full range of wifi modes and is a highly recommended adapter.</p>
+<p>I use this adapter in the <a href="walkingpi.html">WalkingPi</a> and <a href="rpi3_kismet.html">Kismet on Raspberry Pi</a> guides. The <em>TP-Link WN722N</em> also works well with Kali Linux and aircrack-ng.</p>
+<p>How to determine if your wifi is monitor and inject capable. These commands are testing the wlan0 wifi.</p>
+<ul>
+<li><code>sudo ifconfig wlan0 down</code></li>
+<li><code>sudo iwconfig wlan0 mode monitor</code>
+<ul>
+<li>Error message indicates the monitor mode is not supported</li>
+</ul></li>
+</ul>
+<p>If monitor mode seems supported, install aircrack-ng for further tests.</p>
+<ul>
+<li><code>sudo apt-get install aircrack-ng</code></li>
+<li><code>sudo airodump-ng wlan0</code>
+<ul>
+<li>If monitor mode is supported, then found wifis will display</li>
+</ul></li>
+<li><code>sudo aireplay-ng -9 wlan0</code>
+<ul>
+<li>Returns result which includes <em>Injection is working!</em></li>
+</ul></li>
+</ul>
+<p>For more injection testing see <a href="https://www.aircrack-ng.org/doku.php?id=injection_test">Injection test</a>.</p>
+</section>
 <section id="commands-for-information" class="level2">
-<h2><a name="6"></a>Commands for information</h2>
+<h2><a name="7"></a>Commands for information</h2>
 <p>There are some basic commands to determine information about your USB devices.</p>
 <ul>
 <li>List the devices, <code>lsusb</code>.
@@ -106,13 +135,13 @@
 </ul>
 </section>
 <section id="using-two-wifi-adapters" class="level2">
-<h2><a name="7"></a>Using two wifi adapters</h2>
+<h2><a name="8"></a>Using two wifi adapters</h2>
 <p><strong>(caution)</strong> In order to build a wifi to wifi access point, two wifi adapters are needed. If these adapters are built using the same chipset or have the same capabilities then you should experience no problems.</p>
 <p>If wifi adapters with different capabilities are used, you may need to do some extra work. In the <a href="rpi_wifi_ap.html">RPi WiFi Access Point Guide</a>, wlan1 is setup as the access point server. That guide presumes that wlan0 is a RealTek RTL8188CUS chipset adapter and installs a specially compiled hostapd. The guide also sets the <em>/etc/hostapd/hostapd.conf</em> to use <em>driver=rtl871xdrv</em>. The guide uses two of the same adapter and therefore avoids problems.</p>
 <p>Moving to the <a href="rpi_tor.html">Raspberry Tor Guide</a>, we start with the completed access point but now want to change the MAC address on wlan1. This is not possible with the RealTek chipset. In order to change the MAC address, the wlan1 adapter is changed to a Ralink chipset. This solves the problem of MAC address but introduces the problem of which adapter is assigned by udev to the wlan0 and wlan1 identifiers.</p>
 </section>
 <section id="solution-to-wlan0-and-wlan1-confusion" class="level2">
-<h2><a name="8"></a>Solution to wlan0 and wlan1 confusion</h2>
+<h2><a name="9"></a>Solution to wlan0 and wlan1 confusion</h2>
 <p>To ensure consistency on wlan0 and wlan1, a persistence rule must be generated for udev.</p>
 <ul>
 <li>Boot you pi with only the Ralink chipset adapter inserted.</li>
@@ -139,7 +168,7 @@ KERNEL!=&quot;ath*|wlan*[0-9]|msh*|ra*|sta*|ctc*|lcs*|hsi*&quot;, \
 </ul>
 </section>
 <section id="test-the-solution" class="level2">
-<h2><a name="9"></a>Test the solution</h2>
+<h2><a name="10"></a>Test the solution</h2>
 <p>The easiest way to check for persistence is to boot your pi with the wlan0 adapter missing. The <code>ifconfig</code> will not display wlan0 but only wlan1.</p>
 <p>Also test this by changing the MAC on the Ralink chipset adapter, wlan0.</p>
 <ul>
@@ -153,6 +182,12 @@ KERNEL!=&quot;ath*|wlan*[0-9]|msh*|ra*|sta*|ctc*|lcs*|hsi*&quot;, \
 <section id="conclusion" class="level1">
 <h1><a name="Conclusion"></a>Conclusion</h1>
 <p>The gist of this discussion is that one should choose the wifi adapter with care and foresight.</p>
+</section>
+<section id="references" class="level1">
+<h1><a name="References"></a>References</h1>
+<ul>
+<li><a href="https://www.aircrack-ng.org/doku.php?id=injection_test">Injection test</a></li>
+</ul>
 </section>
             </section>
     </div>

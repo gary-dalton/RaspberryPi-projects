@@ -32,7 +32,7 @@ https://github.com/{githubuser}/{githubrepo}/tree/{githubbranch}[View on GitHub 
 * Push buttons
 * Raspberry Pi Camera
 * GPS breakout (https://www.adafruit.com/product/746[Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3])
-* RTC module (included in the GPS breakout)
+* USB Wifi (https://smile.amazon.com/dp/B002SZEOLG[TP-Link WN722N])
 * Backpack
 
 == Requirements
@@ -223,23 +223,79 @@ To learn more about logging see https://docs.python.org/2/howto/logging.html and
 
 == Wireless
 
-WiFi is needed in both collection and transfer modes. I use the Raspberry Pi 3 built-in wifi. The device name for the built-in wifi is wlan0.
+WiFi is needed in both collection and transfer modes. I use the Raspberry Pi 3 built-in wifi to provide an access point for monitoring while in action. The device name for the built-in wifi is wlan0.
 
-TIP: While the built-in wifi is very capable and sufficient for my project; if greater range, monitor mode, or packet injection is needed, use a quality USB wifi with antenna.
+TIP: While the built-in wifi is very capable and sufficient for this project; I chose to use a more capable USB wifi with antenna for greater range, monitor mode, and packet injection.
 
-There is more than one method to bring an interface up with a different result. For walkingpi, wlan0 should initially load without trying to connect to an access point. This makes it available for _wpa_cli_ commands. An easy way to control wlan0 is to give two network configuration files.
+I am using the TP-Link WN722N as my monitor mode wifi using Kismet. This wifi on wlan1 will also work for injection using aircrack-ng. See link:rpi_which_wifi_usb.html#6[Monitor and inject].
 
-* _/etc/network/interfaces_ is the standard configuration that is run at boot
-* _/etc/network/interfaces.base_ is a new configuration used to connect to base
+There is more than one method to bring an interface up with a different result. This guide uses separate configuration files for each mode. These are:
+
+* Default mode
+** wlan0 is an access point
+** Power up GPS
+** wlan1 is down and waiting for a GPS fix
+** Use _/etc/network/interfaces
+* Logging mode
+** wlan0 is an access point
+** wlan1 is in monitor mode with Kismet, after GPS fix
+* Silent mode
+** wlan0 is down
+** wlan1 is in monitor mode with Kismet, after GPS fix
+* Transfer mode
+** wlan0 connects to base
+** wlan1 is down
+** Power down GPS
+** Use _/etc/network/interfaces.transfer
+
+image:images/mode_flow.png[]
+
+=== Default mode
+
+For walkingpi, wlan0 should initially load as an access point and power up the GPS. This makes it available for connection with SSH or an app. Once a GPS fix is obtained, walkingpi switches to Logging mode.
+
+For Default and Logging modes, the pi must act as an access point. See link:rpi3_simple_wifi_ap.html[Raspberry Pi 3 as a Simple WiFi Access Point] to get this set up. Configure wlan0 in _/etc/network/interfaces_ as indicated by that guide.
+
+=== Logging mode
+
+Kismet starts and uses wlan1 as its interface. This is done by python calling the command `/usr/local/bin/kismet_server --daemonize`.
+
+=== Silent mode
+
+The access point is shut down via the following commands:
+
+* `sudo service dnsmasq stop`
+* `sudo service hostapd stop`
+* `sudo ifdown wlan0`
+
+=== Transfer mode
+
+Logging and monitoring are stopped with the commands:
+
+* `killall kismet_server`
+* `sudo ifdown wlan0`
+
+wlan0 is then connected to base by:
+
+* `sudo ifup wlan0 -i /etc/network/interfaces.base`
+
+=== Configuration files
+
+Basically, there are 3 configuration files: _/etc/network/interfaces_, _/etc/network/interfaces.base_, and _/etc/wpa_supplicant/wpa_supplicant.conf_. Let's get them set up.
 
 * `sudo nano /etc/network/interfaces`
-* Add the following
 
 ./etc/network/interfaces
 ----
 allow-hotplug wlan0
-iface wlan0 inet manual
-    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
+iface wlan0 inet static
+    address 192.168.240.1
+    netmask 255.255.255.0
+    network 192.168.240.0
+    broadcast 192.168.240.255
+
+allow-hotplug wlan1
+iface wlan1 inet manual
 ----
 
 * Copy the file, `sudo cp /etc/network/interfaces /etc/network/interfaces.base`
@@ -250,14 +306,13 @@ iface wlan0 inet manual
 ----
 allow-hotplug wlan0
 iface wlan0 inet dhcp
-    wpa-conf /etc/wpa_supplicant/wpa_supplicant.base.conf
+    wpa-conf /etc/wpa_supplicant/wpa_supplicant.conf
 ----
 
-* `sudo cp /etc/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant/wpa_supplicant.base.conf`
-* `sudo nano /etc/wpa_supplicant/wpa_supplicant.base.conf`
+* `sudo nano /etc/wpa_supplicant/wpa_supplicant.conf`
 * Add the following to this file (remember to change replace _your_wifi_identifier_ and _your_wifi_password_ with your real values):
 
-./etc/wpa_supplicant/wpa_supplicant.base.conf
+./etc/wpa_supplicant/wpa_supplicant.conf
 ----
 network={
 ssid="your_wifi_identifier"
@@ -268,19 +323,6 @@ pairwise=CCMP
 auth_alg=OPEN
 }
 ----
-
-What happens in action?
-
-* Boots into wlan0 available for use but not connected
-* Take wlan0 down, `sudo ifdown wlan0`
-* Connect wlan0 to base, `sudo ifup wlan0 -i /etc/network/interfaces.base`
-* Take wlan0 down, `sudo ifdown wlan0`
-* Bring wlan0 up but not connected, `sudo ifup wlan0`
-
-=== Transfer mode
-
-For transfer mode, walkingpi connects to its home base.
-
 
 == GPS
 

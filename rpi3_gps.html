@@ -57,6 +57,7 @@
 </li>
 </ul>
 </li>
+<li><a href="#_conclusion">Conclusion</a></li>
 <li><a href="#_references">References</a></li>
 </ul>
 </div>
@@ -456,7 +457,7 @@ GPSD_OPTIONS="-n"
 <div class="sect2">
 <h3 id="_pps">PPS</h3>
 <div class="paragraph">
-<p>Pulse per second (PPS or 1PPS) is a signal that accurately repeats once per second. Precision clocks align a PPS signal to the UTC second and convert it to a useful time.</p>
+<p>Pulse per second (PPS or 1PPS) is a signal that accurately repeats once per second. Precision clocks align a PPS signal to the UTC second and convert it to a useful time. Using PPS, the clock accuracy can be improved to about ±5 uSeconds (<a href="http://www.catb.org/gpsd/gpsd-time-service-howto.html#_1pps_quality_issues" class="bare">http://www.catb.org/gpsd/gpsd-time-service-howto.html#_1pps_quality_issues</a>).</p>
 </div>
 <div class="paragraph">
 <p>Raspbian has PPS support built-in but it does require some configuration.</p>
@@ -711,6 +712,14 @@ One of the servers must be marked as prefer. Above I show the gpsd provided serv
 </div>
 </div>
 <div class="sect1">
+<h2 id="_conclusion">Conclusion</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Your pi now has a GPS defined location and extremely accurate time. Both of these are very useful and may be used in a variety of mobile, distance, and time based applications.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_references">References</h2>
 <div class="sectionbody">
 <div class="ulist">
@@ -753,7 +762,7 @@ One of the servers must be marked as prefer. Above I show the gpsd provided serv
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2016-10-22 20:54:24 Central Daylight Time
+Last updated 2016-10-23 21:57:42 Central Daylight Time
 </div>
 </div>
 </body>

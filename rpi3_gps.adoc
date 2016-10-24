@@ -169,7 +169,7 @@ GPSD_OPTIONS="-n"
 
 === PPS
 
-Pulse per second (PPS or 1PPS) is a signal that accurately repeats once per second. Precision clocks align a PPS signal to the UTC second and convert it to a useful time.
+Pulse per second (PPS or 1PPS) is a signal that accurately repeats once per second. Precision clocks align a PPS signal to the UTC second and convert it to a useful time. Using PPS, the clock accuracy can be improved to about ±5 uSeconds (http://www.catb.org/gpsd/gpsd-time-service-howto.html#_1pps_quality_issues).
 
 Raspbian has PPS support built-in but it does require some configuration.
 
@@ -269,6 +269,10 @@ NOTE: One of the servers must be marked as prefer. Above I show the gpsd provide
 Your preferred server should have an *** by it and the PPS server should have an *o*. Additionally, the reach of available servers should eventually get to 377. The offset and the jitter from the PPS source should be very low.
 
 image:images/ntp_pps_test.png[]
+
+== Conclusion
+
+Your pi now has a GPS defined location and extremely accurate time. Both of these are very useful and may be used in a variety of mobile, distance, and time based applications.
 
 == References
 

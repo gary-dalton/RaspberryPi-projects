@@ -35,7 +35,7 @@ For full Kismet usage, GPS should be available on the pi. Follow the link:rpi_gp
 * Raspberry Pi 2 or 3
 * 16GB (or larger) class 10 MicroSD card
 * GPS breakout (https://www.adafruit.com/product/746[Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3])
-* USB Wifi with monitor mode (https://smile.amazon.com/gp/product/B00YI0AIRS[Detroit DIY Electronics Long Range WiFi])
+* USB Wifi with monitor mode (https://smile.amazon.com/dp/B002SZEOLG[TP-Link WN722N WiFi])
 * RTC module (included in the GPS breakout)
 
 == Install Kismet
@@ -88,13 +88,13 @@ logprefix=/var/log/kismet
 # Set the wireless network source interface
 ncsource=wlan0
 
-# Change the write interval from 300 to 60 seconds
-writeinterval=60
+# Change the write interval from 300 to 180 seconds
+writeinterval=180
 ----
 
-== Run Kismet
+== Interactive Kismet
 
-Before starting kismet, I make certain my GPS is running and has a fix.
+Before starting kismet, make certain GPS is running and has a fix.
 
 * `sudo gpsd /dev/ttyUSB0 -F /var/run/gpsd.sock`
 * Once it has a fix verify with `cgps`
@@ -103,11 +103,21 @@ Start kismet
 
 * `kismet`
 * Follow the prompts to start the server and view the UI.
-* When done, stop and exit kismet with ``
+* When done, stop and exit kismet with *[ALT][k]* then *[Q]*.
+
+== Headless Kismet
+
+The kismet_server may be started as a daemon from the command line. This will make it available to client interactions and also start logging. No changes to the above configuration are needed. It is also possible to start kismet_server from boot but this is not my preference due to GPS Fix delays.
+
+* Start kismet_server `/usr/local/bin/kismet_server --daemonize`
+* Stop kismet_server `killall kismet_server`
+
 
 == GISKismet
 
 GISKismet converts the data into a format viewable in Google Earth. GISKismet first converts the access point data from the Kismet data file into a SQLLite database and then into a KML data file. KML is the format used by Google Earth.
+
+I do not plan on running GISKismet on the pi but instead on a more capable computer or cloud cluster.
 
 === Installation
 
@@ -119,9 +129,15 @@ GISKismet converts the data into a format viewable in Google Earth. GISKismet fi
 * `make`
 * `sudo make install`
 
-giskismet -x /var/log/kismet/Kismet-20161015-15-18-56-1.netxml --database ~/Downloads/wireless.dbl
+=== Example commands
 
-giskismet -q "select * from wireless" -o ~/Downloads/ex1.kml --database ~/Downloads/wireless.dbl
+Add data from a kismet log file to a SQLLite database file.
+
+ giskismet -x /inputfile/Kismet-date.netxml --database /outputfile/wireless.dbl
+
+Extract data from the SQLLite file to a KML file.
+
+ giskismet -q "select * from wireless" -o /outputfile/ex1.kml --database /outputfile/wireless.dbl
 
 == References
 

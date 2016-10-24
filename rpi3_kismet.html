@@ -36,10 +36,12 @@
 </ul>
 </li>
 <li><a href="#_configure_kismet">Configure Kismet</a></li>
-<li><a href="#_run_kismet">Run Kismet</a></li>
+<li><a href="#_interactive_kismet">Interactive Kismet</a></li>
+<li><a href="#_headless_kismet">Headless Kismet</a></li>
 <li><a href="#_giskismet">GISKismet</a>
 <ul class="sectlevel2">
 <li><a href="#_installation">Installation</a></li>
+<li><a href="#_example_commands">Example commands</a></li>
 </ul>
 </li>
 <li><a href="#_references">References</a></li>
@@ -86,7 +88,7 @@
 <p>GPS breakout (<a href="https://www.adafruit.com/product/746">Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3</a>)</p>
 </li>
 <li>
-<p>USB Wifi with monitor mode (<a href="https://smile.amazon.com/gp/product/B00YI0AIRS">Detroit DIY Electronics Long Range WiFi</a>)</p>
+<p>USB Wifi with monitor mode (<a href="https://smile.amazon.com/dp/B002SZEOLG">TP-Link WN722N WiFi</a>)</p>
 </li>
 <li>
 <p>RTC module (included in the GPS breakout)</p>
@@ -213,17 +215,17 @@ logprefix=/var/log/kismet
 # Set the wireless network source interface
 ncsource=wlan0
 
-# Change the write interval from 300 to 60 seconds
-writeinterval=60</pre>
+# Change the write interval from 300 to 180 seconds
+writeinterval=180</pre>
 </div>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_run_kismet">Run Kismet</h2>
+<h2 id="_interactive_kismet">Interactive Kismet</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Before starting kismet, I make certain my GPS is running and has a fix.</p>
+<p>Before starting kismet, make certain GPS is running and has a fix.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -247,7 +249,25 @@ writeinterval=60</pre>
 <p>Follow the prompts to start the server and view the UI.</p>
 </li>
 <li>
-<p>When done, stop and exit kismet with ``</p>
+<p>When done, stop and exit kismet with <strong>[ALT][k]</strong> then <strong>[Q]</strong>.</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_headless_kismet">Headless Kismet</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The kismet_server may be started as a daemon from the command line. This will make it available to client interactions and also start logging. No changes to the above configuration are needed. It is also possible to start kismet_server from boot but this is not my preference due to GPS Fix delays.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Start kismet_server <code>/usr/local/bin/kismet_server --daemonize</code></p>
+</li>
+<li>
+<p>Stop kismet_server <code>killall kismet_server</code></p>
 </li>
 </ul>
 </div>
@@ -258,6 +278,9 @@ writeinterval=60</pre>
 <div class="sectionbody">
 <div class="paragraph">
 <p>GISKismet converts the data into a format viewable in Google Earth. GISKismet first converts the access point data from the Kismet data file into a SQLLite database and then into a KML data file. KML is the format used by Google Earth.</p>
+</div>
+<div class="paragraph">
+<p>I do not plan on running GISKismet on the pi but instead on a more capable computer or cloud cluster.</p>
 </div>
 <div class="sect2">
 <h3 id="_installation">Installation</h3>
@@ -286,11 +309,24 @@ writeinterval=60</pre>
 </li>
 </ul>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_example_commands">Example commands</h3>
 <div class="paragraph">
-<p>giskismet -x /var/log/kismet/Kismet-20161015-15-18-56-1.netxml --database ~/Downloads/wireless.dbl</p>
+<p>Add data from a kismet log file to a SQLLite database file.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>giskismet -x /inputfile/Kismet-date.netxml --database /outputfile/wireless.dbl</pre>
+</div>
 </div>
 <div class="paragraph">
-<p>giskismet -q "select * from wireless" -o ~/Downloads/ex1.kml --database ~/Downloads/wireless.dbl</p>
+<p>Extract data from the SQLLite file to a KML file.</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>giskismet -q "select * from wireless" -o /outputfile/ex1.kml --database /outputfile/wireless.dbl</pre>
+</div>
 </div>
 </div>
 </div>
@@ -320,7 +356,7 @@ writeinterval=60</pre>
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2016-10-17 10:06:58 Central Daylight Time
+Last updated 2016-10-23 21:54:33 Central Daylight Time
 </div>
 </div>
 </body>

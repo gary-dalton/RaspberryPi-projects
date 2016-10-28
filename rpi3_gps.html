@@ -19,7 +19,7 @@
 <div class="details">
 <span id="author" class="author">Gary Dalton</span><br>
 <span id="revnumber">version 1.0,</span>
-<span id="revdate">22 October 2016</span>
+<span id="revdate">23 October 2016</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -41,6 +41,7 @@
 <li><a href="#_edit_boot_cmdline_txt">Edit /boot/cmdline.txt</a></li>
 <li><a href="#_disable_the_serial_getty_service">Disable the serial getty service</a></li>
 <li><a href="#_force_the_cpu_into_a_fixed_frequency">Force the CPU into a fixed frequency</a></li>
+<li><a href="#_reboot">Reboot</a></li>
 <li><a href="#_connect_gpsd_to_uart_and_test">Connect gpsd to UART and test</a></li>
 </ul>
 </li>
@@ -176,6 +177,16 @@ Make certain to get the correct adapter cable as RP-SMA and SMA, while they look
 </li>
 <li>
 <p><strong>UART</strong> use <code>sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Raspberry Pi 3:</strong> <code>sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock</code></p>
+</li>
+<li>
+<p><strong>Raspberry Pi 2:</strong> <code>sudo gpsd /dev/ttyAMA0 -F /var/run/gpsd.sock</code></p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -337,6 +348,18 @@ Before testing with cgps, it is good for the unit to have a location fix.
 </div>
 <div class="sect2">
 <h3 id="_disable_the_serial_getty_service">Disable the serial getty service</h3>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+The Raspberry Pi 3 uses a different tty device name than the Raspberry Pi 1 or 2. Version 3 uses ttyS0 while versions 1 and 2 use AMA0. In the next few sections I will use the device named ttyS0; if your are not using a Pi3, then change the device name as needed.
+</td>
+</tr>
+</table>
+</div>
 <div class="ulist">
 <ul>
 <li>
@@ -350,6 +373,18 @@ Before testing with cgps, it is good for the unit to have a location fix.
 </div>
 <div class="sect2">
 <h3 id="_force_the_cpu_into_a_fixed_frequency">Force the CPU into a fixed frequency</h3>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+Not for Raspberry Pi 1 or 2.
+</td>
+</tr>
+</table>
+</div>
 <div class="ulist">
 <ul>
 <li>
@@ -362,6 +397,13 @@ Before testing with cgps, it is good for the unit to have a location fix.
 </ul>
 </div>
 </li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_reboot">Reboot</h3>
+<div class="ulist">
+<ul>
 <li>
 <p>Reboot, <code>sudo reboot now</code></p>
 </li>
@@ -376,7 +418,10 @@ Before testing with cgps, it is good for the unit to have a location fix.
 <p><code>sudo killall gpsd</code></p>
 </li>
 <li>
-<p><code>sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock</code></p>
+<p><strong>Raspberry Pi 3:</strong> <code>sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock</code></p>
+</li>
+<li>
+<p><strong>Raspberry Pi 2:</strong> <code>sudo gpsd /dev/ttyAMA0 -F /var/run/gpsd.sock</code></p>
 </li>
 <li>
 <p>Test with <code>cgps</code></p>
@@ -427,7 +472,7 @@ For UART connection only.
 <div class="content">
 <pre># change the options.
 START_DAEMON="true"
-DEVICES="/dev/ttyAMA0"
+DEVICES="/dev/ttyS0"
 GPSD_OPTIONS="-n"
 # -n  : don't wait for client connects to poll GPS
 #     : needed for proper time service polling</pre>
@@ -762,7 +807,7 @@ One of the servers must be marked as prefer. Above I show the gpsd provided serv
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2016-10-23 21:57:42 Central Daylight Time
+Last updated 2016-10-28 16:34:32 Central Daylight Time
 </div>
 </div>
 </body>

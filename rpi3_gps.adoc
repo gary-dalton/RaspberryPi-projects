@@ -2,7 +2,7 @@
 :subtitle: Installing GPS on RPi3
 :author: Gary Dalton
 :revnumber: 1.0
-:revdate: 22 October 2016
+:revdate: 23 October 2016
 :license: Creative Commons BY-SA
 :homepage: https://gary-dalton.github.io/
 :githubuser: gary-dalton
@@ -62,6 +62,8 @@ Now the gpsd needs to be started and pointed at either the USB device or the UAR
 * `sudo killall gpsd`
 * *USB to TLL* use `sudo gpsd /dev/ttyUSB0 -F /var/run/gpsd.sock`
 * *UART* use `sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock`
+** *Raspberry Pi 3:* `sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock`
+** *Raspberry Pi 2:* `sudo gpsd /dev/ttyAMA0 -F /var/run/gpsd.sock`
 
 == GPS using USB to TLL
 
@@ -127,19 +129,27 @@ image:images/pi_gpio_1-18.jpg[]
 
 === Disable the serial getty service
 
+IMPORTANT: The Raspberry Pi 3 uses a different tty device name than the Raspberry Pi 1 or 2. Version 3 uses ttyS0 while versions 1 and 2 use AMA0. The next few sections use the device named ttyS0; if your are not using a Pi3, then change the device name as needed.
+
 * `sudo systemctl stop serial-getty@ttyS0.service`
 * `sudo systemctl disable serial-getty@ttyS0.service`
 
 === Force the CPU into a fixed frequency
 
+WARNING: Not for Raspberry Pi 1 or 2.
+
 * `sudo nano /boot/config.txt`
 ** At bottom add `enable_uart=1`
+
+=== Reboot
+
 * Reboot, `sudo reboot now`
 
 === Connect gpsd to UART and test
 
 * `sudo killall gpsd`
-* `sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock`
+* *Raspberry Pi 3:* `sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock`
+* *Raspberry Pi 2:* `sudo gpsd /dev/ttyAMA0 -F /var/run/gpsd.sock`
 * Test with `cgps`
 
 TIP: Before testing with cgps, it is good for the unit to have a location fix.
@@ -154,7 +164,7 @@ NOTE: For UART connection only.
 ----
 # change the options.
 START_DAEMON="true"
-DEVICES="/dev/ttyAMA0"
+DEVICES="/dev/ttyS0"
 GPSD_OPTIONS="-n"
 # -n  : don't wait for client connects to poll GPS
 #     : needed for proper time service polling

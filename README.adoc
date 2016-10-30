@@ -1,0 +1,17 @@
+= Raspberry Pi Projects
+Gary Dalton <https://github.com/gary-dalton>
+:revnumber: 1.0
+:revdate: 30 October 2016
+:license: Creative Commons BY-SA
+:homepage: https://gary-dalton.github.io/
+:githubuser: gary-dalton
+:githubrepo: RaspberryPi-projects
+:githubbranch: master
+:icons: font
+:toc: left
+:toclevels: 4
+:source-highlighter: coderay
+:description: Raspberry Pi Projects is mostly how to documentation for a wide variety of projects. All the code for those projects may be found in the various folders. View the documentation pages at http://gary-dalton.github.io/RaspberryPi-projects/
+:keywords: raspberrypi, guide, help, reference, projects, python
+
+{description}

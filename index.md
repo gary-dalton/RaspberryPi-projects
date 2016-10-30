@@ -33,7 +33,7 @@ tags: rpi, raspberrypi, guide, howto
 - [Raspberry Pi 3 as a Simple WiFi Access Point](rpi3_simple_wifi_ap.html)
 - [Dnsmasq Whitelist](dnsmasq_whitelist.html), Simple DNS domain whitelister
 - [GPS on Raspberry Pi 3](rpi3_gps.html), Installation and basic use of the Adafruit Ultimate GPS breakout on a Raspberry Pi 3
-- [Kismet on Raspberry Pi](rpi3_kismet), Installation and basic use of Kismet on a Raspberry Pi. Kismet is a wireless network detector, sniffer, and intrusion detection system.
+- [Kismet on Raspberry Pi](rpi3_kismet.html), Installation and basic use of Kismet on a Raspberry Pi. Kismet is a wireless network detector, sniffer, and intrusion detection system.
 
 
 # How-tos
@@ -57,7 +57,7 @@ tags: rpi, raspberrypi, guide, howto
 
 ## On Hold
 
-
+- [Walking Pi](walkingpi.html)
 
 ## Deprecated
 

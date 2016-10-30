@@ -53,20 +53,21 @@ Kismet is a wireless network detector, sniffer, and intrusion detection system. 
 
 === Match MAC addresses to manufacturers
 
+* `cd ~/Downloads`
 * `wget -O manuf "https://code.wireshark.org/review/gitweb?p=wireshark.git;a=blob_plain;f=manuf"`
 * `sudo cp manuf /etc/`
 
 === Download and extract Kismet
 
 * `wget https://www.kismetwireless.net/code/kismet-2016-07-R1.tar.xz`
-* `sudo tar –xf kismet-2016-07-R1.tar.xz`
+* `sudo tar -xf kismet-2016-07-R1.tar.xz`
 * `cd kismet-2016-07-R1`
 
 === Make and install Kismet
 
-* `sudo ./configure`
-* `sudo make dep`
-* `sudo make`
+* `./configure`
+* `make dep`
+* `make`
 * Install with suid-root, `sudo make suidinstall`
 
 === Add user pi to group kismet

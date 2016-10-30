@@ -1,0 +1,17 @@
+= Raspberry Pi Projects - Documentation Pages
+Gary Dalton <https://github.com/gary-dalton>
+:revnumber: 1.0
+:revdate: 30 October 2016
+:license: Creative Commons BY-SA
+:homepage: https://gary-dalton.github.io/
+:githubuser: gary-dalton
+:githubrepo: RaspberryPi-projects
+:githubbranch: gh-pages
+:icons: font
+:toc: left
+:toclevels: 4
+:source-highlighter: coderay
+:description: This is the Github Pages branch that provides documentation for the Raspberry Pi Projects. View the pages at http://gary-dalton.github.io/RaspberryPi-projects/
+:keywords: raspberrypi, guide, help, reference
+
+{description}

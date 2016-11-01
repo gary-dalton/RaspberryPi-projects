@@ -55,7 +55,7 @@ def main():
 
     # Start Kismet
     logging.info('GPS mode 3 fix achieved')
-    os.system('/usr/local/bin/kismet_server --daemonize')
+    os.system('sudo -u pi /usr/local/bin/kismet_server --daemonize')
     logging.info('Kismet server started')
 
     # Loop until shutdown

@@ -36,7 +36,6 @@ For full Kismet usage, GPS should be available on the pi. Follow the link:rpi_gp
 * 16GB (or larger) class 10 MicroSD card
 * GPS breakout (https://www.adafruit.com/product/746[Adafruit Ultimate GPS Breakout - 66 channel w/10 Hz updates - Version 3])
 * USB Wifi with monitor mode (https://smile.amazon.com/dp/B002SZEOLG[TP-Link WN722N WiFi])
-* RTC module (included in the GPS breakout)
 
 == Install Kismet
 
@@ -60,7 +59,7 @@ Kismet is a wireless network detector, sniffer, and intrusion detection system. 
 === Download and extract Kismet
 
 * `wget https://www.kismetwireless.net/code/kismet-2016-07-R1.tar.xz`
-* `sudo tar -xf kismet-2016-07-R1.tar.xz`
+* `tar -xf kismet-2016-07-R1.tar.xz`
 * `cd kismet-2016-07-R1`
 
 === Make and install Kismet
@@ -115,6 +114,8 @@ The kismet_server may be started as a daemon from the command line. This will ma
 
 
 == GISKismet
+
+NOTE: Optional
 
 GISKismet converts the data into a format viewable in Google Earth. GISKismet first converts the access point data from the Kismet data file into a SQLLite database and then into a KML data file. KML is the format used by Google Earth.
 

@@ -58,6 +58,7 @@ tags: rpi, raspberrypi, guide, howto
 ## On Hold
 
 - [Walking Pi](walkingpi.html)
+- [Timeserver on Raspberry Pi](timserver.html)
 
 ## Deprecated
 

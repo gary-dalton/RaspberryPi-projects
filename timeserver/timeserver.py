@@ -6,7 +6,7 @@ Provides a shutdown button and starts Kismet after a GPS fix.
 
 
 import RPi.GPIO as GPIO
-import time, datetime, logging
+import time, datetime, logging, os
 import gps
 
 # Configure logging

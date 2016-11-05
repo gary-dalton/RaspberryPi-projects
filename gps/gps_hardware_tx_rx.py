@@ -9,9 +9,7 @@ import datetime, time, os
 import microstacknode.hardware.gps.l80gps as l80gps
 import rpi_utils
 
-gps = connect_serial_gps()
-
-def basic_nmea():
+def basic_nmea(gps):
     """
     Prints a variety of basic NMEA sentences
     """
@@ -46,7 +44,7 @@ def basic_nmea():
     print("GPZDA")
     print(get_gpzda(gps))
 
-def gps_output_spy(duration_seconds=10):
+def gps_output_spy(gps, duration_seconds=10):
     """
     Watches the data output from the serial device
     :param time: number of seconds to loop
@@ -172,6 +170,9 @@ def connect_serial_gps():
     cmd = "sudo killall gpsd"
     os.system(cmd)
     #rpi_utils.run_program(cmd)
-    time.sleep(2)
+    time.sleep(1)
     gps = l80gps.L80GPS()
     return gps
+
+if __name__ == '__main__':
+    gps = connect_serial_gps()

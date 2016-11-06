@@ -58,6 +58,12 @@
 </li>
 </ul>
 </li>
+<li><a href="#_python">Python</a>
+<ul class="sectlevel2">
+<li><a href="#_disable_gspd">Disable gspd</a></li>
+<li><a href="#_basics">Basics</a></li>
+</ul>
+</li>
 <li><a href="#_conclusion">Conclusion</a></li>
 <li><a href="#_references">References</a></li>
 </ul>
@@ -757,6 +763,125 @@ One of the servers must be marked as prefer. Above I show the gpsd provided serv
 </div>
 </div>
 <div class="sect1">
+<h2 id="_python">Python</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>If not already installed, <code>sudo apt-get install python3</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install python3-pip</code></p>
+</li>
+<li>
+<p><code>sudo pip3 install gps3</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install python3-microstacknode</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install python3-serial</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>I also recommend cloning the microstacknode repository to better understand the code being used.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cd ~/github</code></p>
+</li>
+<li>
+<p><code>git clone <a href="https://github.com/microstack-IoT/python3-microstacknode.git" class="bare">https://github.com/microstack-IoT/python3-microstacknode.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Finally, clone my repository. It has a number of examples in it as well as some utility functions.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cd ~/github</code></p>
+</li>
+<li>
+<p><code>git clone <a href="https://github.com/gary-dalton/RaspberryPi-projects.git" class="bare">https://github.com/gary-dalton/RaspberryPi-projects.git</a></code></p>
+</li>
+</ul>
+</div>
+<div class="sect2">
+<h3 id="_disable_gspd">Disable gspd</h3>
+<div class="paragraph">
+<p>Python serial cannot access the serial device while it is being captured by gspd. It may be neccessary to kill other services such as Kismet before killing gpsd.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Disable, <code>sudo killall gpsd</code></p>
+</li>
+<li>
+<p>Enable when done, <code>sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock</code></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+If you use my utility functions gps_hardware_tx_rx.connect_serial_gps() and gps_hardware_tx_rx.disconnect_serial_gps(), starting and stoping gpsd are included.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_basics">Basics</h3>
+<div class="paragraph">
+<p>Mostly, I connect directly to the gps hardware to interact with the locus logger.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>cd ~/github/RaspberryPi-projects</code></p>
+</li>
+<li>
+<p>Start python3, <code>python3</code></p>
+</li>
+</ul>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="python"><span class="comment"># Start locus logger</span>
+cmd = <span class="string"><span class="delimiter">'</span><span class="content">sudo killall kismet_server</span><span class="delimiter">'</span></span>
+os.system(cmd)
+gps = connect_serial_gps()
+gps.locus_start()
+disconnect_serial_gps(gps)
+<span class="keyword">del</span>(gps)
+cmd = <span class="string"><span class="delimiter">'</span><span class="content">/usr/local/bin/kismet_server --daemonize</span><span class="delimiter">'</span></span>
+os.system(cmd)
+
+<span class="comment"># Stop, download data, and erase locus logger</span>
+cmd = <span class="string"><span class="delimiter">'</span><span class="content">sudo killall kismet_server</span><span class="delimiter">'</span></span>
+os.system(cmd)
+gps = connect_serial_gps()
+gps.locus_stop()
+locus_data = gps.locus_query_data()
+gps.locus_erase()
+disconnect_serial_gps(gps)
+<span class="keyword">del</span>(gps)
+cmd = <span class="string"><span class="delimiter">'</span><span class="content">/usr/local/bin/kismet_server --daemonize</span><span class="delimiter">'</span></span>
+os.system(cmd)</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
 <h2 id="_conclusion">Conclusion</h2>
 <div class="sectionbody">
 <div class="paragraph">
@@ -799,6 +924,12 @@ One of the servers must be marked as prefer. Above I show the gpsd provided serv
 <li>
 <p><a href="http://ava.upuaut.net/?p=726" class="bare">http://ava.upuaut.net/?p=726</a></p>
 </li>
+<li>
+<p><a href="http://www.farnell.com/datasheets/1860443.pdf" class="bare">http://www.farnell.com/datasheets/1860443.pdf</a></p>
+</li>
+<li>
+<p><a href="http://www.microstack.org.uk/" class="bare">http://www.microstack.org.uk/</a></p>
+</li>
 </ul>
 </div>
 </div>
@@ -807,7 +938,7 @@ One of the servers must be marked as prefer. Above I show the gpsd provided serv
 <div id="footer">
 <div id="footer-text">
 Version 1.0<br>
-Last updated 2016-10-28 18:08:32 Central Daylight Time
+Last updated 2016-11-06 12:38:39 Central Standard Time
 </div>
 </div>
 </body>

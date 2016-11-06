@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<!--[if IE]><meta http-equiv="X-UA-Compatible" content="IE=edge"><![endif]-->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="generator" content="Asciidoctor 1.5.4">
+<meta name="description" content="Both Raspbian images have Python 2 preinstalled but Raspbian Lite does not have python 3 preinstalled. This guides the installation of Python and some of the packages that I regularly use. The methods here may be used on many Linux systems but the main audience is Raspberry Pi users.">
+<meta name="keywords" content="raspbian, guide, python3, python, gpio, pip">
+<meta name="author" content="Gary Dalton">
+<title>Python 2 and Python 3 on Raspbian</title>
+<link rel="stylesheet" href="stylesheets/github.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.5.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="stylesheets/coderay-asciidoctor.css">
+</head>
+<body class="article toc2 toc-left">
+<div id="header">
+<h1>Python 2 and Python 3 on Raspbian</h1>
+<div class="details">
+<span id="author" class="author">Gary Dalton</span><br>
+<span id="email" class="email"><a href="https://github.com/gary-dalton" class="bare">https://github.com/gary-dalton</a></span><br>
+<span id="revnumber">version 1.0,</span>
+<span id="revdate">4 November 2016</span>
+</div>
+<div id="toc" class="toc2">
+<div id="toctitle">Table of Contents</div>
+<ul class="sectlevel1">
+<li><a href="#_assumptions">Assumptions</a></li>
+<li><a href="#_basics">Basics</a></li>
+<li><a href="#_some_packages">Some packages</a>
+<ul class="sectlevel2">
+<li><a href="#_general_and_gpio">General and GPIO</a></li>
+<li><a href="#_gps">GPS</a></li>
+<li><a href="#_camera">Camera</a></li>
+<li><a href="#_audio">Audio</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div id="content">
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><a href="index.html">Raspberry Pi Projects</a> | <a href="https://gary-dalton.github.io/">Home</a></p>
+</div>
+<div class="paragraph">
+<p>Both Raspbian images have Python 2 preinstalled but Raspbian Lite does not have python 3 preinstalled. This guides the installation of Python and some of the packages that I regularly use. The methods here may be used on many Linux systems but the main audience is Raspberry Pi users.</p>
+</div>
+<div class="paragraph">
+<p><a href="https://github.com/gary-dalton/RaspberryPi-projects/tree/gh-pages">View on GitHub <span class="image"><img src="images/GitHub-Mark-32px.png" alt="GitHub Mark 32px"></span></a></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_assumptions">Assumptions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This guide assumes an installed and working Debian based Linux operating system that manages packages using apt. Raspbian, the OS for Raspberry Pis, is such an operating system. To install Raspbian follow the <a href="rpi_initial_setup.html">RPi Initial Setup Guide</a>. In order to install new packages, an Internet connection is required.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_basics">Basics</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Raspbian Jessie comes with both Python 2 and Python 3 preinstalled. Raspbian Jessie Lite, however; comes with only Python 2 preinstalled.</p>
+</div>
+<div class="paragraph">
+<p>Raspbian Lite:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Python3, <code>sudo apt-get install python3</code></p>
+</li>
+<li>
+<p>Pip3, <code>sudo apt-get install python3-pip</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If possible, install python packages using the apt system. This makes it a bit easier to maintain. Not all packages or their latest versions are available via apt. If you need a package not in apt, the next choice is pip.</p>
+</div>
+<div class="paragraph">
+<p>Package naming in apt is usually of the form <em>python-packagename</em> or <em>python3-packagename</em>. To install a python packages, use the command:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Python 2, <code>sudo apt-get install python-packagename</code></p>
+</li>
+<li>
+<p>Python 3, <code>sudo apt-get install python3-packagename</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Pip installs packages into Python 2 while pip3 installs packages into Python 3. To install a python package using pip:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Python 2, <code>sudo pip install packagename</code></p>
+</li>
+<li>
+<p>Python 3, <code>sudo pip3 install packagename</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_some_packages">Some packages</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Since I have moved all of my current development work to Python 3, those will be the examples used.</p>
+</div>
+<div class="sect2">
+<h3 id="_general_and_gpio">General and GPIO</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo apt-get install python3-rpi.gpio</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install python3-smbus</code></p>
+</li>
+<li>
+<p><code>sudo apt-get install python3-dev</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_gps">GPS</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>GPS, <code>sudo pip3 install gps3</code></p>
+</li>
+<li>
+<p>GPS chipset, <code>sudo apt-get install python3-microstacknode</code></p>
+</li>
+<li>
+<p>Needed by microstacknode, <code>sudo apt-get install python3-serial</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_camera">Camera</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo apt-get install python3-picamera</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_audio">Audio</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><code>sudo apt-get install python3-pyaudio</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div id="footer">
+<div id="footer-text">
+Version 1.0<br>
+Last updated 2016-11-05 09:07:46 Central Daylight Time
+</div>
+</div>
+</body>
+</html>

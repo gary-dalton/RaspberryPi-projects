@@ -280,6 +280,65 @@ Your preferred server should have an *** by it and the PPS server should have an
 
 image:images/ntp_pps_test.png[]
 
+== Python
+
+* If not already installed, `sudo apt-get install python3`
+* `sudo apt-get install python3-pip`
+* `sudo pip3 install gps3`
+* `sudo apt-get install python3-microstacknode`
+* `sudo apt-get install python3-serial`
+
+I also recommend cloning the microstacknode repository to better understand the code being used.
+
+* `cd ~/github`
+* `git clone https://github.com/microstack-IoT/python3-microstacknode.git`
+
+Finally, clone my repository. It has a number of examples in it as well as some utility functions.
+
+* `cd ~/github`
+* `git clone https://github.com/gary-dalton/RaspberryPi-projects.git`
+
+=== Disable gspd
+
+Python serial cannot access the serial device while it is being captured by gspd. It may be neccessary to kill other services such as Kismet before killing gpsd.
+
+* Disable, `sudo killall gpsd`
+* Enable when done, `sudo gpsd /dev/ttyS0 -F /var/run/gpsd.sock`
+
+TIP: If you use my utility functions gps_hardware_tx_rx.connect_serial_gps() and gps_hardware_tx_rx.disconnect_serial_gps(), starting and stoping gpsd are included.
+
+=== Basics
+
+Mostly, I connect directly to the gps hardware to interact with the locus logger.
+
+* `cd ~/github/RaspberryPi-projects`
+* Start python3, `python3`
+
+[source, python]
+----
+# Start locus logger
+cmd = 'sudo killall kismet_server'
+os.system(cmd)
+gps = connect_serial_gps()
+gps.locus_start()
+disconnect_serial_gps(gps)
+del(gps)
+cmd = '/usr/local/bin/kismet_server --daemonize'
+os.system(cmd)
+
+# Stop, download data, and erase locus logger
+cmd = 'sudo killall kismet_server'
+os.system(cmd)
+gps = connect_serial_gps()
+gps.locus_stop()
+locus_data = gps.locus_query_data()
+gps.locus_erase()
+disconnect_serial_gps(gps)
+del(gps)
+cmd = '/usr/local/bin/kismet_server --daemonize'
+os.system(cmd)
+----
+
 == Conclusion
 
 Your pi now has a GPS defined location and extremely accurate time. Both of these are very useful and may be used in a variety of mobile, distance, and time based applications.
@@ -296,3 +355,5 @@ Your pi now has a GPS defined location and extremely accurate time. Both of thes
 * http://www.satsignal.eu/ntp/Raspberry-Pi-NTP.html
 * http://www.ntp.org/
 * http://ava.upuaut.net/?p=726
+* http://www.farnell.com/datasheets/1860443.pdf
+* http://www.microstack.org.uk/

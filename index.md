@@ -17,11 +17,11 @@ tags: rpi, raspberrypi, guide, howto
 # Beginner
 
 - [Beginner Guide via Core Pi v2](beginner_guide_via_core_pi_v2.html), This guides a beginner to perform an initial setup of a Raspberry Pi
+- [RPi Initial Setup Guide](rpi_initial_setup.html), Raspberry Pi - Image and Initial Setup
 
 
 # Guides
 
-- [RPi Initial Setup Guide](rpi_initial_setup.html), Raspberry Pi - Image and Initial Setup
 - [RPi WiFi Access Point Guide](rpi_wifi_ap.html), Adding WiFi Access Point to your Raspberry Pi
 - [Raspberry Tor Guide](rpi_tor.html), Raspberry Pi used as a Tor router
 - [RPi Desktop Mods](rpi_gui_changes.html), Changes to the packages and defaults of the full Raspian
@@ -34,6 +34,7 @@ tags: rpi, raspberrypi, guide, howto
 - [Dnsmasq Whitelist](dnsmasq_whitelist.html), Simple DNS domain whitelister
 - [GPS on Raspberry Pi 3](rpi3_gps.html), Installation and basic use of the Adafruit Ultimate GPS breakout on a Raspberry Pi 3
 - [Kismet on Raspberry Pi](rpi3_kismet.html), Installation and basic use of Kismet on a Raspberry Pi. Kismet is a wireless network detector, sniffer, and intrusion detection system.
+- [Python 2 and Python 3 on Raspbian](python.html)
 
 
 # How-tos
@@ -58,7 +59,7 @@ tags: rpi, raspberrypi, guide, howto
 ## On Hold
 
 - [Walking Pi](walkingpi.html)
-- [Timeserver on Raspberry Pi](timserver.html)
+- [Timeserver on Raspberry Pi](timeserver.html)
 
 ## Deprecated
 

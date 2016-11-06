@@ -1,0 +1,75 @@
+= Python 2 and Python 3 on Raspbian
+Gary Dalton <https://github.com/gary-dalton>
+:subtitle: Python and its packages
+:description: Both Raspbian images have Python 2 preinstalled but Raspbian Lite does not have python 3 preinstalled. This guides the installation of Python and some of the packages that I regularly use. The methods here may be used on many Linux systems but the main audience is Raspberry Pi users.
+:revnumber: 1.0
+:revdate: 4 November 2016
+:license: Creative Commons BY-SA
+:homepage: https://gary-dalton.github.io/
+:githubuser: gary-dalton
+:githubrepo: RaspberryPi-projects
+:githubbranch: gh-pages
+:icons: font
+:toc: left
+:toclevels: 4
+:source-highlighter: coderay
+:css: stylesheets/stylesheet.css
+:linkcss:
+:cli: asciidoctor -a stylesheet=github.css -a stylesdir=stylesheets python.adoc
+:keywords: raspbian, guide, python3, python, gpio, pip
+
+
+link:index.html[Raspberry Pi Projects] | https://gary-dalton.github.io/[Home]
+
+{description}
+
+https://github.com/{githubuser}/{githubrepo}/tree/{githubbranch}[View on GitHub image:images/GitHub-Mark-32px.png[]]
+
+== Assumptions
+
+This guide assumes an installed and working Debian based Linux operating system that manages packages using apt. Raspbian, the OS for Raspberry Pis, is such an operating system. To install Raspbian follow the link:rpi_initial_setup.html[RPi Initial Setup Guide]. In order to install new packages, an Internet connection is required.
+
+== Basics
+
+Raspbian Jessie comes with both Python 2 and Python 3 preinstalled. Raspbian Jessie Lite, however; comes with only Python 2 preinstalled.
+
+Raspbian Lite:
+
+* Python3, `sudo apt-get install python3`
+* Pip3, `sudo apt-get install python3-pip`
+
+If possible, install python packages using the apt system. This makes it a bit easier to maintain. Not all packages or their latest versions are available via apt. If you need a package not in apt, the next choice is pip.
+
+Package naming in apt is usually of the form _python-packagename_ or _python3-packagename_. To install a python packages, use the command:
+
+* Python 2, `sudo apt-get install python-packagename`
+* Python 3, `sudo apt-get install python3-packagename`
+
+Pip installs packages into Python 2 while pip3 installs packages into Python 3. To install a python package using pip:
+
+* Python 2, `sudo pip install packagename`
+* Python 3, `sudo pip3 install packagename`
+
+== Some packages
+
+Since I have moved all of my current development work to Python 3, those will be the examples used.
+
+=== General and GPIO
+
+* `sudo apt-get install python3-rpi.gpio`
+* `sudo apt-get install python3-smbus`
+* `sudo apt-get install python3-dev`
+
+=== GPS
+
+* GPS, `sudo pip3 install gps3`
+* GPS chipset, `sudo apt-get install python3-microstacknode`
+* Needed by microstacknode, `sudo apt-get install python3-serial`
+
+=== Camera
+
+* `sudo apt-get install python3-picamera`
+
+=== Audio
+
+* `sudo apt-get install python3-pyaudio`

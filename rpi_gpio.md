@@ -48,7 +48,7 @@ The steps to follow are:
 
 **WARNING: The pi must be powered down whenever you are connecting or disconnecting pins.**
 
-Python's RPi.GPIO library supports using the GPIO pins on the pi. This library is instaled by default on recent versions of Raspbian. It is a good idea to review the [documentation for this library](https://sourceforge.net/p/raspberry-gpio-python/wiki/Home/).
+Python's RPi.GPIO library supports using the GPIO pins on the pi. This library is installed by default on recent versions of Raspbian. It is a good idea to review the [documentation for this library](https://sourceforge.net/p/raspberry-gpio-python/wiki/Home/).
 
 The layout of the pins is shown below. Note that there are two numbering schemes and for programming you MUST choose either BOARD or BCM.
 

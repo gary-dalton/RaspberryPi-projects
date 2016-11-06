@@ -7,6 +7,7 @@ import errno
 import shlex
 import os
 
+
 def run_program(rcmd):
     """
     Runs a program, and it's paramters (e.g. rcmd="ls -lh /var/www")
@@ -35,6 +36,7 @@ def run_program(rcmd):
             executable, response_stdout.split('\n')[0]))
             return response_stdout
 
+
 def get_revision():
     """
     Extract board revision from cpuinfo file
@@ -52,4 +54,3 @@ def get_revision():
     except:
         myrevision = "0000"
     return myrevision
-

@@ -5,52 +5,45 @@ Provide a library and a test script to interact with the
 MediaTek GPS Chipset MT3339.
 """
 
-import datetime, time, os
+import datetime, time, os, serial
 import microstacknode.hardware.gps.l80gps as l80gps
 import rpi_utils
+
 
 def basic_nmea(gps):
     """
     Prints a variety of basic NMEA sentences
+    :return: none
     """
 
-    """
-    Time, date, position, course and speed data. Recommended Minimum Navigation Information.
-    """
+    # Time, date, position, course and speed data. Recommended Minimum Navigation Information.
     print("GPMRC")
     print(gps.get_gprmc())
 
-    """
-    Time, position and fix type data.
-    """
+    # Time, position and fix type data.
     print("GPGGA")
     print(gps.get_gpgga())
 
-    """
-    GPS receiver operating mode, active satellites used in the position solution and DOP values.
-    """
+    # GPS receiver operating mode, active satellites used in the position solution and DOP values.
     print("GPGSA")
     print(gps.get_gpgsa())
 
-    """
-    The number of GPS satellites in view satellite ID numbers, elevation, azimuth, and SNR values.
-    """
+    # The number of GPS satellites in view satellite ID numbers, elevation, azimuth, and SNR values.
     print("GPGSV")
     print(gps.get_gpgsv())
 
-    """
-    The UTC date and time
-    """
+    # The UTC date and time
     print("GPZDA")
     print(get_gpzda(gps))
+
 
 def gps_output_spy(gps, duration_seconds=10):
     """
     Watches the data output from the serial device
-    :param time: number of seconds to loop
+    :param gps:
+    :param duration_seconds: number of seconds to loop
     :return: none
     """
-
     starttime = datetime.datetime.now()
     duration = 0
     while duration < duration_seconds:
@@ -67,7 +60,6 @@ def get_gpzda(gps_object):
     :param gps_object:
     :return: GPZDA message as a dictionary
     """
-    """"""
     pkt = gps_object.get_nmea_pkt('GPZDA')
     gpzda_dict, checksum = gpzda_as_dict(pkt)
     return gpzda_dict
@@ -76,28 +68,29 @@ def get_gpzda(gps_object):
 def gpzda_as_dict(gpzda_str):
     """
     Returns the GPZDAC as a dictionary and the checksum.
-
-    gpzda_as_dict($GPZDA,142930.000,03,11,2016,,*5D)
+    :param gpzda_str:
+    :return: gpzda_as_dict($GPZDA,142930.000,03,11,2016,,*5D)
     ({'message_id': '$GPZDA',
         'date_object':  datetime.datetime(2016, 11, 3, 14, 29, 30)
         },
         0C)
     """
     gpzda, checksum = gpzda_str.split('*')
-    message_id, time, day, month, year, time_zone_hours, time_zone_minutes = gpzda.split(',')
-    thedate = datetime.datetime(int(year), int(month), int(day), int(time[:2]), int(time[2:4]), int(time[4:6]), int(time[7:]))
-    gpzda_as_dict = {'message_id': message_id,
-                     'date_object': thedate
-                     }
-    return (gpzda_as_dict, checksum)
+    message_id, thetime, day, month, year, time_zone_hours, time_zone_minutes = gpzda.split(',')
+    thedate = datetime.datetime(int(year), int(month), int(day), int(thetime[:2]),
+                                int(thetime[2:4]), int(thetime[4:6]), int(thetime[7:]))
+    gpzda_dict = {'message_id': message_id,
+                  'date_object': thedate}
+    return (gpzda_dict, checksum)
+
 
 def location_logging_test(gps, duration_minutes=5):
     """
     Queries and then starts the built in locus logger. Stops after a
     preset duration and returns the logged data.
-    :param gps_object:
+    :param gps:
     :param duration_minutes:
-    :return: list of dictionary objects representing the logged data
+    :return: list of dictionaries representing the logged data
     """
     print("Locus query dictionary")
     print(gps.locus_query())
@@ -128,7 +121,8 @@ def location_logging_test(gps, duration_minutes=5):
     print("Erasing locus log")
     gps.locus_erase()
 
-    return (locus_data)
+    return locus_data
+
 
 def get_device_gps():
     """
@@ -149,30 +143,67 @@ def get_device_gps():
         device = '/dev/ttyS0'
     return device
 
-def disconnect_serial_gps():
+
+def disconnect_serial_gps(gps):
     """
     Remove the python gps serial connection and reattach gpsd to the device.
-    :return:
+    :param gps:
+    :return: none
     """
-    global gps
-    del gps
+    # global gps
+    gps.device_tx_rx.close()
     device = get_device_gps()
-    cmd = "sudo gpsd " + device + " -F /var/run/gpsd.sock"
+    cmd = 'sudo gpsd ' + device + ' -n -F /var/run/gpsd.sock'
     os.system(cmd)
-    #rpi_utils.run_program(cmd)
+    # rpi_utils.run_program(cmd)
+
+    """
+    TODO: Close the serial gps connection
+    This may have to be done by extending the L80GPS class
+    """
+
+
+def device_available(device):
+    """
+    Check to see if the named device is available
+    :param device: string identifying device to query
+    :return: boolean T or F
+    """
+    try:
+        ser = serial.Serial(port=device)
+        ser.close()
+        return True
+    except serial.SerialException:
+        return False
+
 
 def connect_serial_gps():
     """
-    Start by disconnecting any currently running gpsd using killall.
-    Then attach gps to the L80GPS object
+    Check if the device is available. If its not, disconnect any currently running gpsd using killall.
+    Check availability again. If still not available, raise an error. When device is available, connect
+    to the L80GPS object.
+    If device does not become available after killall on gpsd, another process such as kismet_server may be
+    forcing it to remain connected.
     :return: L80GPS object
     """
-    cmd = "sudo killall gpsd"
-    os.system(cmd)
-    #rpi_utils.run_program(cmd)
-    time.sleep(1)
+    device = get_device_gps()
+    if not device_available(device):
+        cmd = 'sudo killall gpsd'
+        os.system(cmd)
+        #rpi_utils.run_program(cmd)
+        time.sleep(1)
+        if not device_available(device):
+            raise serial.SerialException('Device busy ' + device + '. Check your processes.')
     gps = l80gps.L80GPS()
     return gps
 
+
 if __name__ == '__main__':
+    cmd = 'sudo killall kismet_server'
+    os.system(cmd)
     gps = connect_serial_gps()
+    gps.get_gpgsv()
+    disconnect_serial_gps(gps)
+    del(gps)
+    cmd = '/usr/local/bin/kismet_server --daemonize'
+    os.system(cmd)

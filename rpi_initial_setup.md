@@ -2,7 +2,7 @@
 title: RPi Initial Setup Guide
 subtitle: Raspberry Pi - Image and Initial Setup
 author: Gary Dalton
-date: 6 March 2016
+date: 21 February 2017
 license: Creative Commons BY-SA
 github:
   user: gary-dalton
@@ -72,6 +72,9 @@ For the Lite version, a 4Gb MicroSD is likely sufficient but use at least an 8GB
 Unzip the image and write it to the MicroSD card. On Windows, I use [Win32 Disk Imager](http://sourceforge.net/projects/win32diskimager/). More detailed instructions and instructions for other operating systems may be found on [Raspberrypi.org's Installing Images](https://www.raspberrypi.org/documentation/installation/installing-images/README.md).
 
 Insert the MicroSD into the Pi.
+
+**NOTE: Versions of Raspbian later than December 2016 ship with SSH disabled. SSH may be enabled by adding a file named _ssh_ to the boot directory of the SD card. See https://www.raspberrypi.org/blog/a-security-update-for-raspbian-pixel/**
+
 
 ## <a name="2"></a>Connect to the Pi
 

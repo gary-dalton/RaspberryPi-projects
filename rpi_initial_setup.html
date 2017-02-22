@@ -8,7 +8,8 @@
     <meta name="description" content="GGIS on Github : Organization Pages for Gary Dalton and GGIS">
 
           <meta name="author" content="Gary Dalton">
-              <title>RPi Initial Setup Guide</title>
+              <meta name="dcterms.date" content="2017-02-21">
+          <title>RPi Initial Setup Guide</title>
       <style type="text/css">code{white-space: pre;}</style>
       <!--[if lt IE 9]>
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -83,6 +84,7 @@
 <p>For the Lite version, a 4Gb MicroSD is likely sufficient but use at least an 8GB card for the full version. The required size of your disk depends a bit on your expected use. In early 2016, the sweet spot in pricing for these cards is 16GB.</p>
 <p>Unzip the image and write it to the MicroSD card. On Windows, I use <a href="http://sourceforge.net/projects/win32diskimager/">Win32 Disk Imager</a>. More detailed instructions and instructions for other operating systems may be found on <a href="https://www.raspberrypi.org/documentation/installation/installing-images/README.md">Raspberrypi.org's Installing Images</a>.</p>
 <p>Insert the MicroSD into the Pi.</p>
+<p><strong>NOTE: Versions of Raspbian later than December 2016 ship with SSH disabled. SSH may be enabled by adding a file named <em>ssh</em> to the boot directory of the SD card. See https://www.raspberrypi.org/blog/a-security-update-for-raspbian-pixel/</strong></p>
 </section>
 <section id="connect-to-the-pi" class="level2">
 <h2><a name="2"></a>Connect to the Pi</h2>

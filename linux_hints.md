@@ -37,3 +37,7 @@ General hints and how-tos for Linux systems.
 + Unmount with `umount /mnt/yourmount`
 
 ### Auto mount on boot
+
+## Apt and Aptitude
+
+* List obsolete packages `aptitude search '~o'`

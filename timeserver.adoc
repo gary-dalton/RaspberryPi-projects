@@ -165,7 +165,7 @@ Crontab is used to launch the timeserver.py on boot.
 
 Check that your script is running:
 
-* Logfile, `grep 'CRON' /var/log/syslog`. The last line show the script being run.
+* Logfile, `grep 'CRON' /var/log/syslog`. The last line shows the script being run.
 
 ----
 Oct 31 15:26:32 timeserver cron[389]: (CRON) INFO (pidfile fd = 3)

@@ -73,3 +73,9 @@ Since I have moved all of my current development work to Python 3, those will be
 === Audio
 
 * `sudo apt-get install python3-pyaudio`
+
+
+== References
+
+* https://pypi.python.org/pypi/gps3/
+* https://pypi.python.org/pypi/RPi.GPIO

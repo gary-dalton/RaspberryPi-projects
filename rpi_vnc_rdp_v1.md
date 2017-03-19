@@ -10,10 +10,12 @@ github:
   branch: "gh-pages"
 framework: minimal
 css: stylesheets/stylesheet.css
-pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html rpi_vnc_rdp.md -o rpi_vnc_rdp.html
+pandoc: pandoc -t html5 --standalone --section-divs --template=template_github.html rpi_vnc_rdp_v1.md -o rpi_vnc_rdp_v1.html
 tags: rpi, guide, vnc, rdp, desktop
 ---
 [Home](index.html)
+
+# NOTE: Deprecated due to default installation of RealVNC in PIXEL versions of Raspbian. See [newer version](rpi_vnc_rdp.html).
 
 # Description
 

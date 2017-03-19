@@ -1,0 +1,78 @@
+= Node.js on Raspberry Pi
+Gary Dalton <https://github.com/gary-dalton>
+:description: Node.js is a JavaScript runtime environment for developing server-side Web applications. It uses an asynchronous event driven framework that is designed to build scalable network applications. I install it on nearly all of my pi to provide a framework for building user interfaces that can actually do something.
+:revnumber: 1.0
+:revdate: 24 February 2017
+:license: Creative Commons BY-SA
+:homepage: https://gary-dalton.github.io/
+:githubuser: gary-dalton
+:githubrepo: RaspberryPi-projects
+:githubbranch: gh-pages
+:icons: font
+:toc: left
+:toclevels: 4
+:source-highlighter: highlightjs
+:css: stylesheets/stylesheet.css
+:linkcss:
+:cli: asciidoctor -a stylesheet=github.css -a stylesdir=stylesheets rpi_nodejs.adoc
+:keywords: rpi, node.js, guide, iot, web
+
+link:index.html[Raspberry Pi Projects] | https://gary-dalton.github.io/[Home]
+
+{description}
+
+https://github.com/{githubuser}/{githubrepo}/tree/{githubbranch}[View on GitHub image:images/GitHub-Mark-32px.png[]]
+
+
+== Next up?
+
+After reading this guide, you may be interested in reading:
+
+
+== Parts List
+
+* Installed network connected Raspberry Pi 2 or newer
+
+
+== Overview
+
+Start with a Raspberry Pi image. This is an image saved after following the [RPi Initial Setup Guide](rpi_initial_setup.html). This may be either a lite or a full desktop image.
+
+
+== Write the image
+
+Write the image to the MicroSD as described in the [RPi Initial Setup Guide](rpi_initial_setup.html). Insert the MicroSD into the Pi and boot.
+
+
+== Connect Pi to your Internet
+
+Use an Ethernet cable to connect the pi to the network. DHCP will assign the pi an IP address. Find the address of your pi from your network's DHCP server.
+
+* SSH to the pi at that IP address or yourpiname.local
+
+== Install the node.js
+
+Figure out which version of nodejs you wan to install. I usually use an LTS version. See versions available at https://github.com/nodejs/LTS/.
+
+Then follow the installation instructions for your version from https://github.com/nodesource/distributions#debinstall. These should be a straight forward install for Raspberry Pi versions 2 and 3.
+
+* Add and update sources, `curl -sL https://deb.nodesource.com/setup_6.x | sudo -E bash -`
+* Install, `sudo apt-get install nodejs`
+
+TIP: The pi uses the ARM processor. Determine which instruction set version is included, `grep 'model name' /proc/cpuinfo`. This output should include ARMv6, ARMv7, and so forth. The Raspberry Pi 3 uses the ARMv7 processor.
+
+
+== Express framework
+
+Express.js is one of the most essential web frameworks for Node.js. It is a minimalist framework for building a host of web and mobile applications as well as application programming interfaces (APIs). Express.js is offers various features, like template engines, simplified multiple routing, database integration and more.
+
+* Install with `sudo npm install express --save`
+
+
+== References
+
+* https://nodejs.org/en/[Node.js]
+* http://expressjs.com/en/starter/hello-world.html[Express]
+* https://learn.adafruit.com/node-embedded-development/events[Adafruit]
+* https://www.google.com/webhp?q=node.js%20raspberry%20pi[search]
+* https://github.com/nodesource/distributions

@@ -1,0 +1,145 @@
+= Connect to the Raspberry Pi using VNC or RDP
+Gary Dalton <https://github.com/gary-dalton>
+:description: Sometimes, it is necessary to view the desktop interface of a Raspberry Pi (RPi) from a remote location or without an attached keyboard and monitor. Both VNC and RDP are available to help. VNC and RDP are client-server remote desktop protocols.
+:revnumber: 1.0
+:revdate: 23 February 2017
+:license: Creative Commons BY-SA
+:homepage: https://gary-dalton.github.io/
+:githubuser: gary-dalton
+:githubrepo: RaspberryPi-projects
+:githubbranch: gh-pages
+:icons: font
+:toc: left
+:toclevels: 4
+:source-highlighter: highlightjs
+:css: stylesheets/stylesheet.css
+:linkcss:
+:cli: asciidoctor -a stylesheet=github.css -a stylesdir=stylesheets rpi_vnc_rdp.adoc
+:keywords: rpi, guide, vnc, rdp, desktop
+
+link:index.html[Raspberry Pi Projects] | https://gary-dalton.github.io/[Home]
+
+{description}
+
+https://github.com/{githubuser}/{githubrepo}/tree/{githubbranch}[View on GitHub image:images/GitHub-Mark-32px.png[]]
+
+
+== Parts List
+
+* Installed network connected Raspberry Pi
+
+
+== Overview
+
+Start with a Raspberry Pi image. This is an image saved after following the [RPi Initial Setup Guide](rpi_initial_setup.html). This must be a full desktop image.
+
+
+== Write the image
+
+Write the image to the MicroSD as described in the link:rpi_initial_setup.html[RPi Initial Setup Guide]. Insert the MicroSD into the Pi and boot.
+
+
+== Connect Pi to your Internet
+
+Use an Ethernet cable to connect the pi to the network. DHCP will assign the pi an IP address. Find the address of your pi from your network's DHCP server.
+
+* SSH to the pi at that IP address or yourpiname.local
+
+
+== Choose VNC or RDP
+
+NOTE: Versions of Raspian newer than September 2016 come with the PIXEL desktop. These versions have RealVNC preinstalled. It is recommended to use RealVNC.
+
+There are benefits and drawbacks to each protocol. RDP is faster but is mostly available from Windows. VNC is universal but may have lower security. Some other opinions from https://blog.codinghorror.com/vnc-vs-remote-desktop/[Coding Horror] and http://www.thetechvoid.com/rdp-vs-vnc-which-is-better-for-your-needs/[TheTechVoid].
+
+Generally, use the preinstalled version of RealVNC. It is possible to switch to RDP but this requires uninstalling RealVNC.
+
+
+== Enable RealVNC
+
+* https://www.realvnc.com/docs/raspberry-pi.html
+
+RealVNC is already installed on your pi, it just needs to be enabled to start on boot. RealVNC is also more secure than many VNC implementations.
+
+
+=== From the Desktop
+
+Navigate the menu system, _Menu > Preferences > Raspberry Pi Configuration > Interfaces_ to enable VNC.
+
+=== From the Command Line
+
+* `sudo raspi-config`
+* Navigate to _Advanced Options > VNC_ and select Yes
+
+
+=== Firewall and Security
+
+If you are using the iptables firewall, see [RPi iptables](rpi_iptables.html), make certain the port is open.
+
+```
+# Allows RealVNC connections. Uncomment this to allow VNC. Again, this is
+# best restricted to certain IPs
+#-A INPUT -p tcp -m state --state NEW --dport 5901 -j ACCEPT
+```
+
+**NOTE: VNC may open a security vulnerability. Permit access to vnc servers on the local network only.**
+
+If you feel you need to run an Internet accessible VNC Server, at a minimum, use SSH tunneling for all connections. Also view https://help.ubuntu.com/community/VNC
+
+== Connect to VNC
+
+Download and install the VNC viewer for your system from https://www.realvnc.com/download/viewer/. If you have a pi, the viewer is already installed.
+
+If you notice screen resolution issues or other problems, please see https://support.realvnc.com/Knowledgebase/Article/View/523/2/troubleshooting-vnc-server-on-the-raspberry-pi
+
+
+== RDP
+
+Using RDP now, unfortunately, means first uninstalling RealVNC.
+
+=== Remove RealVNC
+
+* `sudo apt-get purge realvnc-vnc-server`
+
+=== Installing RDP
+
+Installation is a breeze.
+
+* Update your sources, `sudo apt-get update`
+* Install, `sudo apt-get install xrdp`
+* At this point RDP is ready to use on the pi
+
+If you are using the iptables firewall, see [RPi iptables](rpi_iptables.html), make certain the port is open.
+
+```
+# Allows RDP connections. Uncomment this to allow RDP.
+-A INPUT -p tcp -m state --state NEW --dport 3389 -j ACCEPT
+```
+
+=== The xrdp service
+
+xrdp installs itself as a running service which may be controlled via the following commands:
+
+* `sudo service xrdp status`
+* `sudo service xrdp start`
+* `sudo service xrdp stop`
+* `sudo service xrdp restart`
+* Disable xrdp from starting at boot, `sudo update-rc.d xrdp disable`
+* Enable xrdp to start at boot, `sudo update-rc.d xrdp enable`
+
+=== Connecting from Windows
+
+An RDP client is a built-in feature of Windows. Just launch the client and enter the connection settings. Connection settings may be saved for easier reconnection. There are also some advanced options available.
+
+* `Windows-key r`
+* Enter `mstsc`
+* Connect to your pi
+* Enter your pi's login credentials
+* Shortly, you will see the desktop of your pi
+
+*When done with the session, just close the window.*
+
+
+== Conclusion
+
+Viewing your desktop remotely is cool but remember, this may reduce security. VNC especially, should not be used unprotected over the Internet.

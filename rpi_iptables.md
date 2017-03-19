@@ -104,7 +104,7 @@ Rule set for a standard pi with nothing extra or unusual
 # for everyone is really desired. Most likely you will only allow access
 # from certain IPs.
 
-# Allows TightVNC connections. Uncomment this to allow VNC. Again, this is
+# Allows vncserver connections. Uncomment this to allow VNC. Again, this is
 # best restricted to certain IPs
 #-A INPUT -p tcp -m state --state NEW --dport 5901 -j ACCEPT
 

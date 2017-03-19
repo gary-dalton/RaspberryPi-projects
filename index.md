@@ -2,7 +2,7 @@
 title: Raspberry Pi Projects
 subtitle: Documentation
 author: Gary Dalton
-date: 6 March 2016
+date: 23 February 2017
 license: Creative Commons BY-SA
 github:
   user: gary-dalton
@@ -35,6 +35,7 @@ tags: rpi, raspberrypi, guide, howto
 - [GPS on Raspberry Pi 3](rpi3_gps.html), Installation and basic use of the Adafruit Ultimate GPS breakout on a Raspberry Pi 3
 - [Kismet on Raspberry Pi](rpi3_kismet.html), Installation and basic use of Kismet on a Raspberry Pi. Kismet is a wireless network detector, sniffer, and intrusion detection system.
 - [Python 2 and Python 3 on Raspbian](python.html)
+- [Connect to the Raspberry Pi using VNC or RDP](rpi_vnc_rdp.html), view the GUI desktop interface of a Raspberry Pi from a remote location or without an attached keyboard and monitor.
 
 
 # How-tos
@@ -64,3 +65,4 @@ tags: rpi, raspberrypi, guide, howto
 ## Deprecated
 
 - [Core Pi](core_pi.html), superceded by Core Pi v2
+- [Connect to the Raspberry Pi using VNC or RDP V1](rpi_vnc_rdp_v1.html), superceded by newer version

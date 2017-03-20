@@ -28,10 +28,10 @@ def shutdown(channel):
     Calls system shutdown after a button press of more than 2 seconds
     """
     GPIO.remove_event_detect(channel)
-    pressed_time = datetime.datetime.now()
+    pressed_timestamp = datetime.datetime.now()
     while not GPIO.input(channel):
         time.sleep(.5)
-    dif = datetime.datetime.now() - pressed_time
+    dif = datetime.datetime.now() - pressed_timestamp
     pressed_time = dif.seconds
     logging.debug('Pressed time = %s', pressed_time)
     if pressed_time > 2:
